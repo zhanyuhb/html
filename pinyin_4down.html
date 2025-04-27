@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>部编版语文四年级下册看拼音写汉字练习</title>
+  <style>
+    /* 基础样式 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #e8f5e9;
+      color: #33691e;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      background-color: #81c784;
+      color: white;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+  .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 15px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    /* 下拉菜单和按钮 */
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+    select {
+      background-color: #c8e6c9;
+      color: #33691e;
+    }
+    button {
+      background-color: #43a047;
+      color: white;
+    }
+    button:hover {
+      background-color: #2e7d32;
+    }
+    /* 练习区域 */
+  .exercise {
+      margin-top: 15px;
+    }
+  .exercise div {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+  .exercise div span {
+      margin-right: 10px;
+    }
+    input {
+      width: 80px;
+      padding: 6px;
+      font-size: 16px;
+      border: 1px solid #c8e6c9;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+  .correct {
+      color: green;
+      margin-right: 10px;
+    }
+  .wrong {
+      color: red;
+      margin-right: 10px;
+    }
+  .correct-word {
+      font-weight: bold;
+      color: #33691e;
+    }
+    /* 提示信息 */
+  .hint {
+      text-align: center;
+      margin: 10px 0;
+      color: #33691e;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    /* 版权信息 */
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #81c784;
+      color: white;
+      font-size: 0.8rem;
+    }
+    /* 响应式设计 */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      select, button {
+        font-size: 14px;
+        padding: 10px;
+      }
+      input {
+        font-size: 14px;
+        padding: 4px;
+      }
+      .hint {
+        font-size: 0.8rem;
+      }
+      footer {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>部编版语文四年级下册看拼音写汉字练习</h1>
+  </header>
+  <div class="container">
+    <!-- 单元选择 -->
+    <label for="unit">选择单元：</label>
+    <select id="unit">
+      <option value="">请选择单元</option>
+      <option value="第一单元">第一单元</option>
+      <option value="第二单元">第二单元</option>
+      <option value="第三单元">第三单元</option>
+      <option value="第四单元">第四单元</option>
+      <option value="第五单元">第五单元</option>
+      <option value="第六单元">第六单元</option>
+      <option value="第七单元">第七单元</option>
+      <option value="第八单元">第八单元</option>
+    </select>
+    <!-- 课题选择 -->
+    <label for="lesson">选择课题：</label>
+    <select id="lesson" disabled>
+      <option value="">请选择课题</option>
+    </select>
+    <button onclick="loadExercise()">开始练习</button>
+    <!-- 提示信息 -->
+    <div class="hint"><strong>提示：请将输入法调整为手写输入状态。</strong></div>
+    <!-- 练习区域 -->
+    <div id="exerciseArea" class="exercise"></div>
+    <button onclick="checkAnswers()">提交</button>
+  </div>
+  <!-- 版权信息 -->
+  <footer>
+    本软件由海港区南岭路小学与邢睿信息技术名师工作室共同开发
+  </footer>
+  <script>
+    // 定义四年级下册各单元、各课题的拼音和对应的汉字
+const textbookData = {
+    "第一单元": {
+        "《古诗词三首》": [
+            {pinyin: "zá", word: "杂"},
+            {pinyin: "xī", word: "稀"},
+            {pinyin: "qīng", word: "蜻"},
+            {pinyin: "tíng", word: "蜓"},
+            {pinyin: "dié", word: "蝶"},
+            {pinyin: "sù", word: "宿"},
+            {pinyin: "xú", word: "徐"},
+            {pinyin: "shū", word: "疏"},
+            {pinyin: "máo", word: "茅"},
+            {pinyin: "yán", word: "檐"},
+            {pinyin: "wēng", word: "翁"},
+            {pinyin: "lóng", word: "笼"},
+            {pinyin: "lài", word: "赖"},
+            {pinyin: "bō", word: "剥"}
+        ],
+        "《乡下人家》": [
+            {pinyin: "gòu", word: "构"},
+            {pinyin: "shì", word: "饰"},
+            {pinyin: "dūn", word: "蹲"},
+            {pinyin: "fèng", word: "凤"},
+            {pinyin: "xù", word: "序"},
+            {pinyin: "tóu", word: "投"},
+            {pinyin: "lì", word: "例"},
+            {pinyin: "shuài", word: "率"},
+            {pinyin: "sǒng", word: "耸"},
+            {pinyin: "tà", word: "踏"},
+            {pinyin: "tǎng", word: "倘"},
+            {pinyin: "huì", word: "绘"},
+            {pinyin: "xié", word: "谐"},
+            {pinyin: "jì", word: "寄"},
+            {pinyin: "mián", word: "眠"}
+        ],
+        "《天窗》": [
+            {pinyin: "wèi", word: "慰"},
+            {pinyin: "jiè", word: "藉"},
+            {pinyin: "bǔ", word: "卜"},
+            {pinyin: "ruì", word: "锐"},
+            {pinyin: "tān", word: "滩"},
+            {pinyin: "zhàng", word: "帐"},
+            {pinyin: "shuò", word: "烁"},
+            {pinyin: "biān", word: "蝙"},
+            {pinyin: "fú", word: "蝠"},
+            {pinyin: "bà", word: "霸"},
+            {pinyin: "yīng", word: "鹰"}
+        ]
+    },
+    "第二单元": {
+        "《琥珀》": [
+            {pinyin: "nù", word: "怒"},
+            {pinyin: "hǒu", word: "吼"},
+            {pinyin: "zhī", word: "脂"},
+            {pinyin: "shì", word: "拭"},
+            {pinyin: "cān", word: "餐"},
+            {pinyin: "huá", word: "划"},
+            {pinyin: "shǎng", word: "晌"},
+            {pinyin: "là", word: "辣"},
+            {pinyin: "shèn", word: "渗"},
+            {pinyin: "zhèng", word: "挣"},
+            {pinyin: "fān", word: "番"},
+            {pinyin: "mái", word: "埋"},
+            {pinyin: "shuā", word: "刷"},
+            {pinyin: "cè", word: "测"},
+            {pinyin: "xiáng", word: "详"}
+        ],
+        "《飞向蓝天的恐龙》": [
+            {pinyin: "bèn", word: "笨"},
+            {pinyin: "dùn", word: "钝"},
+            {pinyin: "gē", word: "鸽"},
+            {pinyin: "háo", word: "毫"},
+            {pinyin: "líng", word: "凌"},
+            {pinyin: "mò", word: "末"},
+            {pinyin: "miáo", word: "描"},
+            {pinyin: "suì", word: "隧"},
+            {pinyin: "tài", word: "态"},
+            {pinyin: "dūn", word: "吨"},
+            {pinyin: "lú", word: "颅"},
+            {pinyin: "péng", word: "膨"},
+            {pinyin: "zhī", word: "肢"},
+            {pinyin: "yì", word: "翼"},
+            {pinyin: "pì", word: "辟"}
+        ],
+        "《纳米技术就在我们身边》": [
+            {pinyin: "nà", word: "纳"},
+            {pinyin: "yōu", word: "拥"},
+            {pinyin: "xiāng", word: "箱"},
+            {pinyin: "chòu", word: "臭"},
+            {pinyin: "shū", word: "蔬"},
+            {pinyin: "tàn", word: "碳"},
+            {pinyin: "gāng", word: "钢"},
+            {pinyin: "yǐn", word: "隐"},
+            {pinyin: "jiàn", word: "健"},
+            {pinyin: "kāng", word: "康"},
+            {pinyin: "bāo", word: "胞"},
+            {pinyin: "jí", word: "疾"},
+            {pinyin: "fáng", word: "防"},
+            {pinyin: "zào", word: "灶"},
+            {pinyin: "xū", word: "需"}
+        ]
+    },
+    "第三单元": {
+        "《短诗三首》": [
+            {pinyin: "fán", word: "繁"},
+            {pinyin: "màn", word: "漫"},
+            {pinyin: "miè", word: "灭"},
+            {pinyin: "téng", word: "藤"},
+            {pinyin: "luó", word: "萝"},
+            {pinyin: "xī", word: "膝"},
+            {pinyin: "tāo", word: "涛"},
+            {pinyin: "duǒ", word: "躲"}
+        ],
+        "《绿》": [
+            {pinyin: "píng", word: "瓶"},
+            {pinyin: "jǐ", word: "挤"},
+            {pinyin: "chā", word: "叉"},
+            {pinyin: "huī", word: "挥"}
+        ],
+        "《白桦》": [
+            {pinyin: "huà", word: "桦"},
+            {pinyin: "tú", word: "涂"},
+            {pinyin: "róng", word: "茸"},
+            {pinyin: "xiù", word: "绣"},
+            {pinyin: "xiāo", word: "潇"},
+            {pinyin: "suì", word: "穗"},
+            {pinyin: "méng", word: "朦"},
+            {pinyin: "lóng", word: "胧"},
+            {pinyin: "jì", word: "寂"},
+            {pinyin: "xiá", word: "霞"},
+            {pinyin: "mǒ", word: "抹"}
+        ]
+    },
+    "第四单元": {
+        "《猫》": [
+            {pinyin: "yōu", word: "忧"},
+            {pinyin: "lǜ", word: "虑"},
+            {pinyin: "tān", word: "贪"},
+            {pinyin: "zhí", word: "职"},
+            {pinyin: "píng", word: "屏"},
+            {pinyin: "cèng", word: "蹭"},
+            {pinyin: "gǎo", word: "稿"},
+            {pinyin: "qiāng", word: "腔"},
+            {pinyin: "jiě", word: "解"},
+            {pinyin: "mèn", word: "闷"},
+            {pinyin: "shé", word: "蛇"},
+            {pinyin: "zāo", word: "遭"},
+            {pinyin: "yāng", word: "殃"},
+            {pinyin: "pén", word: "盆"},
+            {pinyin: "bó", word: "勃"}
+        ],
+        "《母鸡》": [
+            {pinyin: "tǎo", word: "讨"},
+            {pinyin: "yàn", word: "厌"},
+            {pinyin: "bà", word: "坝"},
+            {pinyin: "zhōng", word: "忠"},
+            {pinyin: "dú", word: "毒"},
+            {pinyin: "jì", word: "绩"},
+            {pinyin: "fū", word: "孵"},
+            {pinyin: "jǐng", word: "警"},
+            {pinyin: "jiè", word: "戒"},
+            {pinyin: "wāi", word: "歪"},
+            {pinyin: "gū", word: "咕"},
+            {pinyin: "tāng", word: "汤"},
+            {pinyin: "jué", word: "掘"},
+            {pinyin: "fú", word: "伏"},
+            {pinyin: "tí", word: "啼"}
+        ],
+        "《白鹅》": [
+            {pinyin: "tiáo", word: "调"},
+            {pinyin: "cù", word: "促"},
+            {pinyin: "pō", word: "颇"},
+            {pinyin: "jù", word: "剧"},
+            {pinyin: "gǒu", word: "苟"},
+            {pinyin: "pì", word: "譬"},
+            {pinyin: "shì", word: "侍"},
+            {pinyin: "guǎn", word: "馆"},
+            {pinyin: "fù", word: "附"},
+            {pinyin: "pí", word: "脾"},
+            {pinyin: "mǐn", word: "敏"},
+            {pinyin: "jié", word: "捷"},
+            {pinyin: "áng", word: "昂"},
+            {pinyin: "gōng", word: "供"},
+            {pinyin: "tiān", word: "添"}
+        ]
+    },
+    "第五单元": {
+        "《海上日出》": [
+            {pinyin: "kuò", word: "扩"},
+            {pinyin: "fàn", word: "范"},
+            {pinyin: "nǔ", word: "努"},
+            {pinyin: "chà", word: "刹"},
+            {pinyin: "làn", word: "烂"},
+            {pinyin: "tì", word: "替"},
+            {pinyin: "xiāng", word: "镶"},
+            {pinyin: "zǐ", word: "紫"},
+            {pinyin: "jǐn", word: "仅"}
+        ],
+        "《记金华的双龙洞》": [
+            {pinyin: "zhè", word: "浙"},
+            {pinyin: "luó", word: "罗"},
+            {pinyin: "dù", word: "杜"},
+            {pinyin: "juān", word: "鹃"},
+            {pinyin: "zhǎi", word: "窄"},
+            {pinyin: "yù", word: "郁"},
+            {pinyin: "jiān", word: "肩"},
+            {pinyin: "tún", word: "臀"},
+            {pinyin: "yí", word: "移"},
+            {pinyin: "é", word: "额"},
+            {pinyin: "lù", word: "陆"},
+            {pinyin: "rǔ", word: "乳"},
+            {pinyin: "sǔn", word: "笋"},
+            {pinyin: "duān", word: "端"},
+            {pinyin: "yuán", word: "源"}
+        ]
+    },
+    "第六单元": {
+        "《小英雄雨来（节选）》": [
+            {pinyin: "jìn", word: "晋"},
+            {pinyin: "kàng", word: "炕"},
+            {pinyin: "qiān", word: "铅"},
+            {pinyin: "huàng", word: "晃"},
+            {pinyin: "lī", word: "哩"},
+            {pinyin: "shuān", word: "栓"},
+            {pinyin: "gē", word: "胳"},
+            {pinyin: "bó", word: "膊"},
+            {pinyin: "jié", word: "劫"},
+            {pinyin: "chóu", word: "绸"},
+            {pinyin: "bā", word: "扒"},
+            {pinyin: "dí", word: "敌"},
+            {pinyin: "shī", word: "尸"},
+            {pinyin: "chèn", word: "趁"},
+            {pinyin: "huāng", word: "慌"}
+        ],
+        "《我们家的男子汉》": [
+            {pinyin: "huī", word: "徽"},
+            {pinyin: "mí", word: "谜"},
+            {pinyin: "chún", word: "唇"},
+            {pinyin: "shàng", word: "尚"},
+            {pinyin: "hūn", word: "荤"},
+            {pinyin: "bā", word: "扒"},
+            {pinyin: "jié", word: "杰"},
+            {pinyin: "rǎng", word: "嚷"},
+            {pinyin: "liū", word: "溜"},
+            {pinyin: "kuī", word: "亏"}
+        ],
+        "《芦花鞋》": [
+            {pinyin: "cuō", word: "搓"},
+            {pinyin: "kuí", word: "葵"},
+            {pinyin: "qí", word: "祈"},
+            {pinyin: "yí", word: "遗"},
+            {pinyin: "hàn", word: "憾"},
+            {pinyin: "wū", word: "污"},
+            {pinyin: "xiè", word: "屑"}
+        ]
+    },
+    "第七单元": {
+        "《古诗三首》": [
+            {pinyin: "fú", word: "芙"},
+            {pinyin: "róng", word: "蓉"},
+            {pinyin: "luò", word: "洛"},
+            {pinyin: "hú", word: "壶"},
+            {pinyin: "yàn", word: "雁"},
+            {pinyin: "yàn", word: "砚"},
+            {pinyin: "zú", word: "卒"}
+        ],
+        "《“诺曼底号”遇难记》": [
+            {pinyin: "lún", word: "伦"},
+            {pinyin: "fù", word: "腹"},
+            {pinyin: "pōu", word: "剖"},
+            {pinyin: "kū", word: "窟"},
+            {pinyin: "lóng", word: "窿"},
+            {pinyin: "hùn", word: "混"},
+            {pinyin: "sī", word: "嘶"},
+            {pinyin: "wéi", word: "维"},
+            {pinyin: "zhì", word: "秩"},
+            {pinyin: "gǎng", word: "岗"},
+            {pinyin: "zǎi", word: "宰"},
+            {pinyin: "cuò", word: "措"},
+            {pinyin: "qiǎn", word: "遣"},
+            {pinyin: "jiàn", word: "践"}
+        ],
+        "《黄继光》": [
+            {pinyin: "yì", word: "役"},
+            {pinyin: "lǚ", word: "屡"},
+            {pinyin: "cuī", word: "摧"},
+            {pinyin: "táng", word: "膛"},
+            {pinyin: "yūn", word: "晕"},
+            {pinyin: "zhèn", word: "震"}
+        ]
+    },
+    "第八单元": {
+        "《宝葫芦的秘密（节选）》": [
+            {pinyin: "jiè", word: "介"},
+            {pinyin: "shào", word: "绍"},
+            {pinyin: "yāo", word: "妖"},
+            {pinyin: "jǔ", word: "矩"},
+            {pinyin: "guāi", word: "乖"},
+            {pinyin: "niǎn", word: "撵"},
+            {pinyin: "tàng", word: "烫"},
+            {pinyin: "yā", word: "丫"},
+            {pinyin: "zhuài", word: "拽"},
+            {pinyin: "fú", word: "福"},
+            {pinyin: "tiǎn", word: "舔"},
+            {pinyin: "kuí", word: "葵"},
+            {pinyin: "shòu", word: "瘦"},
+            {pinyin: "bàng", word: "棒"},
+            {pinyin: "bà", word: "罢"}
+        ],
+        "《巨人的花园》": [
+            {pinyin: "shuò", word: "硕"},
+            {pinyin: "yǔn", word: "允"},
+            {pinyin: "qì", word: "砌"},
+            {pinyin: "pái", word: "牌"},
+            {pinyin: "jìn", word: "禁"},
+            {pinyin: "chéng", word: "惩"},
+            {pinyin: "zōng", word: "踪"},
+            {pinyin: "xiào", word: "啸"},
+            {pinyin: "sī", word: "私"},
+            {pinyin: "jiá", word: "颊"},
+            {pinyin: "chāi", word: "拆"}
+        ],
+        "《海的女儿》": [
+            {pinyin: "gǎng", word: "港"},
+            {pinyin: "yàn", word: "宴"},
+            {pinyin: "jié", word: "睫"},
+            {pinyin: "hūn", word: "婚"},
+            {pinyin: "xùn", word: "讯"},
+            {pinyin: "wǎn", word: "挽"},
+            {pinyin: "shèng", word: "圣"},
+            {pinyin: "yí", word: "仪"},
+            {pinyin: "zhì", word: "帜"},
+            {pinyin: "chén", word: "陈"},
+            {pinyin: "diàn", word: "垫"},
+            {pinyin: "héng", word: "恒"},
+            {pinyin: "fǔ", word: "抚"},
+            {pinyin: "shì", word: "逝"}
+        ]
+    }
+};
+
+    // 根据选择的单元动态加载课题选项
+    document.getElementById("unit").addEventListener("change", function () {
+      const selectedUnit = this.value;
+      const lessonSelect = document.getElementById("lesson");
+      // 清空课题选项
+      lessonSelect.innerHTML = '<option value="">请选择课题</option>';
+      lessonSelect.disabled = true;
+      if (selectedUnit) {
+        const lessons = Object.keys(textbookData[selectedUnit]);
+        lessons.forEach(lesson => {
+          const option = document.createElement("option");
+          option.value = lesson;
+          option.textContent = lesson;
+          lessonSelect.appendChild(option);
+        });
+        lessonSelect.disabled = false;
+      }
+    });
+    // 加载练习内容
+    function loadExercise() {
+      const selectedUnit = document.getElementById("unit").value;
+      const selectedLesson = document.getElementById("lesson").value;
+      if (!selectedUnit ||!selectedLesson) {
+        alert("请选择单元和课题！");
+        return;
+      }
+      const exerciseArea = document.getElementById("exerciseArea");
+      exerciseArea.innerHTML = ""; // 清空之前的内容
+      const words = textbookData[selectedUnit][selectedLesson];
+      words.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <span>${index + 1}. ${item.pinyin}：</span>
+          <input type="text" data-word="${item.word}" />
+        `;
+        exerciseArea.appendChild(div);
+      });
+    }
+    // 检查答案
+    function checkAnswers() {
+      const inputs = document.querySelectorAll("#exerciseArea input");
+      inputs.forEach(input => {
+        const userAnswer = input.value.trim();
+        const correctAnswer = input.getAttribute("data-word");
+        const parentDiv = input.parentElement;
+        // 清除之前的对错标记和正确汉字
+        parentDiv.querySelector(".result")?.remove();
+        parentDiv.querySelector(".correct-word")?.remove();
+        // 添加新的对错标记
+        const resultSpan = document.createElement("span");
+        resultSpan.className = userAnswer === correctAnswer? "correct" : "wrong";
+        resultSpan.textContent = userAnswer === correctAnswer? "✅" : "❌";
+        resultSpan.classList.add("result");
+        parentDiv.appendChild(resultSpan);
+        // 显示正确汉字
+        const correctWordSpan = document.createElement("span");
+        correctWordSpan.className = "correct-word";
+        correctWordSpan.textContent = ` 正确答案：${correctAnswer}`;
+        parentDiv.appendChild(correctWordSpan);
+      });
+    }
+  </script>
+</body>
+</html>

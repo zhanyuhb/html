@@ -1,0 +1,144 @@
+{
+  "textbook": {
+    "name": "冀教版小学英语三年级下册",
+    "grade": "三年级",
+    "semester": "下册",
+    "publisher": "河北教育出版社"
+  },
+  "units": [
+    {
+      "unit": 1,
+      "title": "Food and Preferences",
+      "words": [
+        {"word": "like", "meaning": "喜欢", "page": 2, "type": "verb"},
+        {"word": "apple", "meaning": "苹果", "page": 2, "type": "noun"},
+        {"word": "orange", "meaning": "橙子", "page": 2, "type": "noun"},
+        {"word": "rice", "meaning": "米饭", "page": 2, "type": "noun"},
+        {"word": "you", "meaning": "你；你们", "page": 2, "type": "pronoun"},
+        {"word": "vegetable", "meaning": "蔬菜", "page": 2, "type": "noun"},
+        {"word": "meat", "meaning": "肉", "page": 2, "type": "noun"},
+        {"word": "food", "meaning": "食物", "page": 2, "type": "noun"},
+        {"word": "fruit", "meaning": "水果", "page": 4, "type": "noun"},
+        {"word": "banana", "meaning": "香蕉", "page": 4, "type": "noun"},
+        {"word": "grape", "meaning": "葡萄", "page": 4, "type": "noun"},
+        {"word": "eleven", "meaning": "十一", "page": 4, "type": "number"},
+        {"word": "twelve", "meaning": "十二", "page": 4, "type": "number"},
+        {"word": "bread", "meaning": "面包", "page": 6, "type": "noun"},
+        {"word": "my", "meaning": "我的", "page": 8, "type": "pronoun"},
+        {"word": "favourite", "meaning": "特别喜爱的", "page": 8, "type": "adjective"},
+        {"word": "chicken", "meaning": "鸡肉", "page": 8, "type": "noun"},
+        {"word": "fish", "meaning": "鱼肉；鱼", "page": 8, "type": "noun"}
+      ]
+    },
+    {
+      "unit": 2,
+      "title": "Daily Meals",
+      "words": [
+        {"word": "breakfast", "meaning": "早餐", "page": 14, "type": "noun"},
+        {"word": "egg", "meaning": "鸡蛋", "page": 14, "type": "noun"},
+        {"word": "juice", "meaning": "果汁", "page": 14, "type": "noun"},
+        {"word": "milk", "meaning": "牛奶", "page": 14, "type": "noun"},
+        {"word": "lunch", "meaning": "午餐", "page": 16, "type": "noun"},
+        {"word": "hungry", "meaning": "饥饿的", "page": 16, "type": "adjective"},
+        {"word": "noodle", "meaning": "面条", "page": 16, "type": "noun"},
+        {"word": "water", "meaning": "水", "page": 18, "type": "noun"},
+        {"word": "eat", "meaning": "吃", "page": 18, "type": "verb"},
+        {"word": "drink", "meaning": "喝", "page": 19, "type": "verb"},
+        {"word": "soup", "meaning": "汤", "page": 20, "type": "noun"},
+        {"word": "dinner", "meaning": "正餐；晚餐", "page": 20, "type": "noun"},
+        {"word": "good", "meaning": "好的", "page": 20, "type": "adjective"}
+      ]
+    },
+    {
+      "unit": 3,
+      "title": "Daily Routines",
+      "words": [
+        {"word": "morning", "meaning": "早晨；上午", "page": 26, "type": "noun"},
+        {"word": "get up", "meaning": "起床", "page": 26, "type": "phrase"},
+        {"word": "make my bed", "meaning": "整理床铺", "page": 26, "type": "phrase"},
+        {"word": "wash", "meaning": "洗", "page": 26, "type": "verb"},
+        {"word": "evening", "meaning": "晚上；傍晚", "page": 28, "type": "noun"},
+        {"word": "do", "meaning": "做；干", "page": 28, "type": "verb"},
+        {"word": "schoolbag", "meaning": "书包", "page": 28, "type": "noun"},
+        {"word": "put", "meaning": "放；置", "page": 30, "type": "verb"},
+        {"word": "clean", "meaning": "干净的；打扫", "page": 32, "type": "adjective/verb"},
+        {"word": "tidy", "meaning": "整洁的；整理", "page": 32, "type": "adjective/verb"},
+        {"word": "room", "meaning": "房间", "page": 32, "type": "noun"},
+        {"word": "sock", "meaning": "短袜", "page": 32, "type": "noun"}
+      ]
+    },
+    {
+      "unit": 4,
+      "title": "On the Farm",
+      "words": [
+        {"word": "farm", "meaning": "农场", "page": 50, "type": "noun"},
+        {"word": "river", "meaning": "河；江", "page": 50, "type": "noun"},
+        {"word": "see", "meaning": "看见", "page": 50, "type": "verb"},
+        {"word": "horse", "meaning": "马", "page": 50, "type": "noun"},
+        {"word": "cow", "meaning": "奶牛", "page": 50, "type": "noun"},
+        {"word": "pig", "meaning": "猪", "page": 50, "type": "noun"},
+        {"word": "rabbit", "meaning": "兔", "page": 50, "type": "noun"},
+        {"word": "sheep", "meaning": "绵羊；羊", "page": 50, "type": "noun", "plural": "sheep"},
+        {"word": "duck", "meaning": "鸭", "page": 50, "type": "noun"},
+        {"word": "bird", "meaning": "鸟", "page": 50, "type": "noun"},
+        {"word": "tree", "meaning": "树；树木", "page": 50, "type": "noun"},
+        {"word": "thirteen", "meaning": "十三", "page": 50, "type": "number"},
+        {"word": "fourteen", "meaning": "十四", "page": 50, "type": "number"},
+        {"word": "fifteen", "meaning": "十五", "page": 50, "type": "number"},
+        {"word": "sixteen", "meaning": "十六", "page": 50, "type": "number"},
+        {"word": "seventeen", "meaning": "十七", "page": 50, "type": "number"},
+        {"word": "eighteen", "meaning": "十八", "page": 50, "type": "number"},
+        {"word": "nineteen", "meaning": "十九", "page": 50, "type": "number"},
+        {"word": "twenty", "meaning": "二十", "page": 50, "type": "number"},
+        {"word": "animal", "meaning": "动物", "page": 50, "type": "noun"},
+        {"word": "many", "meaning": "许多", "page": 50, "type": "adjective"}
+      ]
+    },
+    {
+      "unit": 5,
+      "title": "At the Zoo",
+      "words": [
+        {"word": "zoo", "meaning": "动物园", "page": 50, "type": "noun"},
+        {"word": "panda", "meaning": "熊猫", "page": 50, "type": "noun"},
+        {"word": "it", "meaning": "它", "page": 50, "type": "pronoun"},
+        {"word": "white", "meaning": "白色（的）", "page": 50, "type": "adjective/noun"},
+        {"word": "elephant", "meaning": "象", "page": 50, "type": "noun"},
+        {"word": "tiger", "meaning": "老虎", "page": 50, "type": "noun"},
+        {"word": "bear", "meaning": "熊", "page": 52, "type": "noun"},
+        {"word": "monkey", "meaning": "猴子", "page": 52, "type": "noun"},
+        {"word": "plant", "meaning": "植物", "page": 52, "type": "noun"},
+        {"word": "cute", "meaning": "可爱的", "page": 56, "type": "adjective"},
+        {"word": "its", "meaning": "它的", "page": 56, "type": "pronoun"},
+        {"word": "can", "meaning": "能；会", "page": 56, "type": "modal verb"},
+        {"word": "swim", "meaning": "游泳", "page": 56, "type": "verb"}
+      ]
+    },
+    {
+      "unit": 6,
+      "title": "Days of the Week",
+      "words": [
+        {"word": "day", "meaning": "天", "page": 62, "type": "noun"},
+        {"word": "week", "meaning": "周；星期", "page": 62, "type": "noun"},
+        {"word": "Sunday", "meaning": "星期日", "page": 62, "type": "noun"},
+        {"word": "Monday", "meaning": "星期一", "page": 62, "type": "noun"},
+        {"word": "Tuesday", "meaning": "星期二", "page": 62, "type": "noun"},
+        {"word": "Wednesday", "meaning": "星期三", "page": 62, "type": "noun"},
+        {"word": "Thursday", "meaning": "星期四", "page": 62, "type": "noun"},
+        {"word": "Friday", "meaning": "星期五", "page": 62, "type": "noun"},
+        {"word": "Saturday", "meaning": "星期六", "page": 62, "type": "noun"},
+        {"word": "time", "meaning": "时间", "page": 64, "type": "noun"},
+        {"word": "thirty", "meaning": "三十", "page": 64, "type": "number"},
+        {"word": "forty", "meaning": "四十", "page": 64, "type": "number"},
+        {"word": "ball", "meaning": "球", "page": 66, "type": "noun"},
+        {"word": "dog", "meaning": "狗", "page": 68, "type": "noun"},
+        {"word": "at", "meaning": "在", "page": 68, "type": "preposition"},
+        {"word": "early", "meaning": "提早的", "page": 68, "type": "adjective"}
+      ]
+    }
+  ],
+  "metadata": {
+    "wordCount": 89,
+    "lastUpdated": "2023-08-20",
+    "version": "1.0"
+  }
+}

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>冀教版三年级英语下册单元练习</title>
+    <style>
+        body { 
+            font-family: "幼圆", Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #d4edce, #fff);
+        }
+        .header {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .word-container {
+            display: flex;
+            gap: 8px;
+            font-size: 28px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        .letter-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            background: #f0f8e9;
+            transition: 0.3s;
+        }
+        .letter-input.error {
+            border-color: #ff4444;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            50% { transform: translateX(3px); }
+            75% { transform: translateX(-3px); }
+            100% { transform: translateX(0); }
+        }
+        .chinese-meaning {
+            font-size: 18px;
+            color: #333;
+            margin: 15px 0;
+            text-align: center;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .feedback {
+            color: #ff4444;
+            text-align: center;
+            margin: 15px;
+        }
+        .result-box {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .audio-icon {
+            font-size: 24px;
+            color: #4CAF50;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📖 冀教版三年级英语下册练习 📖</h1>
+    </div>
+    
+    <div class="container">
+        <label>选择单元：</label>
+        <select id="unitSelect">
+            <option value="0">Unit 1 Food and Numbers</option>
+            <option value="1">Unit 2 Meals</option>
+            <option value="2">Unit 3 Daily Routines</option>
+            <option value="3">Unit 4 Farm Animals</option>
+            <option value="4">Unit 5 Zoo Animals</option>
+            <option value="5">Unit 6 Days of the Week</option>
+        </select>
+        <button onclick="startPractice()">开始练习</button>
+    </div>
+
+    <div id="practiceArea" style="display:none">
+        <div class="word-container" id="wordContainer"></div>
+        <div class="chinese-meaning" id="chineseMeaning"></div>
+        <div class="button-group">
+            <button onclick="checkAnswer()" id="submitButton">提交答案</button>
+            <button onclick="nextWord()" id="nextButton" class="disabled" disabled>下一个</button>
+        </div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <div id="finalResult" class="result-box" style="display:none">
+        <h3>练习结果</h3>
+        <p>✅ 正确：<span id="correctCount"></span></p>
+        <p>❌ 错误：<span id="wrongCount"></span></p>
+        <div id="errorWordsSection">
+            <h4>需要加强的单词：</h4>
+            <ul id="errorWordsList"></ul>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {});
+
+// 单元数据（冀教版三年级下册单词表）
+const unitData = [ 
+    // Unit 1 Food and Numbers
+    [["like", "喜欢"], ["apple", "苹果"], ["orange", "橙子"],
+     ["rice", "米饭"], ["vegetable", "蔬菜"], ["meat", "肉"],
+     ["food", "食物"], ["fruit", "水果"], ["banana", "香蕉"],
+     ["grape", "葡萄"], ["eleven", "十一"], ["twelve", "十二"],
+     ["bread", "面包"], ["my", "我的"], ["favourite", "特别喜爱的"],
+     ["chicken", "鸡肉"], ["fish", "鱼肉"]],
+    // Unit 2 Meals
+    [["breakfast", "早餐"], ["egg", "鸡蛋"], ["juice", "果汁"],
+     ["milk", "牛奶"], ["lunch", "午餐"], ["hungry", "饥饿的"],
+     ["noodle", "面条"], ["water", "水"], ["eat", "吃"],
+     ["drink", "喝"], ["soup", "汤"], ["dinner", "晚餐"],
+     ["good", "好的"]],
+    // Unit 3 Daily Routines
+    [["morning", "早晨"], ["get up", "起床"], ["make my bed", "整理床铺"],
+     ["wash", "洗"], ["evening", "晚上"], ["do", "做"],
+     ["schoolbag", "书包"], ["put", "放"], ["clean", "干净的"],
+     ["tidy", "整洁的"], ["room", "房间"], ["sock", "短袜"]],
+    // Unit 4 Farm Animals
+    [["farm", "农场"], ["river", "河"], ["see", "看见"],
+     ["horse", "马"], ["cow", "奶牛"], ["pig", "猪"],
+     ["rabbit", "兔子"], ["sheep", "绵羊"], ["duck", "鸭"],
+     ["bird", "鸟"], ["tree", "树"], ["thirteen", "十三"],
+     ["fourteen", "十四"], ["fifteen", "十五"], ["sixteen", "十六"],
+     ["seventeen", "十七"], ["eighteen", "十八"], ["nineteen", "十九"],
+     ["twenty", "二十"], ["animal", "动物"], ["many", "许多"]],
+    // Unit 5 Zoo Animals
+    [["zoo", "动物园"], ["panda", "熊猫"], ["it", "它"],
+     ["white", "白色"], ["elephant", "象"], ["tiger", "老虎"],
+     ["bear", "熊"], ["monkey", "猴子"], ["plant", "植物"],
+     ["cute", "可爱的"], ["its", "它的"], ["can", "能"],
+     ["swim", "游泳"]],
+    // Unit 6 Days of the Week
+    [["day", "天"], ["week", "周"], ["Sunday", "星期日"],
+     ["Monday", "星期一"], ["Tuesday", "星期二"], ["Wednesday", "星期三"],
+     ["Thursday", "星期四"], ["Friday", "星期五"], ["Saturday", "星期六"],
+     ["time", "时间"], ["thirty", "三十"], ["forty", "四十"],
+     ["ball", "球"], ["dog", "狗"], ["at", "在"],
+     ["early", "提早的"]]
+];
+
+let currentUnit = 0;
+let currentWordIndex = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let answerLetters = [];
+let errorWords = [];
+let attemptCount = 0;
+
+function startPractice() {
+    currentUnit = parseInt(document.getElementById('unitSelect').value);
+    currentWordIndex = 0;
+    correctCount = 0;
+    wrongCount = 0;
+    errorWords = [];
+    attemptCount = 0;
+    
+    document.getElementById('practiceArea').style.display = 'block';
+    document.getElementById('finalResult').style.display = 'none';
+    document.getElementById('nextButton').disabled = true;
+    document.getElementById('nextButton').classList.add('disabled');
+    
+    showNextWord();
+}
+
+function showNextWord() {
+    if (currentWordIndex >= unitData[currentUnit].length) {
+        endPractice();
+        return;
+    }
+
+    const wordInfo = unitData[currentUnit][currentWordIndex];
+    const word = wordInfo[0];
+    const chinese = wordInfo[1];
+    
+    const letters = word.split('');
+    const maskCount = Math.floor(Math.random() * 3) + 1; // 隐藏 1-3 个字母
+    const maskedPositions = selectMaskedPositions(letters, maskCount);
+    
+    const container = document.getElementById('wordContainer');
+    container.innerHTML = '';
+    answerLetters = [];
+    
+    letters.forEach((letter, index) => {
+        if (maskedPositions.has(index)) {
+            const input = document.createElement('input');
+            input.className = 'letter-input';
+            input.maxLength = 1;
+            input.dataset.correct = letter;
+            container.appendChild(input);
+            answerLetters.push(input);
+        } else {
+            const span = document.createElement('span');
+            span.textContent = letter;
+            container.appendChild(span);
+        }
+    });
+
+    // 添加中文释义和喇叭图标
+    const meaningContainer = document.getElementById('chineseMeaning');
+    meaningContainer.innerHTML = `${chinese} `;
+    
+    const audioIcon = document.createElement('span');
+    audioIcon.className = 'audio-icon';
+    audioIcon.innerHTML = '📢'; // 使用喇叭符号作为图标
+    audioIcon.onclick = () => speakWord(word);
+    meaningContainer.appendChild(audioIcon);
+
+    document.getElementById('feedback').textContent = '';
+    answerLetters.forEach(input => input.classList.remove('error'));
+    document.getElementById('submitButton').disabled = false;
+    document.getElementById('nextButton').disabled = true;
+    document.getElementById('nextButton').classList.add('disabled');
+    attemptCount = 0;
+}
+
+// 优先选择元音字母并跳过空格
+function selectMaskedPositions(letters, maskCount) {
+    const vowels = new Set(['a', 'e', 'i', 'o', 'u']);
+    const maskedPositions = new Set();
+    const vowelIndices = [];
+    const consonantIndices = [];
+
+    // 分离元音和辅音的索引
+    letters.forEach((letter, index) => {
+        if (vowels.has(letter.toLowerCase())) {
+            vowelIndices.push(index);
+        } else if (letter.trim() !== '') { // 跳过空格
+            consonantIndices.push(index);
+        }
+    });
+
+    // 优先选择元音字母
+    while (maskedPositions.size < maskCount && vowelIndices.length > 0) {
+        const randomIndex = Math.floor(Math.random() * vowelIndices.length);
+        maskedPositions.add(vowelIndices[randomIndex]);
+        vowelIndices.splice(randomIndex, 1);
+    }
+
+    // 如果元音不够，补充辅音字母
+    while (maskedPositions.size < maskCount && consonantIndices.length > 0) {
+        const randomIndex = Math.floor(Math.random() * consonantIndices.length);
+        maskedPositions.add(consonantIndices[randomIndex]);
+        consonantIndices.splice(randomIndex, 1);
+    }
+
+    return maskedPositions;
+}
+
+function checkAnswer() {
+    const userAnswer = answerLetters.map(input => input.value.toLowerCase());
+    const correctAnswer = answerLetters.map(input => input.dataset.correct.toLowerCase());
+    
+    if (userAnswer.join('') === correctAnswer.join('')) {
+        correctCount++;
+        currentWordIndex++;
+        showNextWord();
+    } else {
+        attemptCount++;
+        answerLetters.forEach(input => {
+            if (input.value.toLowerCase() !== input.dataset.correct.toLowerCase()) {
+                input.classList.add('error');
+            }
+        });
+        
+        if (attemptCount === 1) {
+            document.getElementById('feedback').textContent = '部分字母错误，请再试一次！';
+            document.getElementById('submitButton').disabled = false;
+        } else {
+            wrongCount++;
+            document.getElementById('feedback').innerHTML = 
+                `正确答案是：<span style="color: #4CAF50;">${correctAnswer.join('')}</span>`;
+            answerLetters.forEach(input => {
+                input.value = input.dataset.correct;
+                input.disabled = true;
+                input.classList.remove('error');
+            });
+            document.getElementById('submitButton').disabled = true;
+            document.getElementById('nextButton').disabled = false;
+            document.getElementById('nextButton').classList.remove('disabled');
+            if (!errorWords.includes(unitData[currentUnit][currentWordIndex][0])) {
+                errorWords.push(unitData[currentUnit][currentWordIndex][0]);
+            }
+        }
+    }
+}
+
+function nextWord() {
+    currentWordIndex++;
+    showNextWord();
+}
+
+function endPractice() {
+    document.getElementById('practiceArea').style.display = 'none';
+    document.getElementById('finalResult').style.display = 'block';
+    
+    document.getElementById('correctCount').textContent = correctCount;
+    document.getElementById('wrongCount').textContent = wrongCount;
+    
+    const errorSection = document.getElementById('errorWordsSection');
+    const errorList = document.getElementById('errorWordsList');
+    errorList.innerHTML = '';
+    
+    if (errorWords.length > 0) {
+        errorSection.style.display = 'block';
+        errorWords.forEach(word => {
+            const li = document.createElement('li');
+            li.textContent = word;
+            errorList.appendChild(li);
+        });
+    } else {
+        errorSection.style.display = 'none';
+    }
+}
+
+// 使用 Web Speech API 播放单词读音
+function speakWord(word) {
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = 'en-US'; // 设置语言为美式英语
+    speechSynthesis.speak(utterance);
+}
+</script>
+</body>
+</html>

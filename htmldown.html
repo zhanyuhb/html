@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>量子代码转换器Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --量子蓝: #00f3ff;
+            --脉冲紫: #bd00ff;
+            --暗物质黑: #0a0a0f;
+            --警告红: #ff4757;
+            --成功绿: #2ed573;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #0a0a0f 0%, #1a1a2f 100%);
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+            color: var(--量子蓝);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .容器 {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px var(--量子蓝);
+            margin: 3rem 0;
+            position: relative;
+            font-size: 2.5em;
+        }
+
+        h1::after {
+            content: '▼ 代码编译接口已激活 ▼';
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6em;
+            opacity: 0.8;
+        }
+
+        .代码输入区 {
+            width: 100%;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid var(--量子蓝);
+            border-radius: 8px;
+            padding: 2rem;
+            color: var(--量子蓝);
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+            font-size: 1.2em;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+            transition: all 0.4s;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .代码输入区:focus {
+            outline: none;
+            box-shadow: 0 0 50px var(--脉冲紫);
+            animation: 量子脉动 1.2s infinite alternate;
+        }
+
+        .按钮容器 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 3rem 0;
+        }
+
+        .功能按钮 {
+            background: var(--量子蓝);
+            border: none;
+            padding: 1rem 0;
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            border: 2px solid rgba(0, 243, 255, 0.5);
+        }
+
+        .功能按钮:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .下载按钮 { background: linear-gradient(45deg, var(--量子蓝), var(--脉冲紫)); }
+        .预览按钮 { background: linear-gradient(45deg, var(--脉冲紫), #ff00f7); }
+        .清空按钮 { background: linear-gradient(45deg, var(--警告红), #ff6b6b); }
+        .粘贴按钮 { background: linear-gradient(45deg, var(--成功绿), #00b894); }
+
+        .功能按钮:hover::after {
+            position: absolute;
+            right: 15px;
+            opacity: 1;
+        }
+
+        .下载按钮:hover::after { content: '💾'; }
+        .预览按钮:hover::after { content: '👁️'; }
+        .清空按钮:hover::after { content: '⚠️'; }
+        .粘贴按钮:hover::after { content: '📋'; }
+
+        @keyframes 量子脉动 {
+            from { filter: drop-shadow(0 0 5px var(--量子蓝)); }
+            to { filter: drop-shadow(0 0 20px var(--脉冲紫)); }
+        }
+
+        .全息网格 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(180deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .状态提示 {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 5px;
+            border-left: 4px solid var(--量子蓝);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s;
+            font-size: 1.1em;
+        }
+
+        .状态提示.激活 {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .按钮容器 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="全息网格"></div>
+    <div class="容器">
+        <h1>量子HTML编译终端</h1>
+        <textarea class="代码输入区" placeholder="▼ 在此输入您的量子代码..." spellcheck="false"></textarea>
+        <div class="按钮容器">
+            <button class="功能按钮 下载按钮" onclick="启动下载()">生成网页</button>
+            <button class="功能按钮 预览按钮" onclick="启动预览()">实时预览</button>
+            <button class="功能按钮 清空按钮" onclick="执行清空()">清空缓存</button>
+            <button class="功能按钮 粘贴按钮" onclick="执行粘贴()">快速粘贴</button>
+        </div>
+    </div>
+    <div class="状态提示">✅ 就绪</div>
+
+    <script>
+        // 下载功能
+        function 启动下载() {
+            const 代码内容 = document.querySelector('.代码输入区').value;
+            
+            if(!代码内容.trim()) {
+                显示状态('❌ 代码为空', 2000);
+                return;
+            }
+
+            const 数据包 = new Blob([代码内容], { type: 'text/html' });
+            const 数据链接 = URL.createObjectURL(数据包);
+            
+            const 传输锚点 = document.createElement('a');
+            传输锚点.href = 数据链接;
+            传输锚点.download = `量子网页_${new Date().toLocaleString().replace(/[/:]/g,'-')}.html`;
+            
+            document.body.appendChild(传输锚点);
+            传输锚点.click();
+            
+            URL.revokeObjectURL(数据链接);
+            document.body.removeChild(传输锚点);
+
+            显示状态('✅ 下载完成', 2000);
+        }
+
+        // 预览功能
+        function 启动预览() {
+            const 代码内容 = document.querySelector('.代码输入区').value;
+            
+            if(!代码内容.trim()) {
+                显示状态('❌ 代码为空', 2000);
+                return;
+            }
+
+            const 预览窗口 = window.open('', '_blank');
+            预览窗口.document.open();
+            预览窗口.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>量子预览</title>
+                    <style>
+                        body { 
+                            padding: 20px;
+                            background: #0a0a0f;
+                            color: #00f3ff;
+                            font-family: sans-serif;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${代码内容}
+                </body>
+                </html>
+            `);
+            预览窗口.document.close();
+
+            显示状态('👁️ 预览已打开', 2000);
+        }
+
+        // 清空功能
+        function 执行清空() {
+            if(!document.querySelector('.代码输入区').value.trim()) {
+                显示状态('ℹ️ 内容已为空', 2000);
+                return;
+            }
+
+            if(confirm('⚠️ 确定要清空所有代码吗？')) {
+                document.querySelector('.代码输入区').value = '';
+                显示状态('🔄 已清空', 2000);
+            }
+        }
+
+        // 粘贴功能
+        async function 执行粘贴() {
+            try {
+                const 剪贴板内容 = await navigator.clipboard.readText();
+                if(!剪贴板内容.trim()) {
+                    显示状态('❌ 剪贴板为空', 2000);
+                    return;
+                }
+
+                document.querySelector('.代码输入区').value = 剪贴板内容;
+                显示状态('📋 粘贴成功', 2000);
+            } catch (错误) {
+                显示状态('❌ 请手动粘贴', 2000);
+                console.error('剪贴板访问错误:', 错误);
+            }
+        }
+
+        // 状态显示函数
+        function 显示状态(消息, 持续时间=2000) {
+            const 状态栏 = document.querySelector('.状态提示');
+            状态栏.textContent = 消息;
+            状态栏.classList.add('激活');
+            
+            clearTimeout(状态栏.定时器);
+            状态栏.定时器 = setTimeout(() => {
+                状态栏.classList.remove('激活');
+            }, 持续时间);
+        }
+
+        // 代码统计功能
+        document.querySelector('.代码输入区').addEventListener('input', function() {
+            const 字符数 = this.value.length;
+            const 行数 = this.value.split('\n').length;
+            this.setAttribute('placeholder', `▼ 已输入 ${字符数} 字符 | ${行数} 行 ▼`);
+        });
+    </script>
+</body>
+</html>

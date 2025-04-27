@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双二次函数曲线绘制</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            background-color: #f0f0f0;
+        }
+        #controls {
+            margin: 20px 0;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #formula {
+            font-size: 1.5em;
+            color: #333;
+            margin: 15px 0;
+        }
+        #graph {
+            background: #000;
+            border: 3px solid #2c3e50;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        #vertex {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 15px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        input[type="range"], input[type="number"] {
+            width: 100px;
+            margin: 0 10px;
+        }
+        label {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #2c3e50;">双二次函数曲线绘制</h1>
+    <div id="formula">
+        y = <span id="a1-value" style="color: #e74c3c;">1</span>x² + 
+        <span id="b1-value" style="color: #3498db;">0</span>x + 
+        <span id="c1-value" style="color: #2ecc71;">0</span>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        y = <span id="a2-value" style="color: #9b59b6;">1</span>x² + 
+        <span id="b2-value" style="color: #f1c40f;">0</span>x + 
+        <span id="c2-value" style="color: #e67e22;">0</span>
+    </div>
+    <div id="controls">
+        <div class="control-group">
+            <label for="a1">a1:</label>
+            <input type="range" id="a1" min="-20" max="20" step="0.1" value="1">
+            <input type="number" id="a1-input" value="1" step="0.1">
+            <label for="b1">b1:</label>
+            <input type="range" id="b1" min="-20" max="20" step="0.1" value="0">
+            <input type="number" id="b1-input" value="0" step="0.1">
+            <label for="c1">c1:</label>
+            <input type="range" id="c1" min="-20" max="20" step="0.1" value="0">
+            <input type="number" id="c1-input" value="0" step="0.1">
+        </div>
+        <div class="control-group">
+            <label for="a2">a2:</label>
+            <input type="range" id="a2" min="-20" max="20" step="0.1" value="1">
+            <input type="number" id="a2-input" value="1" step="0.1">
+            <label for="b2">b2:</label>
+            <input type="range" id="b2" min="-20" max="20" step="0.1" value="0">
+            <input type="number" id="b2-input" value="0" step="0.1">
+            <label for="c2">c2:</label>
+            <input type="range" id="c2" min="-20" max="20" step="0.1" value="0">
+            <input type="number" id="c2-input" value="0" step="0.1">
+        </div>
+    </div>
+    <div>
+        <button id="increase-canvas">增大画布</button>
+        <button id="decrease-canvas">缩小画布</button>
+    </div>
+    <canvas id="graph" width="800" height="500"></canvas>
+    <div id="vertex">
+        顶点1坐标: (<span id="vertex1-x" style="color: #9b59b6;">0.00</span>, 
+        <span id="vertex1-y" style="color: #f1c40f;">0.00</span>)
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        顶点2坐标: (<span id="vertex2-x" style="color: #e67e22;">0.00</span>, 
+        <span id="vertex2-y" style="color: #e74c3c;">0.00</span>)
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d');
+        const controls = {
+            a1: document.getElementById('a1'),
+            b1: document.getElementById('b1'),
+            c1: document.getElementById('c1'),
+            a2: document.getElementById('a2'),
+            b2: document.getElementById('b2'),
+            c2: document.getElementById('c2')
+        };
+        const values = {
+            a1: document.getElementById('a1-value'),
+            b1: document.getElementById('b1-value'),
+            c1: document.getElementById('c1-value'),
+            a2: document.getElementById('a2-value'),
+            b2: document.getElementById('b2-value'),
+            c2: document.getElementById('c2-value')
+        };
+        const vertex = {
+            v1x: document.getElementById('vertex1-x'),
+            v1y: document.getElementById('vertex1-y'),
+            v2x: document.getElementById('vertex2-x'),
+            v2y: document.getElementById('vertex2-y')
+        };
+        const buttons = {
+            zoomIn: document.getElementById('increase-canvas'),
+            zoomOut: document.getElementById('decrease-canvas')
+        };
+
+        let scale = 10;
+        const MIN_SCALE = 1;
+        const MAX_SCALE = 50;
+
+        // 坐标转换函数
+        const toPixelX = x => (x + scale) * (canvas.width / (2 * scale));
+        const toPixelY = y => canvas.height - (y + scale) * (canvas.height / (2 * scale));
+
+        // 绘制网格系统
+        function drawGrid() {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 0.5;
+            
+            // 绘制垂直网格线
+            for (let x = -scale; x <= scale; x += 0.5) {
+                const px = toPixelX(x);
+                ctx.beginPath();
+                ctx.moveTo(px, 0);
+                ctx.lineTo(px, canvas.height);
+                ctx.stroke();
+            }
+
+            // 绘制水平网格线
+            for (let y = -scale; y <= scale; y += 0.5) {
+                const py = toPixelY(y);
+                ctx.beginPath();
+                ctx.moveTo(0, py);
+                ctx.lineTo(canvas.width, py);
+                ctx.stroke();
+            }
+        }
+
+        // 绘制坐标轴系统
+        function drawAxes() {
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            
+            // 绘制坐标轴线
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+
+            // 绘制刻度标签
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Arial';
+            const maxInt = Math.floor(scale);
+            for (let i = -maxInt; i <= maxInt; i++) {
+                if (i === 0) continue;
+
+                // X轴标签
+                const xPos = toPixelX(i);
+                if (xPos >= 0 && xPos <= canvas.width) {
+                    ctx.fillText(i, xPos - 5, canvas.height / 2 + 15);
+                }
+
+                // Y轴标签
+                const yPos = toPixelY(i);
+                if (yPos >= 0 && yPos <= canvas.height) {
+                    ctx.fillText(i, canvas.width / 2 + 5, yPos + 5);
+                }
+            }
+        }
+
+        // 绘制曲线函数
+        function drawCurve(a, b, c, color) {
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            
+            for (let x = -scale; x <= scale; x += 0.05) {
+                const y = a * x * x + b * x + c;
+                ctx.lineTo(toPixelX(x), toPixelY(y));
+            }
+            ctx.stroke();
+        }
+
+        // 绘制顶点垂直线
+        function drawVertexLine(a, b, color) {
+            const vertexX = -b / (2 * a);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(toPixelX(vertexX), 0);
+            ctx.lineTo(toPixelX(vertexX), canvas.height);
+            ctx.stroke();
+        }
+
+        // 更新参数显示
+        function updateValues() {
+            Object.keys(controls).forEach(key => {
+                const value = parseFloat(controls[key].value);
+                values[key].textContent = value.toFixed(1);
+            });
+        }
+
+        // 计算顶点坐标
+        function calculateVertex(a, b, c) {
+            const x = -b / (2 * a);
+            return { x, y: a * x * x + b * x + c };
+        }
+
+        // 主更新函数
+        function updateGraph() {
+            // 清空画布
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 获取参数值
+            const params = {
+                f1: {
+                    a: parseFloat(controls.a1.value),
+                    b: parseFloat(controls.b1.value),
+                    c: parseFloat(controls.c1.value)
+                },
+                f2: {
+                    a: parseFloat(controls.a2.value),
+                    b: parseFloat(controls.b2.value),
+                    c: parseFloat(controls.c2.value)
+                }
+            };
+
+            // 更新显示值
+            updateValues();
+
+            // 绘制图形元素
+            drawGrid();
+            drawAxes();
+            drawCurve(params.f1.a, params.f1.b, params.f1.c, '#e74c3c');
+            drawCurve(params.f2.a, params.f2.b, params.f2.c, '#9b59b6');
+            drawVertexLine(params.f1.a, params.f1.b, '#e74c3c');
+            drawVertexLine(params.f2.a, params.f2.b, '#9b59b6');
+
+            // 更新顶点坐标显示
+            const v1 = calculateVertex(params.f1.a, params.f1.b, params.f1.c);
+            const v2 = calculateVertex(params.f2.a, params.f2.b, params.f2.c);
+            vertex.v1x.textContent = v1.x.toFixed(2);
+            vertex.v1y.textContent = v1.y.toFixed(2);
+            vertex.v2x.textContent = v2.x.toFixed(2);
+            vertex.v2y.textContent = v2.y.toFixed(2);
+        }
+
+        // 事件绑定
+        function initEventListeners() {
+            // 输入控件事件
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', e => {
+                    const target = e.target;
+                    if (target.type === 'range') {
+                        document.getElementById(`${target.id}-input`).value = target.value;
+                    } else {
+                        document.getElementById(target.id.replace('-input', '')).value = target.value;
+                    }
+                    updateGraph();
+                });
+            });
+
+            // 缩放按钮事件
+            buttons.zoomIn.addEventListener('click', () => {
+                scale = Math.min(MAX_SCALE, scale * 1.2);
+                updateGraph();
+            });
+            buttons.zoomOut.addEventListener('click', () => {
+                scale = Math.max(MIN_SCALE, scale / 1.2);
+                updateGraph();
+            });
+        }
+
+        // 初始化
+        initEventListeners();
+        updateGraph();
+    </script>
+</body>
+</html>

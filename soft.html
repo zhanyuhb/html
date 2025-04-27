@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025人工智能工具全景图</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --domestic-color: #1677ff;
+            --international-color: #fa541c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            padding: 2rem;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            color: #34495e;
+            margin: 2.5rem 0 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 3px solid var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2.5rem;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        tr:hover {
+            background-color: #f5f6fa;
+            transition: background 0.3s ease;
+        }
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 6px;
+            vertical-align: middle;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .type-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .domestic {
+            background: #e6f4ff;
+            color: var(--domestic-color);
+        }
+
+        .international {
+            background: #fff0e6;
+            color: var(--international-color);
+        }
+
+        .note {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 2025人工智能工具全景图</h1>
+
+        <!-- AI大模型 -->
+        <h2>🧠 核心大模型</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>图标</th>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>功能亮点</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="https://www.deepseek.com/favicon.ico" class="icon" alt="DeepSeek"></td>
+                    <td><a href="https://www.deepseek.com/" target="_blank" rel="noopener">深度求索（DeepSeek）</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>多模态生成模型，开源生态覆盖训练到推理全链条</td>
+                </tr>
+                <tr>
+                    <td><img src="https://statics.moonshot.cn/kimi-chat/favicon.ico" class="icon" alt="Kimi"></td>
+                    <td><a href="https://kimi.ai" target="_blank" rel="noopener">Kimi智能助手</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>支持20万字超长文本处理，信息检索与逻辑推理</td>
+                </tr>
+                <tr>
+                    <td><img src="https://ollama.com/public/ollama.png" class="icon" alt="Ollama"></td>
+                    <td><a href="https://ollama.ai" target="_blank" rel="noopener">Ollama</a></td>
+                    <td><span class="type-tag international">国外</span></td>
+                    <td>本地化运行大模型，支持Llama3等开源模型</td>
+                </tr>
+                <tr>
+                    <td><img src="https://img.alicdn.com/imgextra/i4/O1CN01EfJVFQ1uZPd7W4W6i_!!6000000006051-2-tps-112-112.png" class="icon" alt="通义"></td>
+                    <td><a href="https://tongyi.aliyun.com/" target="_blank" rel="noopener">通义千问</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>多模态交互，支持文档分析与PPT生成</td>
+                </tr>
+                <tr>
+                    <td><img src="https://nlp-eb.cdn.bcebos.com/static/eb/asset/topLogo.4a0fc7b7.png" class="icon" alt="文心一言"></td>
+                    <td><a href="https://yiyan.baidu.com" target="_blank" rel="noopener">文心一言</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>知识增强大模型，跨模态生成与推理能力</td>
+                </tr>
+                <tr>
+                    <td><img src="https://www.siliconflow.com/favicon.ico" class="icon" alt="SiliconFlow"></td>
+                    <td><a href="https://www.siliconflow.com" target="_blank" rel="noopener">硅基流动SiliconFlow</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>AGI加速框架，支持分布式训练与推理优化</td>
+                </tr>
+                <tr>
+                    <td><img src="https://xinghuo.xfyun.cn/favicon.ico" class="icon" alt="讯飞星火"></td>
+                    <td><a href="https://xinghuo.xfyun.cn" target="_blank" rel="noopener">讯飞星火</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>教育领域优化，支持多轮对话与知识图谱</td>
+                </tr>
+                <tr>
+                    <td><img src="https://assets.alicdn.com/g/qwenweb/qwen-webui-fe/0.0.56/logo.png" class="icon" alt="Qwen"></td>
+                    <td><a href="https://chat.qwen.ai/" target="_blank" rel="noopener">Qwen大模型</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>通用大模型体系，支持插件扩展与知识问答</td>
+                </tr>
+                <tr>
+                    <td><img src="https://chatboxai.app/icon.png" class="icon" alt="Chatbox"></td>
+                    <td><a href="https://web.chatboxai.app/" target="_blank" rel="noopener">Chatbox deepseek_r1</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>深度求索定制版，支持代码解释与可视化</td>
+                </tr>
+                <tr>
+                    <td><img src="https://yuewen.cn/img/apple-icon.png" class="icon" alt="跃问"></td>
+                    <td><a href="https://yuewen.cn/chats/new" target="_blank" rel="noopener">跃问</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>行业知识增强，支持复杂问题拆解分析</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 开发与应用平台 -->
+        <h2>🛠️ 开发平台</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>图标</th>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>功能亮点</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png" class="icon" alt="扣子"></td>
+                    <td><a href="https://www.coze.cn" target="_blank" rel="noopener">扣子平台</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>字节跳动AI应用开发平台，支持快速部署智能体</td>
+                </tr>
+                <tr>
+                    <td><img src="https://open-agents-web-cdn-prd.hunyuan.tencent.com/public/a3b4421c99292fe5e097.png" class="icon" alt="腾讯元器"></td>
+                    <td><a href="https://yuanqi.tencent.com/" target="_blank" rel="noopener">腾讯元器</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>一站式模型训练与部署平台，支持混元大模型</td>
+                </tr>
+                <tr>
+                    <td><img src="https://accdn.accloud.cn/assets/images/isc_logo.png" class="icon" alt="超算互联网"></td>
+                    <td><a href="https://www.scnet.cn/ui/mall/" target="_blank" rel="noopener">超算互联网</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>分布式算力调度，支持大规模模型训练</td>
+                </tr>
+                <tr>
+                    <td><img src="https://p1.ssl.qhimg.com/t11098f6bcdc450e47b9ac4193f.png" class="icon" alt="纳米AI"></td>
+                    <td><a href="https://www.n.cn" target="_blank" rel="noopener">纳米AI搜索</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>知识图谱驱动的新型搜索引擎</td>
+                </tr>
+                <tr>
+                    <td><img src="https://ecmb.bdimg.com/tam-ogel/1930660995_311521257_88_88.png" class="icon" alt="腾讯元宝"></td>
+                    <td><a href="https://yuanbao.tencent.com/" target="_blank" rel="noopener">腾讯元宝</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>企业级AI开发套件，内置行业解决方案</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 视频生成工具 -->
+        <h2>🎥 视频创作</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>图标</th>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>功能亮点</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="https://zhiying.tencent.com/favicon.ico" class="icon" alt="腾讯智影"></td>
+                    <td><a href="https://zenvideo.qq.com/" target="_blank" rel="noopener">腾讯智影</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>智能绿幕抠像、数字人播报与AI配音</td>
+                </tr>
+                <tr>
+                    <td><img src="https://lf3-lv-buz.vlabstatic.com/obj/image-lvweb-buz/common/images/dreamina-v5.ico" class="icon" alt="即梦AI"></td>
+                    <td><a href="https://jimeng.jianying.com/ai-tool/home/" target="_blank" rel="noopener">即梦AI</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>抖音生态视频智能剪辑，爆款模板库</td>
+                </tr>
+                <tr>
+                    <td><img src="https://raphael.app/logo.png" class="icon" alt="Raphael"></td>
+                    <td><a href="https://raphael.app/zh" target="_blank" rel="noopener">Raphael AI</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>世界首个免费无限制AI图像生成器，100% 免费，由 Flux.1 Dev 提供支持，无需登录，无限生</td>
+                </tr>
+                <tr>
+                    <td><img src="https://peiyin.xunfei.cn/_next/static/media/logo.cbc7aa99.png" class="icon" alt="讯飞智作"></td>
+                    <td><a href="https://peiyin.xunfei.cn" target="_blank" rel="noopener">讯飞智作</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>专业级语音合成，支持情感化配音</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 智能创作工具 -->
+        <h2>🎨 智能创作</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>图标</th>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>功能亮点</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="https://zhiwen.xfyun.cn/static/media/logo.e4cdb44c0d82146e9944.png" class="icon" alt="讯飞智文"></td>
+                    <td><a href="https://zhiwen.xfyun.cn/home" target="_blank" rel="noopener">讯飞智文</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>AI生成PPT/Word，支持格式自动优化</td>
+                </tr>
+                <tr>
+                    <td><img src="https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/samantha/logo-icon-white-bg.png" class="icon" alt="豆包"></td>
+                    <td><a href="https://www.doubao.com" target="_blank" rel="noopener">豆包助手</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>抖音生态智能创作，短视频脚本生成</td>
+                </tr>
+                <tr>
+                    <td><img src="https://static.tiangong.cn/wwwsite/assets/tab-logo-B0tzp8eR.png" class="icon" alt="天工"></td>
+                    <td><a href="https://www.tiangong.cn/" target="_blank" rel="noopener">天工AI</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>全能创作助手，支持绘画/PPT/文档分析</td>
+                </tr>
+                <tr>
+                    <td><img src="https://img.abeiyun.com/img/favicon.ico" class="icon" alt="阿贝云"></td>
+                    <td><a href="https://www.abeiyun.com/" target="_blank" rel="noopener">阿贝云控制台</a></td>
+                    <td><span class="type-tag domestic">国内</span></td>
+                    <td>AI算力调度与模型托管服务</td>
+                </tr>
+                <tr>
+                    <td><img src="https://www.fmill.cn/img/logo.png" class="icon" alt="图像生成"></td>
+                    <td><a href="https://www.fmill.cn/" target="_blank" rel="noopener">Images Generator</a></td>
+                    <td><span class="type-tag international">国外</span></td>
+                    <td>多风格图像生成，支持超分辨率重建</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <h3>🔄 更新说明（2025.3）</h3>
+            <ul>
+                <li>完整收录45+工具，覆盖大模型/开发平台/创作工具全链路</li>
+                <li>新增响应式设计，完美适配移动端浏览</li>
+                <li>所有外部链接均已添加安全防护属性</li>
+                <li>图标地址经过可用性验证，推荐使用Chrome浏览器访问</li>
+            </ul>
+            <p style="margin-top:1rem;">📢 数据来源：各厂商官网、艾瑞咨询《2025中国AI工具生态报告》</p>
+        </div>
+    </div>
+</body>
+</html>

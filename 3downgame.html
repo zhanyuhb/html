@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语单词大闯关</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #81ecec, #a29bfe);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('https://i.imgur.com/3YjLwQz.png');
+            background-size: cover;
+        }
+
+        .header {
+            color: #2c3e50;
+            font-size: 36px;
+            margin: 20px 0;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            position: relative;
+            animation: bounce 2s infinite;
+        }
+
+        .select-box {
+            margin: 10px;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 25px;
+            border: none;
+            background: #dfe6e9;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .start-btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .prompt {
+            color: #666;
+            font-size: 14px;
+            margin: 10px 0 20px;
+            line-height: 1.4;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 15px;
+            max-width: 400px;
+        }
+
+        .game-area {
+            margin-top: 30px;
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .word-item {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #34495e;
+            font-weight: bold;
+        }
+
+        .ball {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: none;
+            display: inline-block;
+            margin: 15px;
+            line-height: 100px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .ball:hover {
+            transform: scale(1.05);
+        }
+
+        .score-board {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .ball:nth-child(1) { background: #e84393; }
+        .ball:nth-child(2) { background: #3867d6; }
+        .ball:nth-child(3) { background: #2ecc71; }
+        .ball:nth-child(4) { background: #f1c40f; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .header { font-size: 28px; }
+            .ball { width: 80px; height: 80px; line-height: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">部编版小学三年级英语下册单词大闯关</div>
+    <select class="select-box" id="unitSelect">
+        <option value="unit1">Unit 1</option>
+        <option value="unit2">Unit 2</option>
+        <option value="unit3">Unit 3</option>
+        <option value="unit4">Unit 4</option>
+        <option value="unit5">Unit 5</option>
+        <option value="unit6">Unit 6</option>
+    </select>
+    <button class="start-btn" onclick="startGame()">🚀 开始冒险</button>
+    <div class="prompt">提示：一共十组，每组答题时间5秒钟，不作答自动进入下一组。</div>
+    
+    <div class="game-area" id="gameArea" style="display: none;">
+        <div class="word-item" id="chineseWord"></div>
+        <div id="ballContainer"></div>
+        <div class="score-board" id="scoreDisplay">得分：0</div>
+    </div>
+
+    <script>
+        const wordData = {
+            unit1: [
+                { cn: "喜欢", en: "like" }, { cn: "苹果", en: "apple" }, 
+                { cn: "橙子", en: "orange" }, { cn: "米饭", en: "rice" },
+                { cn: "你；你们", en: "you" }, { cn: "蔬菜", en: "vegetable" },
+                { cn: "肉", en: "meat" }, { cn: "食物", en: "food" },
+                { cn: "水果", en: "fruit" }, { cn: "香蕉", en: "banana" },
+                { cn: "葡萄", en: "grape" }, { cn: "十一", en: "eleven" },
+                { cn: "十二", en: "twelve" }, { cn: "面包", en: "bread" },
+                { cn: "我的", en: "my" }, { cn: "特别喜爱的；特别喜爱的事物", en: "favourite" },
+                { cn: "鸡肉", en: "chicken" }, { cn: "鱼肉；鱼", en: "fish" }
+            ],
+            unit2: [
+                { cn: "早餐", en: "breakfast" }, { cn: "鸡蛋", en: "egg" }, 
+                { cn: "果汁", en: "juice" }, { cn: "牛奶", en: "milk" },
+                { cn: "午餐", en: "lunch" }, { cn: "饥饿的", en: "hungry" },
+                { cn: "面条", en: "noodle" }, { cn: "水", en: "water" },
+                { cn: "吃", en: "eat" }, { cn: "喝", en: "drink" },
+                { cn: "汤", en: "soup" }, { cn: "正餐；晚餐", en: "dinner" },
+                { cn: "好的", en: "good" }
+            ],
+            unit3: [
+                { cn: "早晨；上午", en: "morning" }, { cn: "起床", en: "get up" }, 
+                { cn: "整理床铺", en: "make my bed" }, { cn: "洗", en: "wash" },
+                { cn: "晚上；傍晚", en: "evening" }, { cn: "做；干", en: "do" },
+                { cn: "书包", en: "schoolbag" }, { cn: "放；置", en: "put" },
+                { cn: "干净的；打扫", en: "clean" }, { cn: "整洁的；整理", en: "tidy" },
+                { cn: "房间", en: "room" }, { cn: "短袜", en: "sock" }
+            ],
+            unit4: [
+                { cn: "农场", en: "farm" }, { cn: "河；江", en: "river" }, 
+                { cn: "看见", en: "see" }, { cn: "马", en: "horse" },
+                { cn: "奶牛", en: "cow" }, { cn: "猪", en: "pig" },
+                { cn: "兔", en: "rabbit" }, { cn: "绵羊；羊", en: "sheep" },
+                { cn: "鸭", en: "duck" }, { cn: "鸟", en: "bird" },
+                { cn: "树；树木", en: "tree" }, { cn: "十三", en: "thirteen" },
+                { cn: "十四", en: "fourteen" }, { cn: "十五", en: "fifteen" },
+                { cn: "十六", en: "sixteen" }, { cn: "十七", en: "seventeen" },
+                { cn: "十八", en: "eighteen" }, { cn: "十九", en: "nineteen" },
+                { cn: "二十", en: "twenty" }, { cn: "动物", en: "animal" },
+                { cn: "许多", en: "many" }
+            ],
+            unit5: [
+                { cn: "动物园", en: "zoo" }, { cn: "熊猫", en: "panda" }, 
+                { cn: "它", en: "it" }, { cn: "白色（的）", en: "white" },
+                { cn: "象", en: "elephant" }, { cn: "老虎", en: "tiger" },
+                { cn: "熊", en: "bear" }, { cn: "猴子", en: "monkey" },
+                { cn: "植物", en: "plant" }, { cn: "可爱的", en: "cute" },
+                { cn: "它的", en: "its" }, { cn: "能；会", en: "can" },
+                { cn: "游泳", en: "swim" }
+            ],
+            unit6: [
+                { cn: "天", en: "day" }, { cn: "周；星期", en: "week" }, 
+                { cn: "星期日", en: "Sunday" }, { cn: "星期一", en: "Monday" },
+                { cn: "星期二", en: "Tuesday" }, { cn: "星期三", en: "Wednesday" },
+                { cn: "星期四", en: "Thursday" }, { cn: "星期五", en: "Friday" },
+                { cn: "星期六", en: "Saturday" }, { cn: "时间", en: "time" },
+                { cn: "三十", en: "thirty" }, { cn: "四十", en: "forty" },
+                { cn: "球", en: "ball" }, { cn: "狗", en: "dog" },
+                { cn: "在", en: "at" }, { cn: "提早的", en: "early" }
+            ]
+        };
+
+        let currentUnitWords, score = 0, currentIndex = 0;
+        let currentTimer;
+        let wrongWords = [];
+
+        function startGame() {
+            const unit = document.getElementById('unitSelect').value;
+            currentUnitWords = [...wordData[unit]];
+            score = 0;
+            currentIndex = 0;
+            wrongWords = [];
+            document.getElementById('gameArea').style.display = 'block';
+            showNextWord();
+        }
+
+        function showNextWord() {
+            if (currentIndex >= 10 || currentUnitWords.length === 0) {
+                endGame();
+                return;
+            }
+
+            clearTimeout(currentTimer);
+
+            const wordItem = currentUnitWords.splice(Math.floor(Math.random() * currentUnitWords.length), 1)[0];
+            const chineseWordElement = document.getElementById('chineseWord');
+            const ballContainer = document.getElementById('ballContainer');
+
+            chineseWordElement.textContent = wordItem.cn;
+            ballContainer.innerHTML = '';
+
+            const correctWord = wordItem.en;
+            const words = [correctWord];
+            
+            let loopCount = 0;
+            while (words.length < 4 && loopCount < 10) {
+                const randomWord = currentUnitWords[Math.floor(Math.random() * currentUnitWords.length)]?.en;
+                if (randomWord && !words.includes(randomWord)) {
+                    words.push(randomWord);
+                    loopCount = 0;
+                } else {
+                    loopCount++;
+                }
+            }
+
+            const fragment = document.createDocumentFragment();
+            words.sort(() => 0.5 - Math.random()).forEach((word, index) => {
+                const ball = document.createElement('div');
+                ball.className = 'ball';
+                ball.textContent = word;
+                ball.style.backgroundColor = `hsl(${index * 90}, 70%, 60%)`;
+                ball.addEventListener('click', () => checkAnswer(word, correctWord));
+                fragment.appendChild(ball);
+            });
+            ballContainer.appendChild(fragment);
+
+            currentIndex++;
+            currentTimer = setTimeout(() => checkAnswer(null, correctWord), 5000);
+        }
+
+        function checkAnswer(selected, correct) {
+            clearTimeout(currentTimer);
+            const balls = document.querySelectorAll('.ball');
+
+            if (selected === correct) {
+                score++;
+                document.getElementById('scoreDisplay').textContent = `得分：${score}`;
+                balls.forEach(ball => {
+                    if (ball.textContent === correct) {
+                        ball.style.transform = 'scale(1.2)';
+                        ball.style.backgroundColor = '#2ecc71';
+                    }
+                });
+            } else {
+                balls.forEach(ball => {
+                    ball.style.backgroundColor = '#e74c3c';
+                    ball.style.transform = 'scale(0.9)';
+                });
+                wrongWords.push(correct);
+            }
+
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    showNextWord();
+                    balls.forEach(ball => {
+                        ball.style.backgroundColor = '';
+                        ball.style.transform = '';
+                    });
+                }, 1000);
+            });
+        }
+
+        function endGame() {
+            const result = `闯关结束！最终得分：${score}/10`;
+            const wrongList = wrongWords.length > 0 
+                ? `\n需要复习的单词：${wrongWords.join(', ')}` 
+                : '\n恭喜你，全部答对啦！';
+            
+            const dialog = document.createElement('div');
+            dialog.style.position = 'fixed';
+            dialog.style.top = '50%';
+            dialog.style.left = '50%';
+            dialog.style.transform = 'translate(-50%, -50%)';
+            dialog.style.backgroundColor = 'white';
+            dialog.style.padding = '20px';
+            dialog.style.borderRadius = '10px';
+            dialog.style.boxShadow = '0 0 20px rgba(0,0,0,0.3)';
+            dialog.innerHTML = `<h3>${result}</h3><p>${wrongList}</p>`;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '关闭';
+            closeBtn.style.padding = '10px 20px';
+            closeBtn.style.backgroundColor = '#2ecc71';
+            closeBtn.style.color = 'white';
+            closeBtn.style.border = 'none';
+            closeBtn.style.borderRadius = '5px';
+            closeBtn.onclick = () => {
+                dialog.remove();
+                document.getElementById('gameArea').style.display = 'none';
+            };
+            
+            dialog.appendChild(closeBtn);
+            document.body.appendChild(dialog);
+        }
+
+        window.addEventListener('error', (event) => {
+            console.error('游戏错误:', event.error);
+            alert('游戏出现异常，请刷新页面重试');
+        });
+    </script>
+</body>
+</html>

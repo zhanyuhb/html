@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四则运算题生成器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        #count {
+            width: 150px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .problems {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px 15px;
+            margin-top: 20px;
+        }
+        .problem {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            font-size: 18px;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .answer {
+            color: #2ecc71;
+            margin-left: 8px;
+            display: none;
+        }
+        .show-answers .answer {
+            display: inline-block;
+        }
+        .error {
+            color: #e74c3c;
+            margin: 10px 0;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .problems {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .problem {
+                font-size: 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .problems {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .container {
+                padding: 10px;
+            }
+        }
+        /* 打印样式 */
+        @media print {
+            .controls, button {
+                display: none;
+            }
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+            .problems {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <input type="number" id="count" placeholder="输入题目数量 (10-100)" min="10" max="100">
+            <button onclick="generateProblems()">生成题目</button>
+            <button onclick="toggleAnswers()">切换答案</button>
+            <button onclick="printTestPaper()">打印试卷</button>
+        </div>
+        <h1>口算测试题</h1>
+        <div class="header">
+            班级：<span style="border-bottom: 1px solid black; width: 150px; display: inline-block;">&nbsp;</span>
+            姓名：<span style="border-bottom: 1px solid black; width: 150px; display: inline-block;">&nbsp;</span>
+        </div>
+        <div id="error" class="error"></div>
+        <div id="problems" class="problems"></div>
+    </div>
+    <script>
+        function generateProblems() {
+            const countInput = document.getElementById('count');
+            const errorDiv = document.getElementById('error');
+            const problemsDiv = document.getElementById('problems');
+            
+            problemsDiv.innerHTML = '';
+            errorDiv.style.display = 'none';
+            const count = parseInt(countInput.value);
+            
+            if (isNaN(count) || count < 10 || count > 100) {
+                errorDiv.textContent = '请输入10到100之间的有效数字';
+                errorDiv.style.display = 'block';
+                countInput.focus();
+                return;
+            }
+            const operators = ['+', '-', '×', '÷'];
+            const problems = [];
+            for (let i = 0; i < count; i++) {
+                let num1, num2, operator, answer;
+                operator = operators[Math.floor(Math.random() * 4)];
+                
+                // 生成符合要求的题目
+                do {
+                    switch(operator) {
+                        case '+':
+                            num1 = Math.floor(Math.random() * 89) + 10;
+                            num2 = Math.floor(Math.random() * (100 - num1)) + 1;
+                            answer = num1 + num2;
+                            break;
+                        case '-':
+                            num1 = Math.floor(Math.random() * 99) + 2;
+                            num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+                            answer = num1 - num2;
+                            break;
+                        case '×':
+                            num1 = Math.floor(Math.random() * 15) + 5;
+                            num2 = Math.floor(Math.random() * 9) + 1;
+                            answer = num1 * num2;
+                            break;
+                        case '÷':
+                            num2 = Math.floor(Math.random() * 12) + 3;
+                            answer = Math.floor(Math.random() * 15) + 2;
+                            num1 = num2 * answer;
+                            break;
+                    }
+                } while (answer > 200); // 控制最大数值
+                const problemHTML = `
+                    <div class="problem">
+                        ${num1} ${operator} ${num2} = 
+                        <span class="answer">${answer}</span>
+                    </div>
+                `;
+                
+                problems.push(problemHTML);
+            }
+            problemsDiv.innerHTML = problems.join('');
+        }
+
+        function toggleAnswers() {
+            const problemsDiv = document.getElementById('problems');
+            problemsDiv.classList.toggle('show-answers');
+            
+            const btn = document.querySelector('button[onclick="toggleAnswers()"]');
+            btn.textContent = problemsDiv.classList.contains('show-answers') 
+                ? '隐藏答案' 
+                : '显示答案';
+        }
+
+        function printTestPaper() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <title>智能监控系统1.0</title>
+    <style>
+        body {
+            background-color: #030b25;
+            font-family: 'Roboto', sans-serif;
+            color: #7df9ff;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 背景装饰线条 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(90deg, rgba(125, 249, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(rgba(125, 249, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        /* 添加过渡效果 */
+        button {
+            transition: all 0.3s ease;
+        }
+
+        /* 为可交互元素添加悬停效果 */
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        /* 为截图添加动画效果 */
+        #captures img {
+            transition: transform 0.3s ease;
+        }
+
+        #captures img:hover {
+            transform: scale(1.1);
+        }
+
+        /* 截图显示区域样式 */
+        #captures {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+        }
+
+        #captures img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #7df9ff;
+            box-shadow: 0 0 10px rgba(125, 249, 255, 0.5);
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            animation-name: zoom;
+            animation-duration: 0.6s;
+            border: 2px solid #7df9ff;
+            box-shadow: 0 0 20px rgba(125, 249, 255, 0.8);
+        }
+
+        @keyframes zoom {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #7df9ff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 标题样式 */
+        h1 {
+            text-align: center;
+            margin: 2rem 0;
+            text-shadow: 0 0 10px rgba(125, 249, 255, 0.8);
+        }
+
+        /* 视频和画布容器样式 */
+        #video-container {
+            position: relative;
+            width: 640px;
+            height: 480px;
+            margin: 0 auto;
+            border: 2px solid #7df9ff;
+            box-shadow: 0 0 20px rgba(125, 249, 255, 0.8);
+        }
+
+        /* 控制按钮样式 */
+        #controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        #controls button {
+            background-color: #7df9ff;
+            color: #030b25;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        #controls input[type="range"] {
+            background-color: #7df9ff;
+            height: 5px;
+            border-radius: 5px;
+        }
+
+        #controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background-color: #030b25;
+            border: 2px solid #7df9ff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* 线条的 LED 灯光效果 */
+        #canvas {
+            filter: drop-shadow(0 0 10px rgba(125, 249, 255, 0.8));
+        }
+
+        #video-container {
+            filter: drop-shadow(0 0 20px rgba(125, 249, 255, 0.8));
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold text-center mb-8">智能监控系统1.0</h1>
+        <div id="video-container">
+            <video id="video" width="640" height="480" autoplay class="block"></video>
+            <canvas id="canvas" width="640" height="480" class="absolute top-0 left-0"></canvas>
+        </div>
+        <div id="controls">
+            <label for="sensitivity" class="text-lg font-medium">运动检测灵敏度:</label>
+            <input type="range" id="sensitivity" min="1" max="100" value="50"
+                class="w-full h-2 bg-gray-300 rounded-md appearance-none cursor-pointer">
+            <button id="capture">
+                <i class="fa-solid fa-camera"></i> 截图
+            </button>
+            <button id="camera-switch">
+                <i class="fa-solid fa-video"></i> 开启摄像头
+            </button>
+        </div>
+        <div id="captures" class="mt-8">
+            <!-- 截图将显示在这里 -->
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const sensitivityInput = document.getElementById('sensitivity');
+        const captureButton = document.getElementById('capture');
+        const capturesDiv = document.getElementById('captures');
+        const cameraSwitch = document.getElementById('camera-switch');
+        const modal = document.getElementById('myModal');
+        const modalImg = document.getElementById('modalImg');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        let prevFrame = null;
+        let stream = null;
+        let isCameraOn = false;
+        let lastCaptureTime = 0;
+        let isMotionDetected = false;
+        const captureInterval = 500; // 0.5 秒，单位为毫秒
+
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                isCameraOn = true;
+                cameraSwitch.textContent = '关闭摄像头';
+                cameraSwitch.classList.remove('bg-green-500');
+                cameraSwitch.classList.add('bg-red-500');
+            } catch (error) {
+                console.error('无法访问摄像头:', error);
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+                isCameraOn = false;
+                cameraSwitch.textContent = '开启摄像头';
+                cameraSwitch.classList.remove('bg-red-500');
+                cameraSwitch.classList.add('bg-green-500');
+            }
+        }
+
+        function detectMotion(frame) {
+            const width = frame.width;
+            const height = frame.height;
+            const sensitivity = parseInt(sensitivityInput.value);
+
+            const motionAreas = [];
+
+            if (prevFrame) {
+                const currentData = frame.data;
+                const prevData = prevFrame.data;
+
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        const index = (y * width + x) * 4;
+                        const diff = Math.abs(currentData[index] - prevData[index]) +
+                            Math.abs(currentData[index + 1] - prevData[index + 1]) +
+                            Math.abs(currentData[index + 2] - prevData[index + 2]);
+
+                        if (diff > sensitivity) {
+                            motionAreas.push({ x, y });
+                        }
+                    }
+                }
+            }
+
+            prevFrame = frame;
+            return motionAreas;
+        }
+
+        function drawMotionAreas(motionAreas) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (motionAreas.length > 0) {
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                motionAreas.forEach(({ x, y }) => {
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                });
+
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
+            }
+        }
+
+        function captureWithTime() {
+            if (isCameraOn) {
+                const captureCanvas = document.createElement('canvas');
+                captureCanvas.width = canvas.width;
+                captureCanvas.height = canvas.height;
+                const captureCtx = captureCanvas.getContext('2d');
+                captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+                const img = document.createElement('img');
+                img.src = captureCanvas.toDataURL('image/png');
+
+                const timeStamp = new Date().toLocaleString();
+                const timeStampElement = document.createElement('p');
+                timeStampElement.textContent = timeStamp;
+
+                const captureWrapper = document.createElement('div');
+                captureWrapper.appendChild(img);
+                captureWrapper.appendChild(timeStampElement);
+
+                capturesDiv.prepend(captureWrapper);
+
+                img.addEventListener('click', function () {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                });
+            }
+        }
+
+        function processFrame() {
+            if (isCameraOn) {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const motionAreas = detectMotion(frame);
+                drawMotionAreas(motionAreas);
+
+                const currentTime = Date.now();
+                if (motionAreas.length > 0) {
+                    isMotionDetected = true;
+                    if (currentTime - lastCaptureTime >= captureInterval) {
+                        captureWithTime();
+                        lastCaptureTime = currentTime;
+                    }
+                } else {
+                    isMotionDetected = false;
+                }
+            }
+            requestAnimationFrame(processFrame);
+        }
+
+        captureButton.addEventListener('click', () => {
+            captureWithTime();
+        });
+
+        cameraSwitch.addEventListener('click', () => {
+            if (isCameraOn) {
+                stopCamera();
+            } else {
+                startCamera();
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        processFrame();
+    </script>
+</body>
+
+</html>
+    

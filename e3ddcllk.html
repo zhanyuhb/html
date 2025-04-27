@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冀教版三年级下册英语单词连连看</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .game-header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-top: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        select, button {
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 25px;
+            border: 3px solid #4CAF50;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        select {
+            background: white;
+            min-width: 200px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background: #45a049;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            grid-auto-flow: dense;
+        }
+
+        .word-block {
+            background: #fff;
+            border: 3px solid #FFD700;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+
+        .word-block:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .selected {
+            background: #FFD700 !important;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+        }
+
+        .matched {
+            animation: fadeOut 0.5s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { opacity: 0; visibility: hidden; transform: scale(0); }
+        }
+
+        .success {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #4CAF50;
+            color: white;
+            padding: 30px 50px;
+            border-radius: 20px;
+            font-size: 24px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            animation: popUp 0.5s ease-out;
+            z-index: 100;
+        }
+
+        .success button {
+            margin-top: 15px;
+            background: white;
+            color: #4CAF50;
+        }
+
+        .success button:hover {
+            background: #f0f0f0;
+        }
+
+        @keyframes popUp {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            80% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .score-display {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            select, button {
+                padding: 10px 15px;
+                font-size: 16px;
+                margin: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            .word-block {
+                padding: 10px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-header">
+        <h1>冀教版三年级下册英语单词连连看</h1>
+        <select id="unitSelect">
+            <option value="Unit 1">Unit 1 喜好与食物</option>
+            <option value="Unit 2">Unit 2 日常饮食</option>
+            <option value="Unit 3">Unit 3 日常活动</option>
+            <option value="Unit 4">Unit 4 农场动物</option>
+            <option value="Unit 5">Unit 5 动物园</option>
+            <option value="Unit 6">Unit 6 时间与星期</option>
+        </select>
+        <button onclick="startGame()">开始游戏！🎮</button>
+        <div class="score-display" id="scoreDisplay"></div>
+    </div>
+    <div class="game-container" id="gameArea"></div>
+
+    <script>
+        const wordData = {
+            'Unit 1': [
+                {en: 'like', zh: '喜欢'},
+                {en: 'apple', zh: '苹果'},
+                {en: 'orange', zh: '橙子'},
+                {en: 'rice', zh: '米饭'},
+                {en: 'you', zh: '你；你们'},
+                {en: 'vegetable', zh: '蔬菜'},
+                {en: 'meat', zh: '肉'},
+                {en: 'food', zh: '食物'},
+                {en: 'fruit', zh: '水果'},
+                {en: 'banana', zh: '香蕉'},
+                {en: 'grape', zh: '葡萄'},
+                {en: 'eleven', zh: '十一'},
+                {en: 'twelve', zh: '十二'},
+                {en: 'bread', zh: '面包'},
+                {en: 'my', zh: '我的'},
+                {en: 'favourite', zh: '特别喜爱的'},
+                {en: 'chicken', zh: '鸡肉'},
+                {en: 'fish', zh: '鱼肉'}
+            ],
+            'Unit 2': [
+                {en: 'breakfast', zh: '早餐'},
+                {en: 'egg', zh: '鸡蛋'},
+                {en: 'juice', zh: '果汁'},
+                {en: 'milk', zh: '牛奶'},
+                {en: 'lunch', zh: '午餐'},
+                {en: 'hungry', zh: '饥饿的'},
+                {en: 'noodle', zh: '面条'},
+                {en: 'water', zh: '水'},
+                {en: 'eat', zh: '吃'},
+                {en: 'drink', zh: '喝'},
+                {en: 'soup', zh: '汤'},
+                {en: 'dinner', zh: '晚餐'},
+                {en: 'good', zh: '好的'}
+            ],
+            'Unit 3': [
+                {en: 'morning', zh: '早晨'},
+                {en: 'get up', zh: '起床'},
+                {en: 'make my bed', zh: '整理床铺'},
+                {en: 'wash', zh: '洗'},
+                {en: 'evening', zh: '晚上'},
+                {en: 'do', zh: '做'},
+                {en: 'schoolbag', zh: '书包'},
+                {en: 'put', zh: '放'},
+                {en: 'clean', zh: '干净的'},
+                {en: 'tidy', zh: '整洁的'},
+                {en: 'room', zh: '房间'},
+                {en: 'sock', zh: '短袜'}
+            ],
+            'Unit 4': [
+                {en: 'farm', zh: '农场'},
+                {en: 'river', zh: '河'},
+                {en: 'see', zh: '看见'},
+                {en: 'horse', zh: '马'},
+                {en: 'cow', zh: '奶牛'},
+                {en: 'pig', zh: '猪'},
+                {en: 'rabbit', zh: '兔'},
+                {en: 'sheep', zh: '绵羊'},
+                {en: 'duck', zh: '鸭'},
+                {en: 'bird', zh: '鸟'},
+                {en: 'tree', zh: '树'},
+                {en: 'thirteen', zh: '十三'},
+                {en: 'fourteen', zh: '十四'},
+                {en: 'fifteen', zh: '十五'},
+                {en: 'sixteen', zh: '十六'},
+                {en: 'seventeen', zh: '十七'},
+                {en: 'eighteen', zh: '十八'},
+                {en: 'nineteen', zh: '十九'},
+                {en: 'twenty', zh: '二十'},
+                {en: 'animal', zh: '动物'},
+                {en: 'many', zh: '许多'}
+            ],
+            'Unit 5': [
+                {en: 'zoo', zh: '动物园'},
+                {en: 'panda', zh: '熊猫'},
+                {en: 'it', zh: '它'},
+                {en: 'white', zh: '白色'},
+                {en: 'elephant', zh: '象'},
+                {en: 'tiger', zh: '老虎'},
+                {en: 'bear', zh: '熊'},
+                {en: 'monkey', zh: '猴子'},
+                {en: 'plant', zh: '植物'},
+                {en: 'cute', zh: '可爱的'},
+                {en: 'its', zh: '它的'},
+                {en: 'can', zh: '能'},
+                {en: 'swim', zh: '游泳'}
+            ],
+            'Unit 6': [
+                {en: 'day', zh: '天'},
+                {en: 'week', zh: '星期'},
+                {en: 'Sunday', zh: '星期日'},
+                {en: 'Monday', zh: '星期一'},
+                {en: 'Tuesday', zh: '星期二'},
+                {en: 'Wednesday', zh: '星期三'},
+                {en: 'Thursday', zh: '星期四'},
+                {en: 'Friday', zh: '星期五'},
+                {en: 'Saturday', zh: '星期六'},
+                {en: 'time', zh: '时间'},
+                {en: 'thirty', zh: '三十'},
+                {en: 'forty', zh: '四十'},
+                {en: 'ball', zh: '球'},
+                {en: 'dog', zh: '狗'},
+                {en: 'at', zh: '在'},
+                {en: 'early', zh: '提早的'}
+            ]
+        };
+
+        let selectedBlocks = [];
+        let matchedPairs = 0;
+        let totalPairs = 0;
+        let winDiv = null;
+        
+        function startGame() {
+            if (winDiv) {
+                winDiv.remove();
+                winDiv = null;
+            }
+            
+            const unit = document.getElementById('unitSelect').value;
+            const words = wordData[unit];
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = '';
+            
+            selectedBlocks = [];
+            matchedPairs = 0;
+            totalPairs = words.length;
+            
+            updateScore();
+            
+            const allBlocks = words.flatMap(word => [
+                {text: word.en, type: 'en', pair: word.zh},
+                {text: word.zh, type: 'zh', pair: word.en}
+            ]);
+            
+            for (let i = allBlocks.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allBlocks[i], allBlocks[j]] = [allBlocks[j], allBlocks[i]];
+            }
+
+            allBlocks.forEach(word => {
+                const block = document.createElement('div');
+                block.className = 'word-block';
+                block.textContent = word.text;
+                block.dataset.pair = word.pair;
+                block.dataset.type = word.type;
+                block.onclick = handleClick;
+                gameArea.appendChild(block);
+            });
+        }
+
+        function handleClick(event) {
+            const block = event.target;
+            if (block.classList.contains('selected') || block.classList.contains('matched')) return;
+
+            if (selectedBlocks.length === 2) {
+                selectedBlocks.forEach(b => b.classList.remove('selected'));
+                selectedBlocks = [];
+            }
+
+            block.classList.add('selected');
+            selectedBlocks.push(block);
+
+            if (selectedBlocks.length === 2) {
+                setTimeout(checkMatch, 300);
+            }
+        }
+
+        function checkMatch() {
+            const [block1, block2] = selectedBlocks;
+            
+            if (block1.dataset.pair === block2.textContent && 
+                block1.dataset.type !== block2.dataset.type) {
+                block1.classList.add('matched');
+                block2.classList.add('matched');
+                matchedPairs++;
+                updateScore();
+                checkWin();
+            } else {
+                block1.classList.remove('selected');
+                block2.classList.remove('selected');
+            }
+            
+            selectedBlocks = [];
+        }
+
+        function checkWin() {
+            if (matchedPairs === totalPairs) {
+                winDiv = document.createElement('div');
+                winDiv.className = 'success';
+                winDiv.innerHTML = '🎉 闯关成功！你真棒！ 🎉<br><button onclick="startGame()">再玩一次</button>';
+                document.body.appendChild(winDiv);
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('scoreDisplay').textContent = `已匹配: ${matchedPairs}/${totalPairs}`;
+        }
+
+        window.onload = startGame;
+    </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四则运算练习器</title>
+    <style>
+        /* 样式保持不变 */
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .controls {
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        select#count {
+            width: 180px;
+            padding: 10px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            font-size: 16px;
+            appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%233498db"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 10px center/15px;
+        }
+        button {
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .stats {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .stats span {
+            margin-right: 30px;
+            font-weight: bold;
+        }
+        .correct-count {
+            color: #27ae60;
+        }
+        .wrong-count {
+            color: #e74c3c;
+        }
+        .problems {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px 15px;
+            padding: 20px 0;
+            border-top: 2px solid #ecf0f1;
+        }
+        .problem {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 18px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .user-answer {
+            width: 70px;
+            padding: 8px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .user-answer:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .result {
+            font-size: 20px;
+            width: 25px;
+            text-align: center;
+        }
+        .correct {
+            color: #27ae60;
+        }
+        .wrong {
+            color: #e74c3c;
+        }
+        @media (max-width: 768px) {
+            .problems {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            .problems {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            select#count {
+                width: 100%;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>四则运算练习器</h1>
+        
+        <div class="controls">
+            <select id="count"></select>
+            <button onclick="generateProblems()">生成试卷</button>
+            <button onclick="checkAnswers()">提交判卷</button>
+        </div>
+        <div class="stats">
+            <span class="correct-count">✓ 正确：<span id="correctCount">0</span></span>
+            <span class="wrong-count">✗ 错误：<span id="wrongCount">0</span></span>
+        </div>
+        <div id="problems" class="problems"></div>
+    </div>
+    <script>
+        // 动态生成题目数量下拉列表
+        const countSelect = document.getElementById('count');
+        countSelect.innerHTML = `
+            <option value="" disabled selected>选择题目数量</option>
+            ${Array.from({ length: 19 }, (_, i) => 
+                `<option value="${(i + 2) * 5}">${(i + 2) * 5} 题</option>`
+            ).join('')}
+        `;
+
+        let currentAnswers = {};
+        function generateProblems() {
+            const problemsDiv = document.getElementById('problems');
+            const statsDiv = document.querySelector('.stats');
+            
+            problemsDiv.innerHTML = '';
+            statsDiv.style.display = 'none';
+            currentAnswers = {};
+            const count = parseInt(countSelect.value);
+            
+            if (!count || count < 10 || count > 100) {
+                alert('请选择有效的题目数量');
+                return;
+            }
+            const operators = ['+', '-', '×', '÷'];
+            const problems = [];
+            for (let i = 0; i < count; i++) {
+                let num1, num2, operator, answer;
+                operator = operators[Math.floor(Math.random() * 4)];
+                
+                do {
+                    switch(operator) {
+                        case '+':
+                            num1 = Math.floor(Math.random() * 89) + 10;
+                            num2 = Math.floor(Math.random() * (100 - num1)) + 1;
+                            answer = num1 + num2;
+                            break;
+                        case '-':
+                            num1 = Math.floor(Math.random() * 99) + 2;
+                            num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+                            answer = num1 - num2;
+                            break;
+                        case '×':
+                            num1 = Math.floor(Math.random() * 15) + 5;
+                            num2 = Math.floor(Math.random() * 9) + 1;
+                            answer = num1 * num2;
+                            break;
+                        case '÷':
+                            num2 = Math.floor(Math.random() * 12) + 3;
+                            answer = Math.floor(Math.random() * 15) + 2;
+                            num1 = num2 * answer;
+                            break;
+                    }
+                } while (answer > 200);
+                const problemId = `problem-${i}`;
+                currentAnswers[problemId] = answer;
+                const problemHTML = `
+                    <div class="problem">
+                        <span>${num1} ${operator} ${num2} =</span>
+                        <input type="number" id="${problemId}" class="user-answer" min="0" step="1">
+                        <span class="result"></span>
+                    </div>
+                `;
+                
+                problems.push(problemHTML);
+            }
+            problemsDiv.innerHTML = problems.join('');
+        }
+        function checkAnswers() {
+            const statsDiv = document.querySelector('.stats');
+            const correctSpan = document.getElementById('correctCount');
+            const wrongSpan = document.getElementById('wrongCount');
+            const problems = document.getElementsByClassName('problem');
+            
+            let correctCount = 0;
+            let wrongCount = 0;
+            for (let problem of problems) {
+                const input = problem.querySelector('.user-answer');
+                const resultSpan = problem.querySelector('.result');
+                const problemId = input.id;
+                const userAnswer = parseInt(input.value);
+                const correctAnswer = currentAnswers[problemId];
+                resultSpan.className = 'result';
+                input.classList.remove('error-highlight');
+                if (userAnswer === correctAnswer) {
+                    correctCount++;
+                    resultSpan.textContent = '✓';
+                    resultSpan.classList.add('correct');
+                } else {
+                    wrongCount++;
+                    resultSpan.textContent = '✗';
+                    resultSpan.classList.add('wrong');
+                    input.classList.add('error-highlight');
+                }
+            }
+            statsDiv.style.display = 'flex';
+            correctSpan.textContent = correctCount;
+            wrongSpan.textContent = wrongCount;
+        }
+    </script>
+</body>
+</html>

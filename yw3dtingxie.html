@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>三年级下册生字听写系统</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(120deg, #ffd7ed 0%, #d6f5ff 100%);
+            font-family: "Comic Sans MS", "幼圆", cursive;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 新增CSS卡通装饰元素 */
+        .star {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffec99;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite;
+        }
+        .star::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffec99;
+            border-radius: 50%;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .star-1 { top: 50px; left: 100px; animation-delay: 0s; }
+        .star-2 { top: 150px; right: 100px; animation-delay: 0.5s; }
+        .star-3 { bottom: 80px; left: 200px; animation-delay: 1s; }
+        .star-4 { bottom: 120px; right: 150px; animation-delay: 1.2s; }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* 云朵装饰 */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        .cloud:before, .cloud:after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        .cloud-1 {
+            width: 150px; height: 50px;
+            top: 20px; left: -100px;
+            animation: float 8s linear infinite;
+        }
+        .cloud-1:before {
+            width: 80px; height: 80px;
+            top: -30px; left: 30px;
+        }
+        .cloud-1:after {
+            width: 100px; height: 100px;
+            top: 0; left: 80px;
+        }
+        .cloud-2 {
+            width: 100px; height: 40px;
+            bottom: 50px; right: -50px;
+            animation: float 6s linear infinite reverse;
+        }
+        .cloud-2:before {
+            width: 60px; height: 60px;
+            top: -20px; left: 20px;
+        }
+        .cloud-2:after {
+            width: 70px; height: 70px;
+            top: 0; left: 50px;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        #main {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #ff6b6b;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 0 #ffd384;
+            margin-bottom: 30px;
+        }
+
+        select {
+            padding: 12px 24px;
+            font-size: 18px;
+            border: 3px solid #4ecdc4;
+            border-radius: 25px;
+            background: #fff;
+            margin: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        select:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.5);
+        }
+
+        #controls {
+            margin: 30px 0;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 20px;
+            color: white;
+            background: linear-gradient(135deg, #45b6fe, #4ecdc4);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(69, 182, 254, 0.4);
+            transition: 0.3s;
+            margin: 0 10px;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(69, 182, 254, 0.6);
+        }
+
+        /* 提示语样式 */
+        #status {
+            font-size: 2em;
+            color: #ff4444;
+            margin: 40px 0;
+            padding: 25px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            display: block;
+            text-shadow: 1px 1px 2px #ffd700;
+            border: 3px solid #ff6b6b;
+        }
+
+        /* 计数器样式 */
+        .counter-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .counter {
+            font-size: 1.3em;
+            color: #4ecdc4;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: 2px dashed #4ecdc4;
+            min-width: 150px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #4ecdc4;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 新增CSS星星装饰 -->
+    <div class="star star-1"></div>
+    <div class="star star-2"></div>
+    <div class="star star-3"></div>
+    <div class="star star-4"></div>
+
+    <!-- 保留云朵装饰 -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+
+    <div id="main">
+        <h1>✨ 三年级下册生字听写乐园 ✨</h1>
+        <div>
+            <select id="lessonSelect"></select>
+        </div>
+        <div id="controls">
+            <label>间隔时间：<input type="number" id="interval" value="10" min="5" max="30"> 秒</label>
+            <button onclick="startDictation()">开始听写 🎤</button>
+            <button onclick="stopDictation()" id="stopBtn" style="display:none">停止听写 🚫</button>
+        </div>
+        
+        <!-- 状态提示和计数器 -->
+        <div id="status">准备开始啦！</div>
+        <div class="counter-container">
+            <div class="counter" id="totalWords">总生字：0</div>
+            <div class="counter" id="remainingWords">剩余：0</div>
+        </div>
+    </div>
+
+<script>
+const dictationData = {
+    "三下_第一单元_古诗三首": ["融", "燕", "鸳", "鸯", "惠", "崇", "芦", "芽", "梅", "溪", "泛", "减"],
+    "三下_第一单元_燕子": ["凑", "拂", "集", "聚", "形", "掠", "偶", "尔", "沾", "倦", "闲", "纤", "痕"],
+    "三下_第一单元_荷花": ["瓣", "蓬", "胀", "裂", "姿", "势", "仿", "佛", "随", "蹈", "止"],
+    "三下_第二单元_守株待兔": ["守", "株", "待", "宋", "耕", "触", "颈", "释", "其"],
+    "三下_第二单元_陶罐和铁罐": ["骄", "傲", "谦", "虚", "懦", "弱", "提", "尘", "讶", "捧", "代", "价"],
+    "三下_第二单元_鹿角和鹿腿": ["鹿", "塘", "映", "欣", "赏", "匀", "致", "配", "传", "哎", "狮", "追", "叹"],
+    "三下_第三单元_古诗三首": ["符", "欲", "魂", "借", "酒", "何", "牧", "兄", "独", "异", "佳"],
+    "三下_第三单元_纸的发明": ["伟", "录", "保", "存", "约", "验", "捞", "阿", "欧", "洲", "社"],
+    "三下_第三单元_赵州桥": ["赵", "省", "县", "匠", "设", "计", "史", "创", "举", "且", "智", "慧", "历"],
+    "三下_第四单元_花钟": ["芬", "芳", "内", "醒", "寿", "苏", "强", "示", "昆", "修建", "组"],
+    "三下_第四单元_蜜蜂": ["蜜", "蜂", "辨", "阻", "跨", "括", "检", "查", "确", "误", "途", "陌"],
+    "三下_第四单元_小虾": ["宇", "宙", "淌", "秘", "密", "栋", "梯", "铃", "乘", "绪", "篇", "越"],
+    "三下_第五单元_宇宙的另一边": ["状", "狐", "狸", "腰", "零", "巧", "克", "肠", "继", "续", "抬", "烦"],
+    "三下_第五单元_我变成了一棵树": ["表", "胆", "理", "夺", "骂", "仇", "差", "付", "倍", "虽", "鬼", "泡", "件"],
+    "三下_第六单元_童年的水墨画": ["墨", "染", "竿", "腾", "碎", "拨", "浪", "葫", "芦", "爽", "蘑", "菇"],
+    "三下_第六单元_剃头大师": ["皂", "剩", "碗", "悠", "若", "透", "娇", "扯", "仰", "串", "婴", "希"],
+    "三下_第六单元_肥皂泡": ["呈", "幻", "诱", "润", "芒", "冰", "剑", "普", "通", "模", "型"],
+    "三下_第七单元_我们奇妙的世界": ["宁", "官", "汪", "参", "攻", "推", "迅", "速", "退", "轮", "煤", "铁"],
+    "三下_第七单元_海底世界": ["必", "胡", "灿", "骑", "秒", "腿", "凶", "猛", "接", "庙", "威", "武", "镇"],
+    "三下_第七单元_火烧云": ["性", "卷", "货", "算", "夹", "夸", "务", "衬", "衫", "负", "责", "艺"],
+    "三下_第八单元_慢性子裁缝": ["漏", "喂", "胖", "驴", "贼", "狼", "莫", "厉", "抱", "架", "胶", "粘", "偏"],
+    "三下_第八单元_漏": ["漏", "喂", "胖", "驴", "贼", "狼", "莫", "厉", "抱", "架", "胶", "粘", "偏"],
+};
+
+let timer = null;
+let isStopped = false;
+
+// 初始化课程选择
+(function init() {
+    const select = document.getElementById('lessonSelect');
+    Object.keys(dictationData).forEach(lesson => {
+        const option = document.createElement('option');
+        option.value = lesson;
+        option.textContent = lesson
+            .replace(/_/g, ' ')
+            .replace('三下', '🌿 三年级下册 ')
+            .replace('单元', '单元 📚 ')
+            .replace('课', '课 ✏️');
+        select.appendChild(option);
+    });
+})();
+
+function startDictation() {
+    const lesson = document.getElementById('lessonSelect').value;
+    const interval = parseInt(document.getElementById('interval').value) * 1000;
+    const words = dictationData[lesson];
+    
+    if (!words || words.length === 0) {
+        alert("Oops！这个课程暂时没有生字哦 🤔");
+        return;
+    }
+
+    // 显示计数器
+    document.getElementById('totalWords').textContent = `总生字：${words.length}`;
+    document.getElementById('remainingWords').textContent = `剩余：${words.length}`;
+    document.getElementById('stopBtn').style.display = 'inline-block';
+
+    const synth = window.speechSynthesis;
+    const statusDiv = document.getElementById('status');
+    
+    // 格式化课题名称
+    const formattedLesson = lesson
+        .replace(/_/g, ' ')
+        .replace('三下', '三年级下册')
+        .replace('单元', '单元')
+        .replace('课', '课');
+
+    // 开始提示语
+    speak(`小朋友们请注意啦！现在开始听写《${formattedLesson}》的生字，总共有${words.length}个生字，准备好纸笔，我们马上开始！`, 0.8);
+
+    // 更新状态提示
+    statusDiv.textContent = "正在听写...";
+    isStopped = false;
+    
+    let index = 0;
+    function nextWord() {
+        if (isStopped || index >= words.length) {
+            if (!isStopped) {
+                // 结束提示语
+                speak(`《${formattedLesson}》的所有生字已经听写完毕！大家辛苦啦！`, 0.8);
+                statusDiv.textContent = "听写结束啦！";
+            }
+            document.getElementById('stopBtn').style.display = 'none';
+            return;
+        }
+        
+        const word = words[index];
+        
+        // 更新剩余计数
+        document.getElementById('remainingWords').textContent = `剩余：${words.length - index}`;
+        
+        // 直接开始朗读（移除“叮”声相关代码）
+        // 朗读两遍（0.6倍速，间隔5秒）
+        speak(word, 0.6); // 第一遍朗读
+        setTimeout(() => {
+            speak(word, 0.6); // 第二遍朗读
+        }, 3000); // 间隔5秒
+        
+        index++;
+        timer = setTimeout(nextWord, interval + 10000); // 两遍朗读（10秒） + 用户设置间隔时间
+    }
+    
+    // 延迟启动，确保提示语朗读完成
+    setTimeout(nextWord, 8000); // 提示语约需8秒
+}
+
+function stopDictation() {
+    isStopped = true;
+    clearTimeout(timer);
+    document.getElementById('status').textContent = "听写已停止";
+    document.getElementById('stopBtn').style.display = 'none';
+    document.getElementById('remainingWords').textContent = `剩余：0`;
+    speak("听写已停止，下次再见！", 0.8);
+}
+
+function speak(text, rate) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-CN';
+    utterance.pitch = 1.2;
+    utterance.rate = rate;
+    window.speechSynthesis.speak(utterance);
+}
+</script>
+</body>
+</html>

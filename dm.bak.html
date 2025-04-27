@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>课堂互动系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?5c92a83f78ff0c3e5dcf9e5205cbb21b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0a0a2a, #000033);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: calc(100% - 320px) 300px;
+            gap: 20px;
+            margin-top: 80px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10,10,42,0.9);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            background: #2c3e50;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .header button:hover {
+            transform: scale(1.05);
+        }
+
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10,10,42,0.95);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            z-index: 1001;
+            padding: 30px;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .random-area {
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .multi-line {
+            font-size: 2em;
+            line-height: 1.5;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .group-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .leaderboard {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .team {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px;
+            min-width: 180px;
+        }
+
+        .member {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            white-space: nowrap;
+        }
+
+        .medal {
+            width: 20px;
+            height: 20px;
+        }
+
+        .gold { background: gold; }
+        .silver { background: silver; }
+        .bronze { background: #cd7f32; }
+
+        input[type="range"] {
+            width: 180px;
+        }
+
+        button.success {
+            background: #2ecc71;
+        }
+
+        button.danger {
+            background: #e74c3c;
+        }
+
+        .export-btn {
+            background: #3498db;
+        }
+
+        .group-call-btn {
+            margin-top: 10px;
+            background: #f39c12;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+
+        .score-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 0 4px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tab-btn {
+            padding: 8px 15px;
+            background: #2c3e50;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #34495e;
+            transform: translateY(2px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #manualGroupSection {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            max-height: 60vh;
+            margin-top: 20px;
+        }
+
+        #manualGroups {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        #ungroupedStudents {
+            overflow-y: auto;
+            max-height: 60vh;
+            padding-left: 20px;
+        }
+
+        .settings-modal .modal-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .settings-modal button.success {
+            margin-top: auto;
+            align-self: flex-end;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 新增日历和计数器样式 */
+        .calendar-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .visitor-counter {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #00ffff;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+            margin-top: auto;
+            background: rgba(10,10,42,0.9);
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>课堂互动系统</h1>
+        <div>
+            <button onclick="toggleSettings()"><i class="fas fa-cog"></i> 系统设置</button>
+            <button onclick="saveData()"><i class="fas fa-save"></i> 保存当前状态</button>
+            <button onclick="exportExcel()" class="export-btn"><i class="fas fa-file-excel"></i> 学生积分导出</button>
+            <button onclick="undoLast()"><i class="fas fa-undo"></i> 撤回操作</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="random-area" id="randomArea">READY</div>
+            <div class="controls">
+                <div>
+                    <label>速度：</label>
+                    <input type="range" min="50" max="500" value="200" id="speedControl">
+                </div>
+                <button onclick="startRolling()" class="success">开始点名</button>
+                <button onclick="stopRolling()" class="danger">停止点名</button>
+                <div>
+                    <button onclick="changeCount(-1)">-</button>
+                    <span id="currentCount">1</span>
+                    <button onclick="changeCount(1)">+</button>
+                </div>
+            </div>
+
+            <div class="group-stats" id="groupStats"></div>
+        </div>
+
+        <div class="leaderboard">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('group')">小组排行榜</button>
+                <button class="tab-btn" onclick="showTab('member')">个人排行榜</button>
+            </div>
+            <div id="groupRank" class="tab-content active"></div>
+            <div id="memberRank" class="tab-content"></div>
+            
+            <!-- 新增日历和计数器 -->
+            <div class="calendar-container" id="calendarContainer"></div>
+            <div class="visitor-counter" id="visitorCounter"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        ©版权所有 海港区邢睿中小学信息技术名师工作室
+    </div>
+
+    <div class="modal-backdrop" id="settingsModalBackdrop"></div>
+    <div class="settings-modal" id="settingsModal">
+        <div class="modal-content">
+            <h2>系统设置</h2>
+            <div class="settings-section">
+                <label>网页标题：</label>
+                <input type="text" id="pageTitle" value="课堂互动系统">
+            </div>
+
+            <div class="settings-section">
+                <label>学生名单管理：</label>
+                <input type="file" id="studentFile" accept=".txt">
+                <button onclick="toggleEditList()" class="success">编辑名单</button>
+            </div>
+
+            <div class="settings-section hidden" id="editListSection">
+                <textarea id="studentList" rows="10"></textarea>
+                <div>
+                    <button onclick="saveList()">保存名单</button>
+                    <button onclick="cancelEdit()">取消</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <label>分组设置：</label>
+                <input type="number" id="groupCount" min="2" max="10" value="4">
+                <button onclick="autoGroup()">自动分组</button>
+                <button onclick="toggleManualGroup()" class="success">手动分组</button>
+            </div>
+
+            <div class="settings-section hidden" id="manualGroupSection">
+                <div id="manualGroups"></div>
+                <div id="ungroupedStudents"></div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button onclick="saveSettings()" class="success">保存设置</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const MAX_SELECTED = 15; // 最大点名人数限制
+        let students = [];
+        let groups = [];
+        let pageTitle = "课堂互动系统";
+        let currentRolling = null;
+        let selectedCount = 1;
+        let isRolling = false;
+        let currentSelected = [];
+        let history = [];
+        let sound = new Audio('https://www.soundjay.com/button/sounds/beep-07.mp3');
+
+        // 访问计数器
+        let visitorCount = localStorage.getItem('visitorCount') || 0;
+        visitorCount = parseInt(visitorCount) + 1;
+        localStorage.setItem('visitorCount', visitorCount);
+
+        function init() {
+            try {
+                // 加载标题
+                const savedTitle = localStorage.getItem('pageTitle');
+                if (savedTitle) {
+                    pageTitle = savedTitle;
+                    document.querySelector('.header h1').textContent = pageTitle;
+                }
+
+                // 加载学生和分组数据
+                const savedStudents = localStorage.getItem('students');
+                const savedGroups = localStorage.getItem('groups');
+                
+                students = savedStudents 
+                    ? JSON.parse(savedStudents).map(s => ({name: s.name, score: s.score || 0}))
+                    : [];
+                    
+                groups = savedGroups 
+                    ? JSON.parse(savedGroups).map(g => ({
+                        name: g.name,
+                        score: g.score || 0,
+                        members: g.members.map(mName => students.find(s => s.name === mName) || {name: mName, score: 0})
+                    }))
+                    : [];
+                    
+                updateAll();
+                showTab('group');
+                updateCalendar(); // 初始化日历
+                updateVisitorCounter(); // 初始化计数器
+            } catch (e) {
+                console.error('初始化失败:', e);
+                alert('系统初始化失败，请检查控制台');
+            }
+        }
+
+        // 更新日历
+        function updateCalendar() {
+            const days = ['日', '一', '二', '三', '四', '五', '六'];
+            const now = new Date();
+            const dateStr = `
+                <div>${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日</div>
+                <div>星期${days[now.getDay()]}</div>
+                <div>${formatTime(now)}</div>
+            `;
+            document.getElementById('calendarContainer').innerHTML = dateStr;
+        }
+
+        // 时间格式化
+        function formatTime(date) {
+            return date.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+        }
+
+        // 更新访问计数器
+        function updateVisitorCounter() {
+            document.getElementById('visitorCounter').textContent = 
+                `您是第${visitorCount}次使用本网页，感谢您的使用！`;
+        }
+
+        // 每秒更新日历
+        setInterval(updateCalendar, 1000);
+
+        // 文件导入
+        document.getElementById('studentFile').addEventListener('change', function(e) {
+            try {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const names = e.target.result.split('\n')
+                            .filter(name => name.trim())
+                            .map(name => ({name: name.trim(), score: 0}));
+                            
+                        students = names;
+                        groups = [];
+                        document.getElementById('studentList').value = names.map(n => n.name).join('\n');
+                        updateAll();
+                    };
+                    reader.readAsText(file);
+                }
+            } catch (e) {
+                console.error('文件读取失败:', e);
+                alert('文件读取失败，请检查格式');
+            }
+        });
+
+        // 编辑名单
+        function toggleEditList() {
+            const section = document.getElementById('editListSection');
+            section.classList.toggle('hidden');
+            document.getElementById('studentList').value = students.map(s => s.name).join('\n');
+        }
+
+        // 保存名单
+        function saveList() {
+            try {
+                const names = document.getElementById('studentList').value.split('\n')
+                    .filter(name => name.trim())
+                    .map(name => ({name: name.trim(), score: 0}));
+                    
+                if (names.length === 0) {
+                    alert('名单不能为空');
+                    return;
+                }
+
+                students = names;
+                groups = [];
+                toggleEditList();
+                updateAll();
+            } catch (e) {
+                console.error('保存名单失败:', e);
+                alert('保存失败，请检查名单');
+            }
+        }
+
+        // 自动分组
+        function autoGroup() {
+            try {
+                const count = parseInt(document.getElementById('groupCount').value);
+                if (count < 2 || count > 10 || isNaN(count)) {
+                    alert('分组数量必须在2-10之间');
+                    return;
+                }
+                
+                if (students.length === 0) {
+                    alert('请先导入学生名单');
+                    return;
+                }
+
+                const shuffled = [...students].sort(() => 0.5 - Math.random());
+                groups = Array.from({length: count}, (_, i) => ({
+                    name: `第${i+1}小组`,
+                    members: shuffled.slice(
+                        i * Math.ceil(shuffled.length / count),
+                        (i + 1) * Math.ceil(shuffled.length / count)
+                    ),
+                    score: 0
+                }));
+                
+                updateManualGroups();
+                updateAll();
+            } catch (e) {
+                console.error('自动分组失败:', e);
+                alert('分组失败，请检查控制台');
+            }
+        }
+
+        // 更新手动分组界面
+        function updateManualGroups() {
+            try {
+                const container = document.getElementById('manualGroups');
+                const ungrouped = document.getElementById('ungroupedStudents');
+                
+                const groupedNames = groups.flatMap(g => g.members.map(m => m.name));
+                const availableStudents = students.filter(s => !groupedNames.includes(s.name));
+
+                container.innerHTML = groups.map(group => `
+                    <div class="group">
+                        <h4>${group.name} 
+                            <button onclick="editGroupName('${group.name}')">改名</button>
+                        </h4>
+                        <div class="members" style="max-height:150px; overflow-y:auto;">
+                            ${group.members.map(member => `
+                                <div class="member-item">${member.name}
+                                    <button onclick="removeFromGroup('${group.name}', '${member.name}')">×</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <select onchange="addToGroup(this, '${group.name}')">
+                            <option value="">添加成员</option>
+                            ${availableStudents.map(s => `<option value="${s.name}">${s.name}</option>`).join('')}
+                        </select>
+                    </div>
+                `).join('');
+
+                ungrouped.innerHTML = `
+                    <h4>未分组成员 (${availableStudents.length})</h4>
+                    <div class="members" style="max-height:400px; overflow-y:auto;">
+                        ${availableStudents.map(student => `
+                            <div class="member-item">${student.name}
+                                <select onchange="addToGroup(this, '', '${student.name}')">
+                                    <option value="">选择小组</option>
+                                    ${groups.map(g => `<option value="${g.name}">${g.name}</option>`).join('')}
+                                </select>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (e) {
+                console.error('更新分组界面失败:', e);
+            }
+        }
+
+        // 添加成员到小组
+        function addToGroup(select, groupName, studentName) {
+            try {
+                const targetGroup = groupName || select.value;
+                const targetStudent = studentName || select.parentElement.querySelector('option:checked').value;
+                
+                if (!targetGroup || !targetStudent) return;
+
+                const group = groups.find(g => g.name === targetGroup);
+                const student = students.find(s => s.name === targetStudent);
+                
+                if (group && student) {
+                    group.members.push(student);
+                    updateManualGroups();
+                    updateAll();
+                }
+            } catch (e) {
+                console.error('添加成员失败:', e);
+            }
+        }
+
+        // 从小组移除成员
+        function removeFromGroup(groupName, studentName) {
+            try {
+                const group = groups.find(g => g.name === groupName);
+                if (group) {
+                    group.members = group.members.filter(m => m.name !== studentName);
+                    updateManualGroups();
+                    updateAll();
+                }
+            } catch (e) {
+                console.error('移除成员失败:', e);
+            }
+        }
+
+        // 修改小组名称
+        function editGroupName(oldName) {
+            try {
+                const newName = prompt("请输入新的小组名称：", oldName);
+                if (newName && newName !== oldName) {
+                    const group = groups.find(g => g.name === oldName);
+                    group.name = newName.trim();
+                    updateManualGroups();
+                    updateAll();
+                }
+            } catch (e) {
+                console.error('修改组名失败:', e);
+            }
+        }
+
+        // 切换手动分组界面
+        function toggleManualGroup() {
+            const section = document.getElementById('manualGroupSection');
+            section.classList.toggle('hidden');
+        }
+
+        // 保存系统设置
+        function saveSettings() {
+            try {
+                pageTitle = document.getElementById('pageTitle').value.trim();
+                document.querySelector('.header h1').textContent = pageTitle;
+                toggleSettings();
+            } catch (e) {
+                console.error('保存设置失败:', e);
+            }
+        }
+
+        // 切换设置窗口
+        function toggleSettings() {
+            try {
+                const modal = document.getElementById('settingsModal');
+                const backdrop = document.getElementById('settingsModalBackdrop');
+                
+                if (modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                    backdrop.style.display = 'none';
+                } else {
+                    modal.style.display = 'block';
+                    backdrop.style.display = 'block';
+                    document.getElementById('pageTitle').value = pageTitle;
+                }
+            } catch (e) {
+                console.error('切换设置失败:', e);
+                alert('操作失败，请检查控制台');
+            }
+        }
+
+        // 保存数据到LocalStorage
+        function saveData() {
+            try {
+                localStorage.setItem('pageTitle', document.querySelector('.header h1').textContent);
+                localStorage.setItem('students', JSON.stringify(students));
+                localStorage.setItem('groups', JSON.stringify(groups.map(g => ({
+                    name: g.name,
+                    score: g.score,
+                    members: g.members.map(m => m.name)
+                }))));
+                alert('当前状态已保存');
+            } catch (e) {
+                console.error('保存失败:', e);
+                alert('保存失败，请检查数据');
+            }
+        }
+
+        // 开始全局点名
+        function startRolling() {
+            try {
+                if (students.length === 0) {
+                    alert('请先导入学生名单');
+                    return;
+                }
+                if (isRolling) return;
+
+                if (selectedCount > MAX_SELECTED) {
+                    selectedCount = MAX_SELECTED;
+                    document.getElementById('currentCount').textContent = selectedCount;
+                    alert(`已自动调整为最大人数${MAX_SELECTED}`);
+                }
+
+                isRolling = true;
+                currentSelected = [];
+
+                const speed = document.getElementById('speedControl').value;
+                currentRolling = setInterval(() => {
+                    const randomStudents = [];
+                    for(let i=0; i<selectedCount; i++) {
+                        randomStudents.push(students[Math.floor(Math.random()*students.length)].name);
+                    }
+                    currentSelected = randomStudents;
+                    updateRandomAreaDisplay(randomStudents);
+                }, speed);
+            } catch (e) {
+                console.error('开始点名失败:', e);
+            }
+        }
+
+        // 开始小组内点名
+        function startGroupRolling(groupName) {
+            try {
+                const group = groups.find(g => g.name === groupName);
+                if (!group || group.members.length === 0) {
+                    alert(`小组"${groupName}"没有成员`);
+                    return;
+                }
+                if (isRolling) return;
+
+                if (selectedCount > MAX_SELECTED) {
+                    selectedCount = MAX_SELECTED;
+                    document.getElementById('currentCount').textContent = selectedCount;
+                    alert(`已自动调整为最大人数${MAX_SELECTED}`);
+                }
+
+                isRolling = true;
+                currentSelected = [];
+
+                const speed = document.getElementById('speedControl').value;
+                currentRolling = setInterval(() => {
+                    const randomMembers = [];
+                    for(let i=0; i<selectedCount; i++) {
+                        if (group.members.length === 0) break;
+                        const randomIdx = Math.floor(Math.random() * group.members.length);
+                        randomMembers.push(group.members[randomIdx].name);
+                    }
+                    currentSelected = randomMembers;
+                    updateRandomAreaDisplay(randomMembers);
+                }, speed);
+            } catch (e) {
+                console.error('小组内点名失败:', e);
+            }
+        }
+
+        // 停止点名
+        function stopRolling() {
+            try {
+                if (!isRolling) return;
+
+                clearInterval(currentRolling);
+                currentRolling = null;
+                isRolling = false;
+
+                const groupNames = currentSelected.map(s => {
+                    const group = groups.find(g => g.members.some(m => m.name === s));
+                    return group ? group.name : '未分组';
+                });
+
+                updateRandomAreaDisplay(
+                    currentSelected.map((s, i) => `${s} (${groupNames[i]})`)
+                );
+            } catch (e) {
+                console.error('停止点名失败:', e);
+            }
+        }
+
+        // 更新点名区域显示
+        function updateRandomAreaDisplay(names) {
+            const randomArea = document.getElementById('randomArea');
+            if (names.length > 3) {
+                randomArea.innerHTML = names.map(name => `<div>${name}</div>`).join('');
+                randomArea.classList.add('multi-line');
+            } else {
+                randomArea.textContent = names.join(', ');
+                randomArea.classList.remove('multi-line');
+            }
+        }
+
+        // 调整点名人数
+        function changeCount(delta) {
+            try {
+                const newCount = selectedCount + delta;
+                if (newCount > MAX_SELECTED) {
+                    alert(`最多只能选择${MAX_SELECTED}人`);
+                    return;
+                }
+                selectedCount = Math.max(1, Math.min(students.length, newCount));
+                document.getElementById('currentCount').textContent = selectedCount;
+            } catch (e) {
+                console.error('调整人数失败:', e);
+            }
+        }
+
+        // 更新小组统计
+        function updateGroupStats() {
+            try {
+                const container = document.getElementById('groupStats');
+                container.innerHTML = groups.map(group => `
+                    <div class="team">
+                        <h3>${group.name} <span>总积分：${group.score + group.members.reduce((sum, m) => sum + m.score, 0)}</span></h3>
+                        <div class="team-members">
+                            ${group.members.map(member => `
+                                <div class="member">
+                                    ${member.name}
+                                    <span>${member.score}</span>
+                                    <button class="score-btn" onclick="adjustScore('${group.name}', '${member.name}', 1)">+</button>
+                                    <button class="score-btn" onclick="adjustScore('${group.name}', '${member.name}', -1)">−</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div>
+                            小组表现分：
+                            <button class="score-btn" onclick="adjustGroupScore('${group.name}', 1)">+</button>
+                            <button class="score-btn" onclick="adjustGroupScore('${group.name}', -1)">−</button>
+                        </div>
+                        <button class="group-call-btn" onclick="startGroupRolling('${group.name}')">小组内点名</button>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('更新小组统计失败:', e);
+                container.innerHTML = '<p style="color:red">数据加载失败</p>';
+            }
+        }
+
+        // 调整个人积分
+        function adjustScore(groupName, memberName, delta) {
+            try {
+                const group = groups.find(g => g.name === groupName);
+                const member = group?.members.find(m => m.name === memberName);
+                
+                if (member) {
+                    member.score = Math.max(0, member.score + delta);
+                    history.push({type: 'member', group: groupName, member: memberName, value: delta});
+                    updateAll();
+                    playSound();
+                }
+            } catch (e) {
+                console.error('调整积分失败:', e);
+            }
+        }
+
+        // 调整小组积分
+        function adjustGroupScore(groupName, delta) {
+            try {
+                const group = groups.find(g => g.name === groupName);
+                if (group) {
+                    group.score = Math.max(0, group.score + delta);
+                    history.push({type: 'group', group: groupName, value: delta});
+                    updateAll();
+                    playSound();
+                }
+            } catch (e) {
+                console.error('调整小组积分失败:', e);
+            }
+        }
+
+        // 更新排行榜
+        function updateLeaderboard() {
+            try {
+                const groupContainer = document.getElementById('groupRank');
+                const memberContainer = document.getElementById('memberRank');
+                
+                // 小组排名（前10）
+                const groupRank = [...groups].sort((a, b) => 
+                    (b.score + b.members.reduce((sum, m) => sum + m.score, 0)) - 
+                    (a.score + a.members.reduce((sum, m) => sum + m.score, 0))
+                );
+                
+                groupContainer.innerHTML = groupRank.slice(0,10).map((g, i) => `
+                    <div class="rank-item">
+                        ${i < 3 ? `<span class="medal ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}"></span>` : ''}
+                        <span>${i+1}.</span>
+                        <span>${g.name}</span>
+                        <span>${g.score + g.members.reduce((sum, m) => sum + m.score, 0)}分</span>
+                    </div>
+                `).join('');
+
+                // 个人排名（前10）
+                const memberRank = students.sort((a, b) => b.score - a.score);
+                
+                memberContainer.innerHTML = memberRank.slice(0,10).map((m, i) => `
+                    <div class="rank-item">
+                        ${i < 3 ? `<span class="medal ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}"></span>` : ''}
+                        <span>${i+1}.</span>
+                        <span>${m.name}</span>
+                        <span>${m.score}分</span>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('更新排行榜失败:', e);
+            }
+        }
+
+        // 导出Excel
+        function exportExcel() {
+            try {
+                if (students.length === 0) {
+                    alert('没有可导出的数据');
+                    return;
+                }
+
+                const data = students.map(s => {
+                    const group = groups.find(g => g.members.some(m => m.name === s.name));
+                    return [
+                        s.name,
+                        s.score,
+                        group ? group.name : '未分组',
+                        group ? group.score + group.members.reduce((sum, m) => sum + m.score, 0) : 0
+                    ];
+                });
+
+                data.unshift(['姓名', '个人积分', '所属小组', '小组总积分']);
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "学生积分");
+                XLSX.writeFile(wb, `学生积分_${new Date().toLocaleDateString()}.xlsx`);
+            } catch (e) {
+                console.error('导出失败:', e);
+                alert('导出失败，请检查控制台');
+            }
+        }
+
+        // 撤回操作
+        function undoLast() {
+            try {
+                if (history.length === 0) return;
+                const last = history.pop();
+                
+                if (last.type === 'member') {
+                    const group = groups.find(g => g.name === last.group);
+                    const member = group?.members.find(m => m.name === last.member);
+                    if (member) member.score = Math.max(0, member.score - last.value);
+                } else {
+                    const group = groups.find(g => g.name === last.group);
+                    if (group) group.score = Math.max(0, group.score - last.value);
+                }
+                
+                updateAll();
+            } catch (e) {
+                console.error('撤回失败:', e);
+            }
+        }
+
+        // 播放音效
+        function playSound() {
+            try {
+                sound.currentTime = 0;
+                sound.play();
+            } catch (e) {
+                console.error('播放音效失败:', e);
+            }
+        }
+
+        // 更新所有界面
+        function updateAll() {
+            updateGroupStats();
+            updateLeaderboard();
+        }
+
+        // 切换选项卡
+        function showTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(type));
+            });
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.toggle('active', tab.id === `${type}Rank`);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

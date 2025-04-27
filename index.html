@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人工智能生成教学网页小工具</title>
+<style>
+/* 全局样式 */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #ffffff;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.header {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px; /* 减小了边距，为更新时间留空间 */
+    color: #ffeb3b;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    grid-column: 1 / -1;
+}
+
+.update-time {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #a8d8ea;
+    grid-column: 1 / -1;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.card a {
+    display: block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #00bcd4, #2979ff);
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.card a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <div class="header">人工智能生成教学网页小工具</div>
+    <div class="update-time">最后更新: <span id="lastUpdate"></span></div>
+    
+    <!-- 课堂互动管理系统 -->
+    <div class="card">
+        <h3>教学管理工具</h3>
+        <a href="dm.html" target="-blank">课堂互动管理系统</a>
+        <a href="weiwanchengrenwu.html" target="-blank">未完成任务名单</a>
+        <a href="md2docx.html" target="-blank">将Markdown文件转换为Word文档</a>
+        <a href="htmldown.html" target="-blank">HTML代码转文件工具</a>
+        <a href="zhuanqan.html" target="-blank">大转盘</a>
+        <a href="https://bouncyballs.org" target="-blank">声浪弹力球</a>
+        <a href="jk.html" target="-blank">监考</a>
+    </div>
+
+    <!-- 语文 -->
+    <div class="card">
+        <h3>语文</h3>
+        <a href="pinyin_3down.html" target="-blank">三年级下册看拼音写汉字</a>
+        <a href="pinyin_4down.html" target="-blank">四年级下册看拼音写汉字</a>
+        <a href="yw3dtingxie.html" target="-blank">三年级下册生字听写</a>
+        <a href="yw3bscq.html" target="-blank">三年级背诵抽签小助手</a>
+    </div>
+
+    <!-- 数学 -->
+    <div class="card">
+        <h3>数学</h3>
+        <a href="kousuan_judge.html" target="-blank">在线口算练习</a>
+        <a href="kousuan_print.html" target="-blank">自动出口算题（答案）可打印</a>
+        <a href="1yuan2ci.html" target="-blank">一元二次函数曲线</a>
+        <a href="shuang2cihanshu.html" target="-blank">双二次函数曲线</a>
+        <a href="xuanzhuan2ciquxian.html" target="-blank">旋转双二次函数曲线</a>
+    </div>
+
+    <!-- 英语 -->
+    <div class="card">
+        <h3>英语</h3>
+        <a href="e3dclx.html" target="-blank">全册书单词连连看（复习）</a>
+        <a href="e3ddcllk.html" target="-blank">单词连连看（单元练习）</a>
+        <a href="jienglishtiankong3down.html" target="-blank">冀教版小学英语三年级下册单词填空练习</a>
+        <a href="je3uffk.html" target="-blank">冀教版英语三年级上册快乐单词记忆卡</a>
+        <a href="je3dffk.html" target="-blank">冀教版英语三年级下册快乐单词记忆卡</a>
+        <a href="3downgame.html" target="-blank">部编版小学三年级英语下册单元复习小游戏</a>
+        <a href="4downgame.html" target="-blank">部编版小学四年级英语下册单元复习小游戏</a>
+        <a href="englishtiankong3up.html" target="-blank">部编版小学英语三年级上册单词填空练习</a>
+        <a href="englishtiankong3down.html" target="-blank">部编版小学英语三年级下册单词填空练习</a>
+        <a href="englishtiankong4up.html" target="-blank">部编版小学英语四年级上册单词填空练习</a>
+        <a href="englishtiankong4down.html" target="-blank">部编版小学英语四年级下册单词填空练习</a>
+    </div>
+    <div class="header"><a href="soft.html" target="-blank">开发工具</a></div>
+    <div class="header"><a href="https://www.pic.net/" target="-blank">在线图片工具</a></div>
+</div>
+
+<script>
+// 获取最后修改时间并显示
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取当前文件的最后修改时间
+    var lastModified = new Date(document.lastModified);
+    
+    // 格式化日期为 YYYY-MM-DD HH:MM:SS
+    var formattedDate = lastModified.getFullYear() + '-' + 
+                       (lastModified.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                       lastModified.getDate().toString().padStart(2, '0') + ' ' + 
+                       lastModified.getHours().toString().padStart(2, '0') + ':' + 
+                       lastModified.getMinutes().toString().padStart(2, '0') + ':' + 
+                       lastModified.getSeconds().toString().padStart(2, '0');
+    
+    // 显示在页面上
+    document.getElementById('lastUpdate').textContent = formattedDate;
+});
+</script>
+</body>
+</html>

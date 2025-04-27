@@ -1,0 +1,5 @@
+deepseek-r1 apikey:
+sk-3207f6ad598c464380696796bf26dd82
+
+silconflow apikey:
+sk-ndqmsieirdopggowfsamznlnyxnvdapezfwqiykatfkdgkqc

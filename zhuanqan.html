@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>幸运大转盘</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+
+        h1 {
+            color: #3a4a6d;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .container {
+            position: relative;
+            width: 350px;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 30px;
+            background: white;
+        }
+
+        #wheel {
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            border: 8px solid #3a4a6d;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            transition: transform 3s cubic-bezier(0.17, 0.67, 0.21, 0.99);
+            background: #f8f9fa;
+        }
+
+        .segment {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(50% 50%, var(--clip-points));
+        }
+
+        .segment-text {
+            position: absolute;
+            left: var(--text-x);
+            top: var(--text-y);
+            transform: translate(-50%, -50%) rotate(var(--text-rotate));
+            font-size: 16px;
+            white-space: nowrap;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            font-weight: bold;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pointer {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #e74c3c;
+            z-index: 100;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            width: 400px;
+            margin: 100px auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .result-content {
+            background: white;
+            padding: 40px;
+            width: 400px;
+            margin: 150px auto;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #e74c3c;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #3a4a6d 0%, #2c3e50 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: none;
+            transition: border 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #3a4a6d;
+        }
+
+        .wheel-center {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid #3a4a6d;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>幸运大转盘</h1>
+    
+    <div class="container">
+        <div id="wheel"></div>
+        <div class="wheel-center"></div>
+        <div class="pointer"></div>
+    </div>
+
+    <div class="button-group">
+        <button onclick="showModal()">设置选项</button>
+        <button class="btn-primary" onclick="startSpin()">开始旋转</button>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>设置转盘选项</h2>
+            <textarea id="optionsInput" placeholder="请输入选项，每个选项一行"></textarea>
+            <div class="button-group">
+                <button onclick="hideModal()">取消</button>
+                <button class="btn-primary" onclick="submitOptions()">提交</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultModal" class="result-modal">
+        <div class="result-content">
+            <p>恭喜您抽中：</p>
+            <p id="resultText"></p>
+            <div class="button-group">
+                <button class="btn-primary" onclick="hideResultModal()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentOptions = [];
+        let isSpinning = false;
+        let selectedResult = '';
+
+        function showModal() {
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('optionsInput').value = currentOptions.join('\n');
+        }
+
+        function hideModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function showResultModal() {
+            document.getElementById('resultText').textContent = selectedResult;
+            document.getElementById('resultModal').style.display = 'block';
+            createConfetti();
+        }
+
+        function hideResultModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+
+        function submitOptions() {
+            const input = document.getElementById('optionsInput').value;
+            currentOptions = input.split('\n').filter(opt => opt.trim() !== '');
+            generateWheel();
+            hideModal();
+        }
+
+        function generateWheel() {
+            const wheel = document.getElementById('wheel');
+            wheel.innerHTML = '';
+            const count = currentOptions.length;
+            if (count === 0) return;
+
+            const colors = [
+                '#FF6B6B', '#4ECDC4', '#45B7D1', 
+                '#96CEB4', '#FFEEAD', '#FF9999',
+                '#D4A5A5', '#A5D4D4', '#C7B8EA',
+                '#F8A5C2', '#F5CD79', '#A5ECD7'
+            ];
+            const angleStep = 360 / count;
+
+            currentOptions.forEach((option, index) => {
+                const startAngle = index * angleStep;
+                const endAngle = (index + 1) * angleStep;
+                const midAngle = (startAngle + endAngle) / 2;
+
+                // 创建扇形
+                const segment = document.createElement('div');
+                segment.className = 'segment';
+                segment.style.backgroundColor = colors[index % colors.length];
+                
+                // 计算clip-path
+                const points = [];
+                for (let angle = startAngle; angle <= endAngle; angle++) {
+                    const rad = (angle - 90) * Math.PI / 180;
+                    const x = 50 + Math.cos(rad) * 50;
+                    const y = 50 + Math.sin(rad) * 50;
+                    points.push(`${x}% ${y}%`);
+                }
+                segment.style.setProperty('--clip-points', points.join(','));
+
+                // 添加文字
+                const text = document.createElement('div');
+                text.className = 'segment-text';
+                text.textContent = option;
+                const textRad = (midAngle - 90) * Math.PI / 180;
+                text.style.setProperty('--text-x', `${50 + Math.cos(textRad) * 35}%`);
+                text.style.setProperty('--text-y', `${50 + Math.sin(textRad) * 35}%`);
+                text.style.setProperty('--text-rotate', `${midAngle > 90 && midAngle < 270 ? midAngle + 180 : midAngle}deg`);
+
+                segment.appendChild(text);
+                wheel.appendChild(segment);
+            });
+        }
+
+        function startSpin() {
+            if (isSpinning || currentOptions.length === 0) return;
+            isSpinning = true;
+
+            const wheel = document.getElementById('wheel');
+            const count = currentOptions.length;
+            const angleStep = 360 / count;
+            const selectedIndex = Math.floor(Math.random() * count);
+            selectedResult = currentOptions[selectedIndex];
+            const targetAngle = 360 * 5 + selectedIndex * angleStep + angleStep/2;
+
+            wheel.style.transform = `rotate(-${targetAngle}deg)`;
+
+            setTimeout(() => {
+                showResultModal();
+                currentOptions.splice(selectedIndex, 1);
+                setTimeout(() => {
+                    generateWheel();
+                    wheel.style.transform = 'rotate(0deg)';
+                    isSpinning = false;
+                }, 500);
+            }, 3000);
+        }
+
+        function createConfetti() {
+            const container = document.querySelector('.result-content');
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = -10 + 'px';
+                confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                container.appendChild(confetti);
+                
+                const animationDuration = Math.random() * 3 + 2;
+                
+                confetti.style.animation = `confettiFall ${animationDuration}s linear forwards`;
+                
+                // 创建关键帧
+                const keyframes = `
+                    @keyframes confettiFall {
+                        0% {
+                            opacity: 1;
+                            transform: translateY(0) rotate(0deg);
+                        }
+                        100% {
+                            opacity: 0;
+                            transform: translateY(400px) rotate(${Math.random() * 360}deg);
+                        }
+                    }
+                `;
+                
+                // 添加样式
+                const style = document.createElement('style');
+                style.innerHTML = keyframes;
+                document.head.appendChild(style);
+                
+                // 移除元素
+                setTimeout(() => {
+                    confetti.remove();
+                    style.remove();
+                }, animationDuration * 1000);
+            }
+        }
+
+        // 初始化生成转盘
+        generateWheel();
+    </script>
+</body>
+</html>

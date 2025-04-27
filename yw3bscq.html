@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年级背诵抽签小助手（语音版）</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', '楷体', sans-serif;
+            background-color: #f9f4ff;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border: 4px solid #c38dff;
+            text-align: center;
+        }
+        h1 {
+            color: #8a2be2;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .control-panel {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        select, button {
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        select {
+            background-color: #e6d5ff;
+            border: 2px solid #b388ff;
+            min-width: 180px;
+        }
+        button {
+            background-color: #b388ff;
+            color: white;
+            font-weight: bold;
+            min-width: 150px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background-color: #9c64ff;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        .result-box {
+            background-color: #f3e5ff;
+            border-radius: 15px;
+            padding: 30px;
+            min-height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #b388ff;
+            margin: 20px 0;
+        }
+        .result-title {
+            font-size: 28px;
+            color: #8a2be2;
+            font-weight: bold;
+            animation: roll 0.1s infinite;
+        }
+        @keyframes roll {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+        .book-icon {
+            font-size: 28px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
+            font-size: 14px;
+        }
+        .voice-control {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .voice-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #e6d5ff;
+            border: 2px solid #b388ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .voice-btn:hover {
+            background-color: #d0b3ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="book-icon">📚</span>三年级背诵抽签小助手（语音版）</h1>
+        
+        <div class="control-panel">
+            <select id="grade-select">
+                <option value="all">全部内容</option>
+                <option value="up">三年级上册</option>
+                <option value="down">三年级下册</option>
+            </select>
+            
+            <button id="action-btn">开始抽签</button>
+        </div>
+        
+        <div class="result-box">
+            <div class="result-title" id="result-title">准备开始抽签吧！</div>
+        </div>
+        
+        <div class="voice-control">
+            <button class="voice-btn" id="read-btn">朗读题目</button>
+            <button class="voice-btn" id="help-btn">使用帮助</button>
+        </div>
+        
+        <div class="footer">
+            <p>快乐学习 · 轻松背诵 · 语音辅助</p>
+        </div>
+    </div>
+
+    <script>
+        // 三年级上册背诵题目
+        const upTitles = [
+            "《所见》清·袁枚",
+            "《山行》唐·杜牧",
+            "《赠刘景文》宋·苏轼",
+            "《夜书所见》宋·叶绍翁",
+            "《秋天的雨》第2自然段",
+            "语文园地二日积月累",
+            "语文园地三日积月累",
+            "语文园地四日积月累",
+            "《望天门山》唐·李白",
+            "《饮湖上初晴后雨》宋·苏轼",
+            "《望洞庭》唐·刘禹锡",
+            "《早发白帝城》唐·李白",
+            "《大自然的声音》第2-3自然段",
+            "《采莲曲》唐·王昌龄",
+            "《司马光》全文背诵",
+            "语文园地八日积月累"
+        ];
+
+        // 三年级下册背诵题目
+        const downTitles = [
+            "《绝句》唐·杜甫",
+            "《惠崇春江晚景》宋·苏轼",
+            "《三衢道中》宋·曾几",
+            "《燕子》1-3自然段",
+            "《荷花》2、4自然段",
+            "《忆江南》唐·白居易",
+            "《守株待兔》全文背诵",
+            "《邯郸学步》成语故事",
+            "《元日》宋·王安石",
+            "《清明》唐·杜牧",
+            "《九月九日忆山东兄弟》唐·王维",
+            "文房四宝（笔墨纸砚）",
+            "《花钟》第1自然段",
+            "《滁州西涧》唐·韦应物",
+            "《溪边》（童年的水墨画）",
+            "见善则迁（名言）",
+            "《火烧云》3-6自然段",
+            "兵来将挡（俗语）",
+            "《大林寺桃花》唐·白居易"
+        ];
+
+        const allTitles = [...upTitles, ...downTitles];
+        let isRolling = false;
+        let rollInterval;
+        let currentTitle = "";
+        const resultTitle = document.getElementById('result-title');
+        const actionBtn = document.getElementById('action-btn');
+        const gradeSelect = document.getElementById('grade-select');
+        const readBtn = document.getElementById('read-btn');
+        const helpBtn = document.getElementById('help-btn');
+
+        // 语音合成函数
+        function speak(text, rate = 1) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = rate;
+                speechSynthesis.speak(utterance);
+            } else {
+                alert("您的浏览器不支持语音合成功能，请使用Chrome或Edge浏览器");
+            }
+        }
+
+        // 朗读当前题目
+        readBtn.addEventListener('click', function() {
+            if (currentTitle) {
+                speak("题目是：" + currentTitle);
+            } else {
+                speak("请先抽选一个题目");
+            }
+        });
+
+        // 使用帮助
+        helpBtn.addEventListener('click', function() {
+            speak("使用说明：首先选择要抽签的范围，然后点击开始抽签按钮，题目会快速滚动，再次点击停止按钮确定题目，最后可以点击朗读题目按钮听取题目内容。");
+        });
+
+        // 初始化语音提示
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                speak("欢迎使用三年级背诵抽签小助手，请选择要抽签的范围，然后点击开始抽签按钮");
+            }, 500);
+        });
+
+        // 抽签功能
+        actionBtn.addEventListener('click', function() {
+            if (!isRolling) {
+                // 开始抽签
+                isRolling = true;
+                actionBtn.textContent = '停止';
+                resultTitle.style.animation = 'roll 0.1s infinite';
+                speak("题目正在抽选中，请稍候");
+                
+                // 根据选择获取题目数组
+                let titles = [];
+                switch(gradeSelect.value) {
+                    case 'up': 
+                        titles = upTitles; 
+                        speak("已选择三年级上册内容");
+                        break;
+                    case 'down': 
+                        titles = downTitles; 
+                        speak("已选择三年级下册内容");
+                        break;
+                    default: 
+                        titles = allTitles;
+                        speak("已选择全部内容");
+                }
+                
+                // 快速滚动显示题目
+                rollInterval = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * titles.length);
+                    currentTitle = titles[randomIndex];
+                    resultTitle.textContent = currentTitle;
+                }, 100);
+            } else {
+                // 停止抽签
+                isRolling = false;
+                actionBtn.textContent = '开始抽签';
+                resultTitle.style.animation = 'none';
+                clearInterval(rollInterval);
+                speak("抽中的题目是：" + currentTitle);
+            }
+        });
+
+        // 选择变化时提示
+        gradeSelect.addEventListener('change', function() {
+            switch(this.value) {
+                case 'up': 
+                    speak("已切换为三年级上册内容"); 
+                    break;
+                case 'down': 
+                    speak("已切换为三年级下册内容"); 
+                    break;
+                default: 
+                    speak("已选择全部内容");
+            }
+        });
+    </script>
+</body>
+</html>

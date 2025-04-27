@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冀教版英语三年级下册快乐单词记忆卡</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', '楷体', sans-serif;
+            background-color: #f0f9ff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .unit-selector {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #a5d8ff;
+            border-radius: 15px;
+            display: inline-block;
+        }
+        
+        select {
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 2px solid #74c0fc;
+            font-size: 16px;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .card-container {
+            perspective: 1000px;
+            width: 300px;
+            height: 200px;
+            margin: 0 auto 30px;
+        }
+        
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+            cursor: pointer;
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, #74c0fc, #b197fc);
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, #ffc9c9, #ff8787);
+            color: white;
+            transform: rotateY(180deg);
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .meaning {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        
+        .example {
+            font-style: italic;
+            font-size: 16px;
+        }
+        
+        .page {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #495057;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: #4dabf7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        button:hover {
+            background-color: #339af0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .unit-info {
+            background-color: #d0ebff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .progress {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #495057;
+        }
+        
+        .animal-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌈快乐单词记忆卡 - 三年级下册🌈</h1>
+    
+    <div class="unit-selector">
+        <label for="unit-select">选择单元：</label>
+        <select id="unit-select">
+            <option value="unit1">Unit 1 食物与数字</option>
+            <option value="unit2">Unit 2 餐饮时间</option>
+            <option value="unit3">Unit 3 日常活动</option>
+            <option value="unit4">Unit 4 动物与颜色</option>
+            <option value="unit5">Unit 5 动物园</option>
+        </select>
+    </div>
+    
+    <div class="unit-info" id="unit-info">
+        Unit 1 食物与数字 - 共18个单词
+    </div>
+    
+    <div class="card-container">
+        <div class="card" id="card">
+            <div class="card-face card-front">
+                <div class="animal-icon">🍎</div>
+                <div class="word">apple</div>
+            </div>
+            <div class="card-face card-back">
+                <div class="meaning">苹果</div>
+                <div class="example">例句：I like to eat an apple every day.</div>
+                <div class="page">出现在第2页</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="progress">
+        <span id="current-index">1</span> / <span id="total-count">18</span>
+    </div>
+    
+    <div class="controls">
+        <button id="prev-btn">上一个</button>
+        <button id="next-btn">下一个</button>
+        <button id="random-btn">随机单词</button>
+    </div>
+    
+    <script>
+        // 单词数据库
+        const wordData = {
+            unit1: [
+                { word: "like", meaning: "喜欢", example: "I like apples.", page: "2", emoji: "❤️" },
+                { word: "apple", meaning: "苹果", example: "I like to eat an apple every day.", page: "2", emoji: "🍎" },
+                { word: "orange", meaning: "橙子", example: "The orange is sweet and juicy.", page: "2", emoji: "🍊" },
+                { word: "rice", meaning: "米饭", example: "We eat rice for dinner.", page: "2", emoji: "🍚" },
+                { word: "you", meaning: "你；你们", example: "You are my friend.", page: "2", emoji: "👆" },
+                { word: "vegetable", meaning: "蔬菜", example: "Eat more vegetables for health.", page: "2", emoji: "🥦" },
+                { word: "meat", meaning: "肉", example: "I don't eat too much meat.", page: "2", emoji: "🍖" },
+                { word: "food", meaning: "食物", example: "What's your favorite food?", page: "2", emoji: "🍱" },
+                { word: "fruit", meaning: "水果", example: "Fruits are good for you.", page: "4", emoji: "🍇" },
+                { word: "banana", meaning: "香蕉", example: "Monkeys love bananas.", page: "4", emoji: "🍌" },
+                { word: "grape", meaning: "葡萄", example: "These grapes are very sweet.", page: "4", emoji: "🍇" },
+                { word: "eleven", meaning: "十一", example: "I have eleven pencils.", page: "4", emoji: "11️⃣" },
+                { word: "twelve", meaning: "十二", example: "There are twelve months in a year.", page: "4", emoji: "12️⃣" },
+                { word: "bread", meaning: "面包", example: "I eat bread for breakfast.", page: "6", emoji: "🍞" },
+                { word: "my", meaning: "我的", example: "This is my book.", page: "8", emoji: "👦" },
+                { word: "favourite", meaning: "特别喜爱的；特别喜爱的事物", example: "Apples are my favourite fruit.", page: "8", emoji: "⭐" },
+                { word: "chicken", meaning: "鸡肉", example: "I like fried chicken.", page: "8", emoji: "🍗" },
+                { word: "fish", meaning: "鱼肉；鱼", example: "The fish is swimming in the river.", page: "8", emoji: "🐟" }
+            ],
+            unit2: [
+                { word: "breakfast", meaning: "早餐", example: "I eat eggs for breakfast.", page: "14", emoji: "🍳" },
+                { word: "egg", meaning: "鸡蛋", example: "The hen lays an egg.", page: "14", emoji: "🥚" },
+                { word: "juice", meaning: "果汁", example: "Orange juice is delicious.", page: "14", emoji: "🧃" },
+                { word: "milk", meaning: "牛奶", example: "Drink milk to grow strong.", page: "14", emoji: "🥛" },
+                { word: "lunch", meaning: "午餐", example: "We have noodles for lunch.", page: "16", emoji: "🍜" },
+                { word: "hungry", meaning: "饥饿的", example: "I'm hungry after playing.", page: "16", emoji: "😋" },
+                { word: "noodle", meaning: "面条", example: "Chinese noodles are tasty.", page: "16", emoji: "🍜" },
+                { word: "water", meaning: "水", example: "We need to drink water every day.", page: "18", emoji: "💧" },
+                { word: "eat", meaning: "吃", example: "We eat three meals a day.", page: "18", emoji: "🍽️" },
+                { word: "drink", meaning: "喝", example: "Don't drink too much soda.", page: "19", emoji: "🥤" },
+                { word: "soup", meaning: "汤", example: "The soup is very hot.", page: "20", emoji: "🍲" },
+                { word: "dinner", meaning: "正餐；晚餐", example: "We have fish for dinner.", page: "20", emoji: "🍛" },
+                { word: "good", meaning: "好的", example: "This is a good book.", page: "20", emoji: "👍" }
+            ],
+            unit3: [
+                { word: "morning", meaning: "早晨；上午", example: "Good morning, teacher!", page: "26", emoji: "🌞" },
+                { word: "get up", meaning: "起床", example: "I get up at 7 o'clock.", page: "26", emoji: "⏰" },
+                { word: "make my bed", meaning: "整理床铺", example: "I make my bed every morning.", page: "26", emoji: "🛏️" },
+                { word: "wash", meaning: "洗", example: "Wash your hands before eating.", page: "26", emoji: "🧼" },
+                { word: "evening", meaning: "晚上；傍晚", example: "We watch TV in the evening.", page: "28", emoji: "🌙" },
+                { word: "do", meaning: "做；干", example: "What are you doing?", page: "28", emoji: "🏃" },
+                { word: "schoolbag", meaning: "书包", example: "My schoolbag is heavy.", page: "28", emoji: "🎒" },
+                { word: "put", meaning: "放；置", example: "Put your books on the desk.", page: "30", emoji: "📚" },
+                { word: "clean", meaning: "干净的；打扫", example: "Keep your room clean.", page: "32", emoji: "🧹" },
+                { word: "tidy", meaning: "整洁的；整理", example: "Tidy up your toys.", page: "32", emoji: "🧸" },
+                { word: "room", meaning: "房间", example: "This is my bedroom.", page: "32", emoji: "🚪" },
+                { word: "sock", meaning: "短袜", example: "I wear socks every day.", page: "32", emoji: "🧦" }
+            ],
+            unit4: [
+                { word: "white", meaning: "白色（的）", example: "The snow is white.", page: "50", emoji: "⚪" },
+                { word: "farm", meaning: "农场", example: "There are many animals on the farm.", page: "50", emoji: "🚜" },
+                { word: "elephant", meaning: "象", example: "The elephant has a long trunk.", page: "50", emoji: "🐘" },
+                { word: "river", meaning: "河；江", example: "We swim in the river.", page: "50", emoji: "🌊" },
+                { word: "tiger", meaning: "老虎", example: "The tiger is very strong.", page: "50", emoji: "🐅" },
+                { word: "see", meaning: "看见", example: "I can see a bird.", page: "50", emoji: "👀" },
+                { word: "bear", meaning: "熊", example: "The bear is sleeping.", page: "52", emoji: "🐻" },
+                { word: "horse", meaning: "马", example: "The horse runs fast.", page: "52", emoji: "🐴" },
+                { word: "monkey", meaning: "猴子", example: "The monkey climbs the tree.", page: "52", emoji: "🐒" },
+                { word: "cow", meaning: "奶牛", example: "The cow gives us milk.", page: "52", emoji: "🐄" },
+                { word: "plant", meaning: "植物", example: "Water the plant every day.", page: "52", emoji: "🌱" },
+                { word: "pig", meaning: "猪", example: "The pig is pink.", page: "52", emoji: "🐷" },
+                { word: "cute", meaning: "可爱的", example: "The puppy is very cute.", page: "56", emoji: "🥰" },
+                { word: "its", meaning: "它的", example: "The cat licks its paw.", page: "56", emoji: "🐾" },
+                { word: "can", meaning: "能；会", example: "I can swim.", page: "56", emoji: "💪" },
+                { word: "swim", meaning: "游泳", example: "Let's swim in the pool.", page: "56", emoji: "🏊" },
+                { word: "rabbit", meaning: "兔", example: "The rabbit has long ears.", page: "56", emoji: "🐇" },
+                { word: "sheep", meaning: "绵羊；羊（复数 sheep）", example: "The sheep is eating grass.", page: "56", emoji: "🐑" },
+                { word: "duck", meaning: "鸭", example: "The duck is swimming.", page: "56", emoji: "🦆" },
+                { word: "bird", meaning: "鸟", example: "The bird is singing.", page: "62", emoji: "🐦" },
+                { word: "tree", meaning: "树；树木", example: "We sit under the tree.", page: "62", emoji: "🌳" },
+                { word: "thirteen", meaning: "十三", example: "I am thirteen years old.", page: "62", emoji: "13️⃣" },
+                { word: "fourteen", meaning: "十四", example: "There are fourteen students.", page: "62", emoji: "14️⃣" },
+                { word: "fifteen", meaning: "十五", example: "My brother is fifteen.", page: "62", emoji: "15️⃣" },
+                { word: "sixteen", meaning: "十六", example: "Sixteen candles on the cake.", page: "62", emoji: "16️⃣" },
+                { word: "seventeen", meaning: "十七", example: "I have seventeen books.", page: "62", emoji: "17️⃣" },
+                { word: "eighteen", meaning: "十八", example: "She is eighteen years old.", page: "62", emoji: "18️⃣" },
+                { word: "nineteen", meaning: "十九", example: "Nineteen days to holiday.", page: "62", emoji: "19️⃣" },
+                { word: "twenty", meaning: "二十", example: "There are twenty apples.", page: "62", emoji: "20️⃣" },
+                { word: "animal", meaning: "动物", example: "The zoo has many animals.", page: "64", emoji: "🐾" },
+                { word: "many", meaning: "许多", example: "There are many stars in the sky.", page: "64", emoji: "✨" },
+                { word: "day", meaning: "天", example: "There are seven days in a week.", page: "66", emoji: "📅" },
+                { word: "week", meaning: "周；星期", example: "I go swimming twice a week.", page: "66", emoji: "🗓️" },
+                { word: "Sunday", meaning: "星期日", example: "We don't go to school on Sunday.", page: "66", emoji: "☀️" },
+                { word: "Monday", meaning: "星期一", example: "Monday is the first school day.", page: "66", emoji: "📚" },
+                { word: "Tuesday", meaning: "星期二", example: "We have PE on Tuesday.", page: "66", emoji: "⚽" },
+                { word: "Wednesday", meaning: "星期三", example: "Wednesday is in the middle.", page: "66", emoji: "🔄" },
+                { word: "Thursday", meaning: "星期四", example: "Thursday comes before Friday.", page: "66", emoji: "📝" },
+                { word: "Friday", meaning: "星期五", example: "Friday is the last school day.", page: "66", emoji: "🎉" },
+                { word: "Saturday", meaning: "星期六", example: "I play on Saturday.", page: "66", emoji: "🎮" },
+                { word: "time", meaning: "时间", example: "What time is it now?", page: "68", emoji: "⏰" },
+                { word: "thirty", meaning: "三十", example: "Thirty minutes is half an hour.", page: "68", emoji: "30️⃣" },
+                { word: "forty", meaning: "四十", example: "My dad is forty years old.", page: "68", emoji: "40️⃣" },
+                { word: "ball", meaning: "球", example: "Let's play with the ball.", page: "68", emoji: "⚽" },
+                { word: "dog", meaning: "狗", example: "The dog is barking.", page: "68", emoji: "🐕" },
+                { word: "at", meaning: "在", example: "I am at school now.", page: "68", emoji: "📍" },
+                { word: "early", meaning: "提早的", example: "I get up early in the morning.", page: "68", emoji: "⏱️" }
+            ],
+            unit5: [
+                { word: "zoo", meaning: "动物园", example: "We go to the zoo on Sunday.", page: "50", emoji: "🐾" },
+                { word: "panda", meaning: "熊猫", example: "The panda eats bamboo.", page: "50", emoji: "🐼" },
+                { word: "it", meaning: "它", example: "It is a cute puppy.", page: "50", emoji: "🐶" }
+            ]
+        };
+
+        // 单元信息
+        const unitInfo = {
+            unit1: { name: "Unit 1 食物与数字", count: 18 },
+            unit2: { name: "Unit 2 餐饮时间", count: 13 },
+            unit3: { name: "Unit 3 日常活动", count: 12 },
+            unit4: { name: "Unit 4 动物与颜色", count: 44 },
+            unit5: { name: "Unit 5 动物园", count: 3 }
+        };
+
+        // 获取DOM元素
+        const card = document.getElementById('card');
+        const unitSelect = document.getElementById('unit-select');
+        const unitInfoDiv = document.getElementById('unit-info');
+        const currentIndexSpan = document.getElementById('current-index');
+        const totalCountSpan = document.getElementById('total-count');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const randomBtn = document.getElementById('random-btn');
+
+        // 当前状态
+        let currentUnit = 'unit1';
+        let currentWordIndex = 0;
+        let words = wordData.unit1;
+
+        // 初始化
+        function init() {
+            updateUnitInfo();
+            updateWordDisplay();
+            updateProgress();
+        }
+
+        // 切换单元
+        unitSelect.addEventListener('change', function() {
+            currentUnit = this.value;
+            currentWordIndex = 0;
+            words = wordData[currentUnit];
+            updateUnitInfo();
+            updateWordDisplay();
+            updateProgress();
+        });
+
+        // 卡片点击翻转
+        card.addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+
+        // 上一个单词
+        prevBtn.addEventListener('click', function() {
+            if (currentWordIndex > 0) {
+                currentWordIndex--;
+                updateWordDisplay();
+                updateProgress();
+                resetCard();
+            }
+        });
+
+        // 下一个单词
+        nextBtn.addEventListener('click', function() {
+            if (currentWordIndex < words.length - 1) {
+                currentWordIndex++;
+                updateWordDisplay();
+                updateProgress();
+                resetCard();
+            }
+        });
+
+        // 随机单词
+        randomBtn.addEventListener('click', function() {
+            currentWordIndex = Math.floor(Math.random() * words.length);
+            updateWordDisplay();
+            updateProgress();
+            resetCard();
+        });
+
+        // 更新单词显示
+        function updateWordDisplay() {
+            const word = words[currentWordIndex];
+            const front = card.querySelector('.card-front');
+            const back = card.querySelector('.card-back');
+            
+            front.innerHTML = `<div class="animal-icon">${word.emoji}</div><div class="word">${word.word}</div>`;
+            back.innerHTML = `<div class="meaning">${word.meaning}</div><div class="example">例句：${word.example}</div><div class="page">出现在第${word.page}页</div>`;
+        }
+
+        // 更新单元信息
+        function updateUnitInfo() {
+            const info = unitInfo[currentUnit];
+            unitInfoDiv.textContent = `${info.name} - 共${info.count}个单词`;
+            totalCountSpan.textContent = info.count;
+        }
+
+        // 更新进度
+        function updateProgress() {
+            currentIndexSpan.textContent = currentWordIndex + 1;
+        }
+
+        // 重置卡片状态
+        function resetCard() {
+            card.classList.remove('flipped');
+        }
+
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>

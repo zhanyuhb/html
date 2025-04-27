@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>英语单词大冒险</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #F8BBD0 0%, #B3E5FC 100%);
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .unit-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .unit-card:hover {
+            transform: scale(1.05);
+        }
+        .game-area {
+            display: none;
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+        }
+        .word-bubble {
+            background: #FFEB3B;
+            border-radius: 20px;
+            padding: 15px;
+            margin: 10px;
+            display: inline-block;
+            cursor: pointer;
+            animation: float 3s infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .score {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #E91E63;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: #E91E63; text-align: center;">📚 英语单词大冒险 🎮</h1>
+        <div id="unitSelection"></div>
+        <div id="gameArea" class="game-area"></div>
+        <div id="score" class="score">🌟 积分: 0</div>
+    </div>
+
+    <script>
+        // 从JSON文件加载数据（需确保同目录下存在english-grade3-book2.json）
+        fetch('english-grade3-book2.json')
+            .then(response => response.json())
+            .then(data => {
+                const units = data.units;
+                let currentUnit;
+                let score = 0;
+
+                // 显示单元选择界面
+                function showUnits() {
+                    document.getElementById('unitSelection').innerHTML = units.map(unit => `
+                        <div class="unit-card" onclick="startGame(${unit.unit})">
+                            <h2>${unit.title}</h2>
+                            <p>📖 包含 ${unit.words.length} 个单词</p>
+                        </div>
+                    `).join('');
+                }
+
+                // 开始游戏
+                window.startGame = (unitNum) => {
+                    currentUnit = units.find(u => u.unit === unitNum);
+                    document.getElementById('unitSelection').style.display = 'none';
+                    document.getElementById('gameArea').style.display = 'block';
+                    startMatchingGame();
+                }
+
+                // 单词配对游戏
+                function startMatchingGame() {
+                    const words = [...currentUnit.words];
+                    const gameArea = document.getElementById('gameArea');
+                    
+                    // 创建单词和图片气泡
+                    gameArea.innerHTML = `
+                        <h2>${currentUnit.title} 🎯</h2>
+                        <div id="wordContainer"></div>
+                        <div id="imageContainer" style="margin-top: 20px;"></div>
+                    `;
+
+                    // 动态生成可拖拽单词
+                    words.forEach(word => {
+                        const bubble = document.createElement('div');
+                        bubble.className = 'word-bubble';
+                        bubble.draggable = true;
+                        bubble.textContent = word.word;
+                        bubble.ondragstart = (e) => e.dataTransfer.setData("text", word.meaning);
+                        document.getElementById('wordContainer').appendChild(bubble);
+                    });
+
+                    // 创建图片区域
+                    const meanings = words.map(w => w.meaning);
+                    meanings.sort(() => Math.random() - 0.5);
+                    meanings.forEach(meaning => {
+                        const imgBox = document.createElement('div');
+                        imgBox.className = 'word-bubble';
+                        imgBox.style.background = '#E91E63';
+                        imgBox.textContent = meaning;
+                        imgBox.ondragover = (e) => e.preventDefault();
+                        imgBox.ondrop = (e) => {
+                            const draggedMeaning = e.dataTransfer.getData("text");
+                            if(draggedMeaning === meaning) {
+                                e.target.style.background = '#4CAF50';
+                                score += 10;
+                                document.getElementById('score').textContent = `🌟 积分: ${score}`;
+                                setTimeout(() => e.target.remove(), 500);
+                            }
+                        };
+                        document.getElementById('imageContainer').appendChild(imgBox);
+                    });
+                }
+
+                showUnits();
+            });
+    </script>
+</body>
+</html>

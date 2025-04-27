@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黑板风格二次函数曲线</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            background-color: #f0f0f0;
+        }
+        #controls {
+            margin: 20px 0;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #formula {
+            font-size: 1.5em;
+            color: #333;
+            margin: 15px 0;
+        }
+        #graph {
+            background: #000;
+            border: 3px solid #2c3e50;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        #vertex {
+            font-size: 1.2em;
+            color: #333;
+            margin-top: 15px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        input[type="range"] {
+            width: 120px;
+            margin: 0 10px;
+        }
+        label {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #2c3e50;">二次函数动态演示</h1>
+    <div id="formula">
+        y = <span id="a-value" style="color: #e74c3c;">1</span>x² + 
+        <span id="b-value" style="color: #3498db;">0</span>x + 
+        <span id="c-value" style="color: #2ecc71;">0</span>
+    </div>
+    <div id="controls">
+        <label for="a">a:</label>
+        <input type="range" id="a" min="-10" max="10" step="0.1" value="1">
+        <label for="b">b:</label>
+        <input type="range" id="b" min="-10" max="10" step="0.1" value="0">
+        <label for="c">c:</label>
+        <input type="range" id="c" min="-10" max="10" step="0.1" value="0">
+    </div>
+    <canvas id="graph" width="800" height="500"></canvas>
+    <div id="vertex">顶点坐标: 
+        (<span id="vertex-x" style="color: #9b59b6;">0.00</span>, 
+        <span id="vertex-y" style="color: #f1c40f;">0.00</span>)
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d');
+        const aInput = document.getElementById('a');
+        const bInput = document.getElementById('b');
+        const cInput = document.getElementById('c');
+        const aValue = document.getElementById('a-value');
+        const bValue = document.getElementById('b-value');
+        const cValue = document.getElementById('c-value');
+        const vertexX = document.getElementById('vertex-x');
+        const vertexY = document.getElementById('vertex-y');
+
+        // 坐标转换函数
+        const toPixelX = x => (x + 10) * (canvas.width / 20);
+        const toPixelY = y => canvas.height - (y + 10) * (canvas.height / 20);
+
+        function drawGrid() {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 0.5;
+            
+            // 垂直网格线（纵向）
+            for (let x = -10; x <= 10; x++) {
+                ctx.beginPath();
+                ctx.moveTo(toPixelX(x), 0);
+                ctx.lineTo(toPixelX(x), canvas.height);
+                ctx.stroke();
+            }
+
+            // 水平网格线（横向）
+            for (let y = -10; y <= 10; y++) {
+                ctx.beginPath();
+                ctx.moveTo(0, toPixelY(y));
+                ctx.lineTo(canvas.width, toPixelY(y));
+                ctx.stroke();
+            }
+        }
+
+        function drawAxes() {
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            
+            // X轴
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2);
+            ctx.lineTo(canvas.width, canvas.height / 2);
+            ctx.stroke();
+
+            // Y轴
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+
+            // 刻度标签
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Arial';
+            for (let i = -10; i <= 10; i++) {
+                if (i === 0) continue;
+                // X轴刻度
+                ctx.fillText(i, toPixelX(i) - 5, canvas.height / 2 + 15);
+                // Y轴刻度
+                ctx.fillText(i, canvas.width / 2 + 5, toPixelY(i) + 5);
+            }
+        }
+
+        function drawCurve(a, b, c) {
+            ctx.beginPath();
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 3;
+            
+            for (let x = -10; x <= 10; x += 0.05) {
+                const y = a * x * x + b * x + c;
+                ctx.lineTo(toPixelX(x), toPixelY(y));
+            }
+            ctx.stroke();
+        }
+
+        function updateGraph() {
+            // 清空画布
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 获取滑块值
+            const a = parseFloat(aInput.value);
+            const b = parseFloat(bInput.value);
+            const c = parseFloat(cInput.value);
+
+            // 更新公式显示
+            aValue.textContent = a.toFixed(1);
+            bValue.textContent = b.toFixed(1);
+            cValue.textContent = c.toFixed(1);
+
+            // 绘制网格、坐标轴和曲线
+            drawGrid();
+            drawAxes();
+            drawCurve(a, b, c);
+
+            // 计算并显示顶点坐标
+            const vertexXValue = -b / (2 * a);
+            const vertexYValue = a * vertexXValue * vertexXValue + b * vertexXValue + c;
+            vertexX.textContent = vertexXValue.toFixed(2);
+            vertexY.textContent = vertexYValue.toFixed(2);
+        }
+
+        // 事件监听
+        aInput.addEventListener('input', updateGraph);
+        bInput.addEventListener('input', updateGraph);
+        cInput.addEventListener('input', updateGraph);
+
+        // 初始化
+        updateGraph();
+    </script>
+</body>
+</html>
