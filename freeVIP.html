@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免VIP视频网址解析</title>
+    <style>
+        body {
+            font-family: '微软雅黑', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            margin: 1.5rem 0;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .notice {
+            color: #7f8c8d;
+            margin-top: 1.5rem;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+            input[type="text"] {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>免VIP视频网址解析</h1>
+        <div class="input-group">
+            <input type="text" id="videoUrl" placeholder="请输入视频网址（如：https://v.youku.com/...）">
+        </div>
+        <button onclick="parseUrl()">立即解析</button>
+        <p class="notice">提示：将需要解析的视频网址粘贴到上方输入框，点击按钮即可享受免VIP观看</p>
+    </div>
+
+    <script>
+        function parseUrl() {
+            const baseUrl = "https://jx.xmflv.com/?url=";
+            const userInput = document.getElementById('videoUrl').value.trim();
+            
+            if (!userInput) {
+                alert("请输入有效的视频网址！");
+                return;
+            }
+
+            const encodedUrl = encodeURIComponent(userInput);
+            const finalUrl = baseUrl + encodedUrl;
+            
+            window.open(finalUrl, '_blank');
+        }
+
+        // 支持回车键提交
+        document.getElementById('videoUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                parseUrl();
+            }
+        });
+    </script>
+</body>
+</html>
