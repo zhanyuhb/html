@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>进制转换工具 - 十进制 ↔ 二进制</title>
+    <style>
+        :root {
+            --primary-color: #6e48aa;
+            --secondary-color: #9d50bb;
+            --dark-color: #1a1a2e;
+            --light-color: #f1f1f1;
+            --accent-color: #00dbde;
+            --error-color: #ff4d4d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-color), #16213e);
+            color: var(--light-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2.5rem;
+        }
+        
+        .converter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .converter-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .converter-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .converter-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+        
+        .converter-title i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(0, 219, 222, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(110, 72, 170, 0.4);
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(0, 219, 222, 0.1);
+            border: 1px solid var(--accent-color);
+            min-height: 60px;
+            word-break: break-all;
+        }
+        
+        .error {
+            color: var(--error-color);
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .binary-bits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 15px;
+        }
+        
+        .bit {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            font-family: monospace;
+            transition: all 0.3s ease;
+        }
+        
+        .bit.active {
+            background: var(--accent-color);
+            color: var(--dark-color);
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .converter-box {
+                padding: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>进制转换工具</h1>
+        
+        <div class="converter-container">
+            <div class="converter-box">
+                <div class="converter-title">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h2>十进制 ↔ 二进制转换</h2>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="decimalInput" placeholder="输入十进制数字 (例如: 255)" autocomplete="off">
+                    <button id="decimalToBinaryBtn">转换为二进制</button>
+                    <div class="result" id="binaryResult"></div>
+                    <div class="error" id="decimalError"></div>
+                    <div class="binary-bits" id="binaryBits"></div>
+                </div>
+            </div>
+            
+            <div class="converter-box">
+                <div class="converter-title">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h2>二进制 ↔ 十进制转换</h2>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="binaryInput" placeholder="输入二进制数字 (例如: 1101)" autocomplete="off">
+                    <button id="binaryToDecimalBtn">转换为十进制</button>
+                    <div class="result" id="decimalResult"></div>
+                    <div class="error" id="binaryError"></div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2024 进制转换工具 | 科技感设计</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('decimalToBinaryBtn').addEventListener('click', function() {
+            const decimalInput = document.getElementById('decimalInput').value.trim();
+            const binaryResult = document.getElementById('binaryResult');
+            const decimalError = document.getElementById('decimalError');
+            const binaryBits = document.getElementById('binaryBits');
+            
+            binaryResult.textContent = '';
+            decimalError.textContent = '';
+            binaryBits.innerHTML = '';
+            
+            if (!decimalInput) {
+                decimalError.textContent = '请输入一个十进制数字';
+                return;
+            }
+            
+            const decimalNumber = parseInt(decimalInput, 10);
+            
+            if (isNaN(decimalNumber)) {
+                decimalError.textContent = '请输入有效的十进制数字';
+                return;
+            }
+            
+            if (decimalNumber < 0) {
+                decimalError.textContent = '请输入非负整数';
+                return;
+            }
+            
+            const binaryString = decimalNumber.toString(2);
+            binaryResult.textContent = `二进制: ${binaryString}`;
+            
+            // 显示二进制位可视化
+            for (let i = 0; i < binaryString.length; i++) {
+                const bit = document.createElement('div');
+                bit.className = `bit ${binaryString[i] === '1' ? 'active' : ''}`;
+                bit.textContent = binaryString[i];
+                bit.title = `第 ${binaryString.length - i - 1} 位 (${Math.pow(2, binaryString.length - i - 1)})`;
+                binaryBits.appendChild(bit);
+            }
+        });
+        
+        document.getElementById('binaryToDecimalBtn').addEventListener('click', function() {
+            const binaryInput = document.getElementById('binaryInput').value.trim();
+            const decimalResult = document.getElementById('decimalResult');
+            const binaryError = document.getElementById('binaryError');
+            
+            decimalResult.textContent = '';
+            binaryError.textContent = '';
+            
+            if (!binaryInput) {
+                binaryError.textContent = '请输入一个二进制数字';
+                return;
+            }
+            
+            // 验证是否为有效的二进制数
+            if (!/^[01]+$/.test(binaryInput)) {
+                binaryError.textContent = '请输入有效的二进制数字 (仅包含0和1)';
+                return;
+            }
+            
+            const decimalNumber = parseInt(binaryInput, 2);
+            decimalResult.textContent = `十进制: ${decimalNumber}`;
+        });
+        
+        // 允许按Enter键触发转换
+        document.getElementById('decimalInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('decimalToBinaryBtn').click();
+            }
+        });
+        
+        document.getElementById('binaryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('binaryToDecimalBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>
