@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>马拉松配速时间计算器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 1200px;
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .marathon-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: #f0f7ff;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .marathon-distance {
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+        }
+        
+        .calculator-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 25px;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin: 15px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        h2 i {
+            font-size: 1.5rem;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input {
+            padding: 14px 18px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .input-hint {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 8px;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            width: 100%;
+            letter-spacing: 0.5px;
+        }
+        
+        button:hover {
+            background: linear-gradient(90deg, #2980b9, #2573a7);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+        
+        .explanation {
+            margin-top: 15px;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .example {
+            background: #e8f4fc;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        
+        /* 分段成绩表样式 */
+        .splits-container {
+            margin-top: 30px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .splits-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .splits-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .splits-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        .splits-table tr:nth-child(even) {
+            background: #f5f9ff;
+        }
+        
+        .splits-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .splits-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .split-distance {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .split-time {
+            font-weight: 500;
+            color: #e74c3c;
+        }
+        
+        .split-cumulative {
+            color: #2980b9;
+        }
+        
+        .split-pace {
+            color: #27ae60;
+        }
+        
+        .progress-container {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 25px 0 15px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0;
+            transition: width 1s ease-in-out;
+        }
+        
+        .distance-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            font-size: 0.95rem;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .splits-table {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-running"></i> 马拉松配速时间计算器</h1>
+            <p class="subtitle">计算配速、完成时间及每5公里分段累积时间</p>
+        </header>
+        
+        <div class="marathon-info">
+            <div class="marathon-distance">
+                <i class="fas fa-route"></i> 全程马拉松距离: 42.195公里
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="calculator-section">
+                <h2><i class="fas fa-stopwatch"></i> 计算每公里配速</h2>
+                <div class="input-group">
+                    <label for="finish-time">马拉松完成时间</label>
+                    <div class="input-container">
+                        <input type="text" id="finish-time" placeholder="例如: 325 (3小时25分)" maxlength="4">
+                    </div>
+                    <div class="input-hint">输入格式: 3小时25分输入"325"，4小时5分输入"405"</div>
+                </div>
+                
+                <button id="calculate-pace">计算配速</button>
+                
+                <div class="result" id="pace-result">
+                    <div class="result-title">
+                        <i class="fas fa-tachometer-alt"></i> 每公里配速:
+                    </div>
+                    <div class="result-value" id="pace-value">--</div>
+                    <div class="explanation">
+                        此配速表示完成全程马拉松需要保持每公里消耗的时间。
+                    </div>
+                    <div class="example">
+                        示例: 输入"325"（3小时25分）会得到配速"452"（4分52秒/公里）
+                    </div>
+                </div>
+            </div>
+            
+            <div class="calculator-section">
+                <h2><i class="fas fa-clock"></i> 计算马拉松完成时间</h2>
+                <div class="input-group">
+                    <label for="pace-time">每公里配速</label>
+                    <div class="input-container">
+                        <input type="text" id="pace-time" placeholder="例如: 500 (5分0秒)" maxlength="4">
+                    </div>
+                    <div class="input-hint">输入格式: 5分钟输入"500"，4分30秒输入"430"</div>
+                </div>
+                
+                <button id="calculate-time">计算完成时间</button>
+                
+                <div class="result" id="time-result">
+                    <div class="result-title">
+                        <i class="fas fa-flag-checkered"></i> 马拉松完成时间:
+                    </div>
+                    <div class="result-value" id="time-value">--</div>
+                    <div class="explanation">
+                        此时间表示以指定配速完成全程马拉松所需的总时间。
+                    </div>
+                    <div class="example">
+                        示例: 输入"500"（5分钟/公里）会得到完成时间"350"（3小时50分）
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分段成绩表容器 -->
+        <div class="splits-container">
+            <div class="splits-title">
+                <i class="fas fa-list-ol"></i> 每5公里分段累积时间表
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="distance-labels">
+                <span>0km</span>
+                <span>5km</span>
+                <span>10km</span>
+                <span>15km</span>
+                <span>20km</span>
+                <span>25km</span>
+                <span>30km</span>
+                <span>35km</span>
+                <span>40km</span>
+                <span>42.195km</span>
+            </div>
+            <table class="splits-table">
+                <thead>
+                    <tr>
+                        <th>距离 (公里)</th>
+                        <th>分段配速</th>
+                        <th>分段耗时</th>
+                        <th>累积时间</th>
+                    </tr>
+                </thead>
+                <tbody id="splits-table-body">
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 30px;">
+                            输入配速或完成时间后，将显示每5公里分段成绩
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer>
+            <p>© 2023 马拉松配速时间计算器 | 42.195公里全程马拉松专用工具</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const marathonDistance = 42.195;
+            const splits = [5, 10, 15, 20, 25, 30, 35, 40, 42.195];
+            
+            // 计算配速按钮事件
+            document.getElementById('calculate-pace').addEventListener('click', function() {
+                const finishTimeInput = document.getElementById('finish-time').value.trim();
+                
+                if (!finishTimeInput) {
+                    alert('请输入完成时间');
+                    return;
+                }
+                
+                const totalMinutes = parseTimeInput(finishTimeInput);
+                if (totalMinutes === null) {
+                    alert('输入格式错误，请使用3位或4位数字，如325表示3小时25分');
+                    return;
+                }
+                
+                // 计算每公里配速（分钟）
+                const pacePerKm = totalMinutes / marathonDistance;
+                const paceMinutes = Math.floor(pacePerKm);
+                const paceSeconds = Math.round((pacePerKm - paceMinutes) * 60);
+                
+                // 格式化配速
+                const formattedPace = formatPace(paceMinutes, paceSeconds);
+                
+                // 显示结果
+                document.getElementById('pace-value').textContent = formattedPace;
+                
+                // 生成分段成绩表
+                generateSplitTable(pacePerKm, totalMinutes);
+                
+                // 更新进度条
+                updateProgressBar();
+            });
+            
+            // 计算完成时间按钮事件
+            document.getElementById('calculate-time').addEventListener('click', function() {
+                const paceInput = document.getElementById('pace-time').value.trim();
+                
+                if (!paceInput) {
+                    alert('请输入配速');
+                    return;
+                }
+                
+                const paceMinutes = parsePaceInput(paceInput);
+                if (paceMinutes === null) {
+                    alert('输入格式错误，请使用3位或4位数字，如500表示5分0秒');
+                    return;
+                }
+                
+                // 计算总时间（分钟）
+                const totalMinutes = paceMinutes * marathonDistance;
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = Math.round(totalMinutes % 60);
+                
+                // 格式化时间
+                const formattedTime = formatTime(hours, minutes);
+                
+                // 显示结果
+                document.getElementById('time-value').textContent = formattedTime;
+                
+                // 生成分段成绩表
+                generateSplitTable(paceMinutes, totalMinutes);
+                
+                // 更新进度条
+                updateProgressBar();
+            });
+            
+            // 解析时间输入（如"325" -> 3小时25分 -> 205分钟）
+            function parseTimeInput(input) {
+                if (!/^\d{3,4}$/.test(input)) return null;
+                
+                // 最后两位是分钟，前面是小时
+                const minutesPart = parseInt(input.slice(-2));
+                const hoursPart = parseInt(input.slice(0, -2)) || 0;
+                
+                if (minutesPart >= 60) return null;
+                
+                return hoursPart * 60 + minutesPart;
+            }
+            
+            // 解析配速输入（如"430" -> 4分30秒 -> 4.5分钟）
+            function parsePaceInput(input) {
+                if (!/^\d{3,4}$/.test(input)) return null;
+                
+                // 最后两位是秒，前面是分钟
+                const secondsPart = parseInt(input.slice(-2));
+                const minutesPart = parseInt(input.slice(0, -2)) || 0;
+                
+                if (secondsPart >= 60) return null;
+                
+                return minutesPart + secondsPart / 60;
+            }
+            
+            // 格式化配速输出（如4分30秒 -> "430"）
+            function formatPace(minutes, seconds) {
+                return minutes.toString() + seconds.toString().padStart(2, '0');
+            }
+            
+            // 格式化时间输出（如3小时25分 -> "325"）
+            function formatTime(hours, minutes) {
+                return hours.toString() + minutes.toString().padStart(2, '0');
+            }
+            
+            // 格式化时间为 HH:MM:SS
+            function formatTimeHMS(totalMinutes) {
+                const totalSeconds = Math.round(totalMinutes * 60);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            // 生成分段成绩表
+            function generateSplitTable(pacePerKm, totalMinutes) {
+                const tableBody = document.getElementById('splits-table-body');
+                tableBody.innerHTML = '';
+                
+                let prevDistance = 0;
+                let cumulativeTime = 0;
+                
+                splits.forEach(distance => {
+                    // 计算分段距离
+                    const segmentDistance = distance - prevDistance;
+                    
+                    // 计算分段耗时（分钟）
+                    const segmentTime = segmentDistance * pacePerKm;
+                    
+                    // 计算累积时间
+                    cumulativeTime += segmentTime;
+                    
+                    // 计算配速
+                    const segmentPaceMinutes = Math.floor(pacePerKm);
+                    const segmentPaceSeconds = Math.round((pacePerKm - segmentPaceMinutes) * 60);
+                    const formattedPace = `${segmentPaceMinutes}:${segmentPaceSeconds.toString().padStart(2, '0')}/km`;
+                    
+                    // 创建表格行
+                    const row = document.createElement('tr');
+                    
+                    // 特殊标记半程点和全程点
+                    let distanceClass = "split-distance";
+                    if (Math.abs(distance - 21.0975) < 0.1) distanceClass += " highlight";
+                    if (Math.abs(distance - 42.195) < 0.1) distanceClass += " highlight";
+                    
+                    row.innerHTML = `
+                        <td class="${distanceClass}">${distance.toFixed(3)} km</td>
+                        <td class="split-pace">${formattedPace}</td>
+                        <td class="split-time">${formatTimeHMS(segmentTime)}</td>
+                        <td class="split-cumulative">${formatTimeHMS(cumulativeTime)}</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                    prevDistance = distance;
+                });
+            }
+            
+            // 更新进度条
+            function updateProgressBar() {
+                const progressBar = document.getElementById('progress-bar');
+                progressBar.style.width = '100%';
+                
+                // 添加动画效果
+                setTimeout(() => {
+                    progressBar.style.transition = 'width 0.5s ease-in-out';
+                    progressBar.style.width = '0%';
+                    
+                    setTimeout(() => {
+                        progressBar.style.transition = 'width 2s ease-in-out';
+                        progressBar.style.width = '100%';
+                    }, 50);
+                }, 10);
+            }
+        });
+    </script>
+</body>
+</html>
