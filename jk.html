@@ -1,377 +1,582 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
-    <title>智能监控系统1.0</title>
-    <style>
-        body {
-            background-color: #030b25;
-            font-family: 'Roboto', sans-serif;
-            color: #7df9ff;
-            margin: 0;
-            padding: 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* 背景装饰线条 */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: linear-gradient(90deg, rgba(125, 249, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(rgba(125, 249, 255, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-        }
-
-        /* 添加过渡效果 */
-        button {
-            transition: all 0.3s ease;
-        }
-
-        /* 为可交互元素添加悬停效果 */
-        button:hover {
-            transform: scale(1.05);
-        }
-
-        /* 为截图添加动画效果 */
-        #captures img {
-            transition: transform 0.3s ease;
-        }
-
-        #captures img:hover {
-            transform: scale(1.1);
-        }
-
-        /* 截图显示区域样式 */
-        #captures {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-        }
-
-        #captures img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            cursor: pointer;
-            border: 2px solid #7df9ff;
-            box-shadow: 0 0 10px rgba(125, 249, 255, 0.5);
-        }
-
-        /* 模态框样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.9);
-        }
-
-        .modal-content {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 700px;
-            animation-name: zoom;
-            animation-duration: 0.6s;
-            border: 2px solid #7df9ff;
-            box-shadow: 0 0 20px rgba(125, 249, 255, 0.8);
-        }
-
-        @keyframes zoom {
-            from {
-                transform: scale(0);
-            }
-            to {
-                transform: scale(1);
-            }
-        }
-
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #7df9ff;
-            font-size: 40px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #bbb;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        /* 标题样式 */
-        h1 {
-            text-align: center;
-            margin: 2rem 0;
-            text-shadow: 0 0 10px rgba(125, 249, 255, 0.8);
-        }
-
-        /* 视频和画布容器样式 */
-        #video-container {
-            position: relative;
-            width: 640px;
-            height: 480px;
-            margin: 0 auto;
-            border: 2px solid #7df9ff;
-            box-shadow: 0 0 20px rgba(125, 249, 255, 0.8);
-        }
-
-        /* 控制按钮样式 */
-        #controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        #controls button {
-            background-color: #7df9ff;
-            color: #030b25;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-
-        #controls input[type="range"] {
-            background-color: #7df9ff;
-            height: 5px;
-            border-radius: 5px;
-        }
-
-        #controls input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 15px;
-            height: 15px;
-            background-color: #030b25;
-            border: 2px solid #7df9ff;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        /* 线条的 LED 灯光效果 */
-        #canvas {
-            filter: drop-shadow(0 0 10px rgba(125, 249, 255, 0.8));
-        }
-
-        #video-container {
-            filter: drop-shadow(0 0 20px rgba(125, 249, 255, 0.8));
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>考试智能监场系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#DC2626', // 红色作为主色调
+            secondary: '#1E40AF', // 蓝色作为辅助色
+            neutral: '#1F2937', // 深色中性色
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .backdrop-blur-sm {
+        backdrop-filter: blur(4px);
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .transition-all-300 {
+        transition: all 0.3s ease;
+      }
+    }
+  </style>
 </head>
-
-<body>
-    <div class="container mx-auto p-8">
-        <h1 class="text-3xl font-bold text-center mb-8">智能监控系统1.0</h1>
-        <div id="video-container">
-            <video id="video" width="640" height="480" autoplay class="block"></video>
-            <canvas id="canvas" width="640" height="480" class="absolute top-0 left-0"></canvas>
-        </div>
-        <div id="controls">
-            <label for="sensitivity" class="text-lg font-medium">运动检测灵敏度:</label>
-            <input type="range" id="sensitivity" min="1" max="100" value="50"
-                class="w-full h-2 bg-gray-300 rounded-md appearance-none cursor-pointer">
-            <button id="capture">
-                <i class="fa-solid fa-camera"></i> 截图
-            </button>
-            <button id="camera-switch">
-                <i class="fa-solid fa-video"></i> 开启摄像头
-            </button>
-        </div>
-        <div id="captures" class="mt-8">
-            <!-- 截图将显示在这里 -->
-        </div>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <!-- 导航栏 -->
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-primary flex items-center">
+        <i class="fa fa-video-camera mr-2"></i>考试智能监场系统
+      </h1>
+      <button id="settingsBtn" class="bg-gray-100 hover:bg-gray-200 text-neutral px-4 py-2 rounded-lg transition-all duration-300 flex items-center">
+        <i class="fa fa-cog mr-2"></i>设置
+      </button>
     </div>
+  </header>
 
-    <!-- 模态框 -->
-    <div id="myModal" class="modal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImg">
+  <main class="flex-grow container mx-auto px-4 py-8">
+    <!-- 倒计时区域 -->
+    <div class="flex justify-center my-8">
+      <div id="countdownDisplay" class="text-[clamp(2rem,5vw,4rem)] font-bold text-primary text-center p-4 rounded-xl bg-white shadow-lg">
+        00:00:00
+      </div>
     </div>
+    
+    <!-- 控制按钮 -->
+    <div class="flex justify-center mb-8">
+      <button id="startExamBtn" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center">
+        <i class="fa fa-play-circle mr-2"></i>开始考试
+      </button>
+    </div>
+    
+    <!-- 视频监控区域 -->
+    <div id="monitoringArea" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6 bg-white rounded-xl shadow-xl p-6 mb-8">
+      <!-- 视频显示区 -->
+      <div class="lg:col-span-2 relative rounded-lg overflow-hidden bg-gray-100 aspect-video flex items-center justify-center">
+        <video id="videoElement" autoplay muted playsinline class="w-full h-full object-contain" poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'%3E%3Crect width='100%25' height='100%25' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='Arial' font-size='24'%3E摄像头画面将显示在这里%3C/text%3E%3C/svg%3E"></video>
+        <div id="loadingOverlay" class="absolute inset-0 bg-black/50 flex items-center justify-center">
+          <div class="text-white text-center">
+            <i class="fa fa-circle-o-notch fa-spin text-4xl mb-2"></i>
+            <p>正在启动摄像头...</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 控制面板 -->
+      <div class="flex flex-col justify-between">
+        <div>
+          <button id="cameraToggle" class="w-full bg-secondary hover:bg-secondary/90 text-white font-medium py-3 px-4 rounded-lg mb-4 flex items-center justify-center transition-all duration-300">
+            <i class="fa fa-video-camera mr-2"></i>开启摄像头
+          </button>
+          
+          <button id="captureToggle" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg mb-6 flex items-center justify-center transition-all duration-300 opacity-50 cursor-not-allowed">
+            <i class="fa fa-camera mr-2"></i>开始捕捉
+          </button>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h3 class="font-medium text-neutral mb-3">灵敏度调节</h3>
+          <div class="flex items-center">
+            <i class="fa fa-low-vision text-gray-500 mr-2"></i>
+            <input id="sensitivitySlider" type="range" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-secondary">
+            <i class="fa fa-high-vision text-gray-500 ml-2"></i>
+          </div>
+          <div class="flex justify-between text-xs text-gray-500 mt-1">
+            <span>低精度</span>
+            <span id="sensitivityValue">50</span>
+            <span>高精度</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 截图展示区 -->
+    <div id="capturesContainer" class="hidden">
+      <h2 class="text-xl font-bold text-neutral mb-4 flex items-center">
+        <i class="fa fa-images mr-2"></i>移动检测截图
+        <span id="captureCount" class="ml-2 text-sm font-normal bg-gray-100 text-gray-600 px-2 py-1 rounded-full">0</span>
+      </h2>
+      
+      <div id="capturesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <!-- 截图将动态添加到这里 -->
+        <div class="col-span-full text-center py-16 text-gray-400">
+          <i class="fa fa-film text-5xl mb-4"></i>
+          <p>暂无截图</p>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <footer class="bg-neutral text-white py-6">
+    <div class="container mx-auto px-4 text-center">
+      <p>© 2025 考试智能监场系统 - 保护考试公平</p>
+    </div>
+  </footer>
+  
+  <!-- 设置对话框 -->
+  <div id="settingsModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden backdrop-blur-sm">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-neutral">考试设置</h3>
+        <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <div class="mb-6">
+        <label for="examDuration" class="block text-sm font-medium text-gray-700 mb-2">考试时长</label>
+        <div class="flex items-center">
+          <input type="number" id="examHours" min="0" max="23" value="0" class="w-16 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/50">
+          <span class="mx-2 text-gray-500">小时</span>
+          <input type="number" id="examMinutes" min="0" max="59" value="60" class="w-16 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/50">
+          <span class="mx-2 text-gray-500">分钟</span>
+          <input type="number" id="examSeconds" min="0" max="59" value="0" class="w-16 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/50">
+          <span class="mx-2 text-gray-500">秒</span>
+        </div>
+      </div>
+      
+      <div class="flex justify-end space-x-3">
+        <button id="cancelSettings" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+          取消
+        </button>
+        <button id="confirmSettings" class="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary/90 transition-colors">
+          确定
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 图片查看器模态框 -->
+  <div id="imageViewer" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+    <div class="max-w-4xl w-full max-h-[90vh] relative">
+      <button id="closeViewer" class="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
+        <i class="fa fa-times text-2xl"></i>
+      </button>
+      <img id="fullsizeImage" src="" alt="截图大图" class="max-w-full max-h-[80vh] object-contain mx-auto">
+      <div class="mt-4 text-center">
+        <button id="downloadImage" class="px-4 py-2 bg-white text-neutral rounded-md hover:bg-gray-100 transition-colors">
+          <i class="fa fa-download mr-1"></i> 保存图片
+        </button>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const sensitivityInput = document.getElementById('sensitivity');
-        const captureButton = document.getElementById('capture');
-        const capturesDiv = document.getElementById('captures');
-        const cameraSwitch = document.getElementById('camera-switch');
-        const modal = document.getElementById('myModal');
-        const modalImg = document.getElementById('modalImg');
-        const closeBtn = document.getElementsByClassName('close')[0];
-
-        let prevFrame = null;
-        let stream = null;
-        let isCameraOn = false;
-        let lastCaptureTime = 0;
-        let isMotionDetected = false;
-        const captureInterval = 500; // 0.5 秒，单位为毫秒
-
-        async function startCamera() {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                isCameraOn = true;
-                cameraSwitch.textContent = '关闭摄像头';
-                cameraSwitch.classList.remove('bg-green-500');
-                cameraSwitch.classList.add('bg-red-500');
-            } catch (error) {
-                console.error('无法访问摄像头:', error);
-            }
+  <script>
+    // 全局变量
+    let examDuration = 60 * 60; // 默认60分钟，单位：秒
+    let countdownTimer = null;
+    let remainingTime = examDuration;
+    let isCameraOn = false;
+    let isCapturing = false;
+    let motionSensitivity = 50;
+    let captureInterval = null;
+    let imageDataArray = [];
+    let videoElement = document.getElementById('videoElement');
+    let canvasElement = document.createElement('canvas');
+    let ctx = canvasElement.getContext('2d');
+    let prevFrame = null;
+    let lastCaptureTime = 0;
+    const MIN_CAPTURE_INTERVAL = 500; // 两次截图之间的最小间隔（毫秒）
+    
+    // DOM 元素
+    const settingsBtn = document.getElementById('settingsBtn');
+    const startExamBtn = document.getElementById('startExamBtn');
+    const cameraToggle = document.getElementById('cameraToggle');
+    const captureToggle = document.getElementById('captureToggle');
+    const sensitivitySlider = document.getElementById('sensitivitySlider');
+    const sensitivityValue = document.getElementById('sensitivityValue');
+    const monitoringArea = document.getElementById('monitoringArea');
+    const capturesContainer = document.getElementById('capturesContainer');
+    const capturesGrid = document.getElementById('capturesGrid');
+    const captureCount = document.getElementById('captureCount');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    
+    // 设置对话框元素
+    const settingsModal = document.getElementById('settingsModal');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.getElementById('closeModal');
+    const cancelSettings = document.getElementById('cancelSettings');
+    const confirmSettings = document.getElementById('confirmSettings');
+    const examHours = document.getElementById('examHours');
+    const examMinutes = document.getElementById('examMinutes');
+    const examSeconds = document.getElementById('examSeconds');
+    
+    // 图片查看器元素
+    const imageViewer = document.getElementById('imageViewer');
+    const fullsizeImage = document.getElementById('fullsizeImage');
+    const closeViewer = document.getElementById('closeViewer');
+    const downloadImage = document.getElementById('downloadImage');
+    
+    // 初始化
+    function init() {
+      // 设置事件监听器
+      settingsBtn.addEventListener('click', openSettings);
+      closeModal.addEventListener('click', closeSettings);
+      cancelSettings.addEventListener('click', closeSettings);
+      confirmSettings.addEventListener('click', saveSettings);
+      
+      startExamBtn.addEventListener('click', startExam);
+      cameraToggle.addEventListener('click', toggleCamera);
+      captureToggle.addEventListener('click', toggleCapture);
+      
+      sensitivitySlider.addEventListener('input', updateSensitivity);
+      
+      closeViewer.addEventListener('click', closeImageViewer);
+      downloadImage.addEventListener('click', downloadCurrentImage);
+      
+      // 确保视频和画布尺寸一致
+      videoElement.addEventListener('loadedmetadata', function() {
+        canvasElement.width = videoElement.videoWidth;
+        canvasElement.height = videoElement.videoHeight;
+      });
+    }
+    
+    // 设置相关函数
+    function openSettings() {
+      // 显示当前设置
+      const hours = Math.floor(examDuration / 3600);
+      const minutes = Math.floor((examDuration % 3600) / 60);
+      const seconds = examDuration % 60;
+      
+      examHours.value = hours;
+      examMinutes.value = minutes;
+      examSeconds.value = seconds;
+      
+      // 显示模态框并添加动画
+      settingsModal.classList.remove('hidden');
+      setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+    
+    function closeSettings() {
+      // 添加关闭动画
+      modalContent.classList.remove('scale-100', 'opacity-100');
+      modalContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        settingsModal.classList.add('hidden');
+      }, 300);
+    }
+    
+    function saveSettings() {
+      const hours = parseInt(examHours.value) || 0;
+      const minutes = parseInt(examMinutes.value) || 0;
+      const seconds = parseInt(examSeconds.value) || 0;
+      
+      // 计算总秒数
+      examDuration = hours * 3600 + minutes * 60 + seconds;
+      
+      // 更新倒计时显示
+      updateCountdownDisplay(examDuration);
+      
+      // 关闭设置对话框
+      closeSettings();
+    }
+    
+    // 考试控制函数
+    function startExam() {
+      // 重置考试状态
+      remainingTime = examDuration;
+      updateCountdownDisplay(remainingTime);
+      
+      // 显示监控区域
+      monitoringArea.classList.remove('hidden');
+      capturesContainer.classList.remove('hidden');
+      
+      // 禁用开始考试按钮
+      startExamBtn.disabled = true;
+      startExamBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      
+      // 启动倒计时
+      startCountdown();
+    }
+    
+    function startCountdown() {
+      if (countdownTimer) clearInterval(countdownTimer);
+      
+      countdownTimer = setInterval(() => {
+        remainingTime--;
+        updateCountdownDisplay(remainingTime);
+        
+        if (remainingTime <= 0) {
+          endExam();
         }
-
-        function stopCamera() {
-            if (stream) {
-                const tracks = stream.getTracks();
-                tracks.forEach(track => track.stop());
-                video.srcObject = null;
-                isCameraOn = false;
-                cameraSwitch.textContent = '开启摄像头';
-                cameraSwitch.classList.remove('bg-red-500');
-                cameraSwitch.classList.add('bg-green-500');
-            }
+      }, 1000);
+    }
+    
+    function endExam() {
+      clearInterval(countdownTimer);
+      
+      // 停止摄像头和捕捉
+      if (isCameraOn) toggleCamera();
+      if (isCapturing) toggleCapture();
+      
+      // 显示考试结束消息
+      document.getElementById('countdownDisplay').textContent = '考试结束';
+      document.getElementById('countdownDisplay').classList.add('text-green-600');
+      
+      // 启用开始考试按钮
+      setTimeout(() => {
+        startExamBtn.disabled = false;
+        startExamBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        document.getElementById('countdownDisplay').classList.remove('text-green-600');
+      }, 3000);
+    }
+    
+    function updateCountdownDisplay(seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      
+      document.getElementById('countdownDisplay').textContent = 
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    // 摄像头控制函数
+    async function toggleCamera() {
+      if (isCameraOn) {
+        // 关闭摄像头
+        if (videoElement.srcObject) {
+          videoElement.srcObject.getTracks().forEach(track => track.stop());
         }
-
-        function detectMotion(frame) {
-            const width = frame.width;
-            const height = frame.height;
-            const sensitivity = parseInt(sensitivityInput.value);
-
-            const motionAreas = [];
-
-            if (prevFrame) {
-                const currentData = frame.data;
-                const prevData = prevFrame.data;
-
-                for (let y = 0; y < height; y++) {
-                    for (let x = 0; x < width; x++) {
-                        const index = (y * width + x) * 4;
-                        const diff = Math.abs(currentData[index] - prevData[index]) +
-                            Math.abs(currentData[index + 1] - prevData[index + 1]) +
-                            Math.abs(currentData[index + 2] - prevData[index + 2]);
-
-                        if (diff > sensitivity) {
-                            motionAreas.push({ x, y });
-                        }
-                    }
-                }
-            }
-
-            prevFrame = frame;
-            return motionAreas;
+        videoElement.srcObject = null;
+        cameraToggle.innerHTML = '<i class="fa fa-video-camera mr-2"></i>开启摄像头';
+        cameraToggle.classList.remove('bg-red-500');
+        cameraToggle.classList.add('bg-secondary');
+        
+        // 如果正在捕捉，停止捕捉
+        if (isCapturing) {
+          toggleCapture();
         }
-
-        function drawMotionAreas(motionAreas) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (motionAreas.length > 0) {
-                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-                motionAreas.forEach(({ x, y }) => {
-                    minX = Math.min(minX, x);
-                    minY = Math.min(minY, y);
-                    maxX = Math.max(maxX, x);
-                    maxY = Math.max(maxY, y);
-                });
-
-                ctx.strokeStyle = 'red';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
-            }
+        
+        isCameraOn = false;
+      } else {
+        // 开启摄像头
+        try {
+          loadingOverlay.classList.remove('hidden');
+          
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            } 
+          });
+          
+          videoElement.srcObject = stream;
+          cameraToggle.innerHTML = '<i class="fa fa-video-camera mr-2"></i>关闭摄像头';
+          cameraToggle.classList.remove('bg-secondary');
+          cameraToggle.classList.add('bg-red-500');
+          
+          isCameraOn = true;
+          
+          // 启用捕捉按钮
+          captureToggle.disabled = false;
+          captureToggle.classList.remove('opacity-50', 'cursor-not-allowed');
+          
+          // 延迟隐藏加载动画，确保视频已加载
+          videoElement.onloadeddata = () => {
+            setTimeout(() => {
+              loadingOverlay.classList.add('hidden');
+            }, 500);
+          };
+        } catch (error) {
+          console.error('无法访问摄像头:', error);
+          loadingOverlay.classList.add('hidden');
+          alert('无法访问摄像头，请确保您的设备有摄像头并已授予权限。');
         }
-
-        function captureWithTime() {
-            if (isCameraOn) {
-                const captureCanvas = document.createElement('canvas');
-                captureCanvas.width = canvas.width;
-                captureCanvas.height = canvas.height;
-                const captureCtx = captureCanvas.getContext('2d');
-                captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
-                const img = document.createElement('img');
-                img.src = captureCanvas.toDataURL('image/png');
-
-                const timeStamp = new Date().toLocaleString();
-                const timeStampElement = document.createElement('p');
-                timeStampElement.textContent = timeStamp;
-
-                const captureWrapper = document.createElement('div');
-                captureWrapper.appendChild(img);
-                captureWrapper.appendChild(timeStampElement);
-
-                capturesDiv.prepend(captureWrapper);
-
-                img.addEventListener('click', function () {
-                    modal.style.display = 'block';
-                    modalImg.src = this.src;
-                });
-            }
+      }
+    }
+    
+    // 捕捉控制函数
+    function toggleCapture() {
+      if (isCapturing) {
+        // 停止捕捉
+        if (captureInterval) clearInterval(captureInterval);
+        captureInterval = null;
+        prevFrame = null;
+        
+        captureToggle.innerHTML = '<i class="fa fa-camera mr-2"></i>开始捕捉';
+        captureToggle.classList.remove('bg-green-500');
+        captureToggle.classList.add('bg-gray-600');
+        
+        isCapturing = false;
+      } else {
+        // 开始捕捉
+        captureInterval = setInterval(detectMotion, 100); // 每100ms检查一次
+        captureToggle.innerHTML = '<i class="fa fa-camera mr-2"></i>停止捕捉';
+        captureToggle.classList.remove('bg-gray-600');
+        captureToggle.classList.add('bg-green-500');
+        
+        isCapturing = true;
+      }
+    }
+    
+    // 灵敏度更新函数
+    function updateSensitivity() {
+      motionSensitivity = parseInt(sensitivitySlider.value);
+      sensitivityValue.textContent = motionSensitivity;
+    }
+    
+    // 移动检测函数
+    function detectMotion() {
+      if (!isCameraOn || !isCapturing) return;
+      
+      // 绘制当前帧到画布
+      ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      const currentFrame = ctx.getImageData(0, 0, canvasElement.width, canvasElement.height);
+      
+      // 如果是第一帧，保存并返回
+      if (!prevFrame) {
+        prevFrame = currentFrame;
+        return;
+      }
+      
+      // 计算两帧之间的差异
+      const motionDetected = compareFrames(prevFrame, currentFrame, motionSensitivity);
+      
+      // 更新上一帧
+      prevFrame = currentFrame;
+      
+      // 如果检测到移动且距离上次截图足够久，则截图
+      const now = Date.now();
+      if (motionDetected && now - lastCaptureTime > MIN_CAPTURE_INTERVAL) {
+        captureImage();
+        lastCaptureTime = now;
+      }
+    }
+    
+    // 比较两帧以检测移动
+    function compareFrames(prevFrame, currentFrame, sensitivity) {
+      const threshold = sensitivity / 100; // 将0-100的灵敏度转换为0-1的阈值
+      const data1 = prevFrame.data;
+      const data2 = currentFrame.data;
+      const pixelCount = data1.length / 4; // 每个像素有4个值(RGBA)
+      let diffCount = 0;
+      
+      // 每隔一定像素检查一次，提高性能
+      const step = 10;
+      for (let i = 0; i < pixelCount; i += step) {
+        const index = i * 4;
+        const rDiff = Math.abs(data1[index] - data2[index]);
+        const gDiff = Math.abs(data1[index + 1] - data2[index + 1]);
+        const bDiff = Math.abs(data1[index + 2] - data2[index + 2]);
+        
+        // 如果任一颜色通道差异超过阈值，则认为是移动
+        if (rDiff > 30 || gDiff > 30 || bDiff > 30) {
+          diffCount++;
         }
-
-        function processFrame() {
-            if (isCameraOn) {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const motionAreas = detectMotion(frame);
-                drawMotionAreas(motionAreas);
-
-                const currentTime = Date.now();
-                if (motionAreas.length > 0) {
-                    isMotionDetected = true;
-                    if (currentTime - lastCaptureTime >= captureInterval) {
-                        captureWithTime();
-                        lastCaptureTime = currentTime;
-                    }
-                } else {
-                    isMotionDetected = false;
-                }
-            }
-            requestAnimationFrame(processFrame);
-        }
-
-        captureButton.addEventListener('click', () => {
-            captureWithTime();
-        });
-
-        cameraSwitch.addEventListener('click', () => {
-            if (isCameraOn) {
-                stopCamera();
-            } else {
-                startCamera();
-            }
-        });
-
-        closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        window.addEventListener('click', function (event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        });
-
-        processFrame();
-    </script>
+      }
+      
+      // 计算移动像素的比例
+      const diffRatio = diffCount / (pixelCount / step);
+      
+      // 如果移动像素比例超过阈值，则认为检测到移动
+      return diffRatio > threshold;
+    }
+    
+    // 截图函数
+    function captureImage() {
+      // 绘制当前帧到画布
+      ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      
+      // 获取图片数据URL
+      const dataURL = canvasElement.toDataURL('image/jpeg', 0.8);
+      
+      // 添加到图片数组
+      imageDataArray.unshift({
+        id: Date.now(),
+        dataURL: dataURL,
+        timestamp: new Date().toLocaleString()
+      });
+      
+      // 更新UI
+      updateCapturesGrid();
+    }
+    
+    // 更新截图网格
+    function updateCapturesGrid() {
+      // 清空现有网格
+      capturesGrid.innerHTML = '';
+      
+      // 更新计数
+      captureCount.textContent = imageDataArray.length;
+      
+      // 如果没有截图，显示空状态
+      if (imageDataArray.length === 0) {
+        capturesGrid.innerHTML = `
+          <div class="col-span-full text-center py-16 text-gray-400">
+            <i class="fa fa-film text-5xl mb-4"></i>
+            <p>暂无截图</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // 添加所有截图
+      imageDataArray.forEach((image, index) => {
+        const thumbnail = document.createElement('div');
+        thumbnail.className = 'relative group cursor-pointer transition-all duration-300 hover:scale-105';
+        thumbnail.innerHTML = `
+          <img src="${image.dataURL}" alt="截图 ${index + 1}" class="w-full h-32 object-cover rounded-lg shadow-sm">
+          <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+            <span class="text-white text-sm">${image.timestamp}</span>
+          </div>
+        `;
+        
+        thumbnail.addEventListener('click', () => openImageViewer(index));
+        capturesGrid.appendChild(thumbnail);
+      });
+    }
+    
+    // 图片查看器函数
+    function openImageViewer(index) {
+      const image = imageDataArray[index];
+      fullsizeImage.src = image.dataURL;
+      fullsizeImage.alt = `截图 ${index + 1}`;
+      downloadImage.setAttribute('data-index', index);
+      
+      imageViewer.classList.remove('hidden');
+    }
+    
+    function closeImageViewer() {
+      imageViewer.classList.add('hidden');
+    }
+    
+    function downloadCurrentImage() {
+      const index = downloadImage.getAttribute('data-index');
+      const image = imageDataArray[index];
+      
+      const link = document.createElement('a');
+      link.href = image.dataURL;
+      link.download = `考试截图_${new Date().toISOString().replace(/:/g, '-')}.jpg`;
+      link.click();
+    }
+    
+    // 初始化应用
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
-
 </html>
     
