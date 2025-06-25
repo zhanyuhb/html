@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学生考试监场系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Marker Felt', 'Chalkboard SE', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6ecbf5, #a1eafb, #c2f5e9);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+            border: 8px solid #ff9e6d;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 4px dashed #ff6b6b;
+            border-radius: 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            color: #ff6b6b;
+            text-shadow: 3px 3px 0 #ffe66d;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(to right, #ff9e6d, #ff6b6b, #ff9e6d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleColor 8s infinite linear;
+        }
+        
+        @keyframes titleColor {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        h1::after {
+            content: "✏️📚🔍";
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .big-btn {
+            padding: 18px 35px;
+            font-size: 1.4rem;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .big-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
+        
+        .big-btn:hover::before {
+            transform: translateX(0);
+        }
+        
+        .big-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .big-btn:active {
+            transform: translateY(2px);
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, #1dd1a1, #10ac84);
+        }
+        
+        .stop-btn {
+            background: linear-gradient(45deg, #ff9f43, #ff6b6b);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(45deg, #54a0ff, #2e86de);
+        }
+        
+        .settings-btn {
+            background: linear-gradient(45deg, #f368e0, #ff9ff3);
+        }
+        
+        .timer-container {
+            text-align: center;
+            padding: 20px;
+            background: #ffecd9;
+            border-radius: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+            border: 5px solid #ff9e6d;
+            position: relative;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timer-container::before {
+            content: "⏱️";
+            position: absolute;
+            top: -25px;
+            left: 20px;
+            font-size: 2.5rem;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ff9e6d;
+        }
+        
+        .timer {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            text-shadow: 2px 2px 0 #ffe66d;
+            letter-spacing: 5px;
+            font-family: 'Digital', monospace;
+            padding: 15px;
+            background: linear-gradient(to bottom, #fff9ec, #ffecd9);
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 10px;
+            border: 3px dashed #ff9e6d;
+        }
+        
+        .monitoring-section {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .video-container {
+            flex: 1;
+            min-width: 400px;
+            background: #e2f3ff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 5px solid #54a0ff;
+            position: relative;
+        }
+        
+        .video-container::before {
+            content: "📹";
+            position: absolute;
+            top: -25px;
+            left: 20px;
+            font-size: 2.5rem;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #54a0ff;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 75%; /* 4:3 Aspect Ratio */
+            background: #c8e8ff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* 镜像翻转 */
+            background: #333;
+        }
+        
+        .controls-panel {
+            flex: 0 0 300px;
+            background: #ffedcc;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border: 5px solid #ffd166;
+            position: relative;
+        }
+        
+        .controls-panel::before {
+            content: "⚙️";
+            position: absolute;
+            top: -25px;
+            left: 20px;
+            font-size: 2.5rem;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ffd166;
+        }
+        
+        .control-group {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .control-group h3 {
+            margin-bottom: 15px;
+            color: #ff9e6d;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: center;
+            justify-content: center;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .control-btn {
+            padding: 16px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .cam-btn {
+            background: linear-gradient(45deg, #54a0ff, #2e86de);
+        }
+        
+        .capture-btn {
+            background: linear-gradient(45deg, #1dd1a1, #10ac84);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 20px;
+            -webkit-appearance: none;
+            background: linear-gradient(to right, #1dd1a1, #ffd166, #ff6b6b);
+            border-radius: 10px;
+            outline: none;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border: 3px solid #ff9e6d;
+        }
+        
+        .sensitivity-value {
+            width: 60px;
+            text-align: center;
+            font-weight: bold;
+            background: #ffeaa7;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            border: 2px solid #ffd166;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            background: #f7f7f7;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px dashed #ffd166;
+        }
+        
+        .indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ccc;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator.active {
+            background: #1dd1a1;
+            box-shadow: 0 0 10px #1dd1a1;
+        }
+        
+        .screenshots-section {
+            background: #e2f3ff;
+            border-radius: 20px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 5px solid #54a0ff;
+            position: relative;
+        }
+        
+        .screenshots-section::before {
+            content: "📸";
+            position: absolute;
+            top: -25px;
+            left: 20px;
+            font-size: 2.5rem;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #54a0ff;
+        }
+        
+        .screenshots-section h2 {
+            margin-bottom: 20px;
+            color: #2e86de;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            text-shadow: 1px 1px 0 white;
+        }
+        
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        
+        .screenshot-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            aspect-ratio: 4/3;
+            background: white;
+            border: 3px solid #ffd166;
+        }
+        
+        .screenshot-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        
+        .screenshot-item:hover {
+            transform: scale(1.05);
+            z-index: 2;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .screenshot-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .screenshot-time {
+            font-size: 0.75rem;
+            color: #ff6b6b;
+            display: block;
+            margin-top: 3px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            grid-column: 1 / -1;
+            background: #c8e8ff;
+            border-radius: 15px;
+            border: 3px dashed #54a0ff;
+        }
+        
+        .empty-state p {
+            font-size: 1.4rem;
+            color: #2e86de;
+            font-weight: bold;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: #54a0ff;
+            margin-bottom: 20px;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border: 5px solid #ff9e6d;
+        }
+        
+        .modal-content img {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 15px;
+            display: block;
+            margin: 0 auto;
+            border: 3px solid #54a0ff;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #ff6b6b;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .close-modal:hover {
+            transform: scale(1.1);
+            color: #ff9e6d;
+        }
+        
+        .save-btn {
+            padding: 15px 35px;
+            font-size: 1.3rem;
+            margin: 20px auto 0;
+            display: block;
+            background: linear-gradient(45deg, #1dd1a1, #10ac84);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .settings-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            border: 5px solid #f368e0;
+        }
+        
+        .settings-modal h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #f368e0;
+            font-size: 2rem;
+        }
+        
+        .setting-group {
+            margin-bottom: 25px;
+        }
+        
+        .setting-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+            color: #ff6b6b;
+            text-align: center;
+        }
+        
+        .setting-group input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: 3px solid #ffd166;
+            background: #fff9ec;
+            color: #333;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+        
+        .confirm-btn {
+            background: linear-gradient(45deg, #1dd1a1, #10ac84);
+        }
+        
+        .cancel-btn {
+            background: linear-gradient(45deg, #ff9f43, #ff6b6b);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #2e86de;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .detection-status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff9ec;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 1.3rem;
+            border: 3px solid #ffd166;
+            color: #ff6b6b;
+        }
+        
+        .detection-status.active {
+            background: #ffd9d9;
+            color: #ff6b6b;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 900px) {
+            .monitoring-section {
+                flex-direction: column;
+            }
+            
+            .video-container, .controls-panel {
+                min-width: 100%;
+            }
+            
+            .screenshots-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .timer {
+                font-size: 3.5rem;
+            }
+        }
+        
+        /* 卡通装饰元素 */
+        .decoration {
+            position: absolute;
+            z-index: -1;
+            font-size: 2rem;
+            opacity: 0.3;
+            animation: float 8s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        .dec-1 { top: 5%; left: 5%; animation-duration: 12s; }
+        .dec-2 { top: 10%; right: 5%; animation-duration: 10s; }
+        .dec-3 { bottom: 15%; left: 7%; animation-duration: 14s; }
+        .dec-4 { bottom: 20%; right: 8%; animation-duration: 9s; }
+    </style>
+</head>
+<body>
+    <div class="decoration dec-1">📚</div>
+    <div class="decoration dec-2">✏️</div>
+    <div class="decoration dec-3">🔍</div>
+    <div class="decoration dec-4">📝</div>
+    
+    <div class="container">
+        <header>
+            <h1>小学生考试监场系统</h1>
+            <div class="controls">
+                <button class="big-btn settings-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i> 系统设置
+                </button>
+                <button class="big-btn start-btn" id="startExamBtn">
+                    <i class="fas fa-play"></i> 开始考试
+                </button>
+                <button class="big-btn stop-btn" id="stopExamBtn">
+                    <i class="fas fa-pause"></i> 停止计时
+                </button>
+                <button class="big-btn reset-btn" id="resetBtn">
+                    <i class="fas fa-redo"></i> 重置系统
+                </button>
+            </div>
+        </header>
+        
+        <div class="timer-container">
+            <div class="timer" id="timer">00:00:00</div>
+        </div>
+        
+        <section class="monitoring-section">
+            <div class="video-container">
+                <div class="video-wrapper">
+                    <video id="video" autoplay playsinline></video>
+                </div>
+                <div class="detection-status" id="detectionStatus">
+                    <i class="fas fa-check-circle"></i> 当前没有检测到移动物体
+                </div>
+            </div>
+            
+            <div class="controls-panel">
+                <div class="control-group">
+                    <h3><i class="fas fa-video"></i> 摄像头控制</h3>
+                    <div class="btn-group">
+                        <button class="control-btn cam-btn" id="toggleCameraBtn">
+                            <i class="fas fa-camera"></i> 开启摄像头
+                        </button>
+                        <div class="status-indicator">
+                            <div class="indicator" id="cameraIndicator"></div>
+                            <span id="cameraStatus">摄像头已关闭</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-camera"></i> 移动监测</h3>
+                    <div class="btn-group">
+                        <button class="control-btn capture-btn" id="toggleCaptureBtn" disabled>
+                            <i class="fas fa-record-vinyl"></i> 开始捕捉
+                        </button>
+                        <div class="status-indicator">
+                            <div class="indicator" id="captureIndicator"></div>
+                            <span id="captureStatus">捕捉未激活</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-sliders-h"></i> 监测灵敏度</h3>
+                    <div class="slider-container">
+                        <input type="range" id="sensitivitySlider" min="1" max="100" value="40" disabled>
+                        <div class="sensitivity-value" id="sensitivityValue">40</div>
+                    </div>
+                    <div class="status-indicator">
+                        <div class="indicator"></div>
+                        <span>灵敏度越高，越容易检测到移动</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="screenshots-section">
+            <h2><i class="fas fa-images"></i> 捕捉到的图片</h2>
+            <div class="screenshots-grid" id="screenshotsGrid">
+                <div class="empty-state">
+                    <i class="fas fa-camera"></i>
+                    <p>系统检测到移动时会自动截图</p>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>小学生考试监场系统 © 2023 | 让考试更公平更有趣</p>
+        </footer>
+    </div>
+    
+    <!-- 设置模态框 -->
+    <div class="modal" id="settingsModal">
+        <div class="settings-modal">
+            <h2><i class="fas fa-cog"></i> 考试设置</h2>
+            <div class="setting-group">
+                <label for="examDuration"><i class="fas fa-clock"></i> 考试时长（分钟）</label>
+                <input type="number" id="examDuration" min="1" max="120" value="60">
+            </div>
+            <div class="modal-buttons">
+                <button class="confirm-btn" id="confirmSettings"><i class="fas fa-check"></i> 确定</button>
+                <button class="cancel-btn" id="cancelSettings"><i class="fas fa-times"></i> 取消</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 图片预览模态框 -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <img id="modalImage" src="" alt="预览图片">
+            <button class="save-btn" id="saveImageBtn"><i class="fas fa-download"></i> 保存图片</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const video = document.getElementById('video');
+        const timer = document.getElementById('timer');
+        const toggleCameraBtn = document.getElementById('toggleCameraBtn');
+        const toggleCaptureBtn = document.getElementById('toggleCaptureBtn');
+        const sensitivitySlider = document.getElementById('sensitivitySlider');
+        const sensitivityValue = document.getElementById('sensitivityValue');
+        const startExamBtn = document.getElementById('startExamBtn');
+        const stopExamBtn = document.getElementById('stopExamBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const confirmSettings = document.getElementById('confirmSettings');
+        const cancelSettings = document.getElementById('cancelSettings');
+        const examDuration = document.getElementById('examDuration');
+        const screenshotsGrid = document.getElementById('screenshotsGrid');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const saveImageBtn = document.getElementById('saveImageBtn');
+        const closeModal = document.querySelector('.close-modal');
+        const cameraIndicator = document.getElementById('cameraIndicator');
+        const captureIndicator = document.getElementById('captureIndicator');
+        const cameraStatus = document.getElementById('cameraStatus');
+        const captureStatus = document.getElementById('captureStatus');
+        const detectionStatus = document.getElementById('detectionStatus');
+
+        // 全局变量
+        let stream = null;
+        let isCameraOn = false;
+        let isCapturing = false;
+        let examStarted = false;
+        let examPaused = false;
+        let countdownInterval = null;
+        let secondsLeft = 0;
+        let lastScreenshotTime = 0;
+        let lastFrame = null;
+        let currentFrame = null;
+        let screenshots = [];
+        let diffCanvas = document.createElement('canvas');
+        let diffCtx = diffCanvas.getContext('2d');
+        
+        // 初始化
+        function init() {
+            // 加载保存的考试时长
+            const savedDuration = localStorage.getItem('examDuration');
+            if (savedDuration) {
+                examDuration.value = savedDuration;
+            }
+            
+            // 设置事件监听器
+            settingsBtn.addEventListener('click', () => {
+                settingsModal.style.display = 'flex';
+            });
+            
+            confirmSettings.addEventListener('click', () => {
+                localStorage.setItem('examDuration', examDuration.value);
+                settingsModal.style.display = 'none';
+            });
+            
+            cancelSettings.addEventListener('click', () => {
+                settingsModal.style.display = 'none';
+            });
+            
+            startExamBtn.addEventListener('click', startExam);
+            stopExamBtn.addEventListener('click', stopTimer);
+            resetBtn.addEventListener('click', resetSystem);
+            toggleCameraBtn.addEventListener('click', toggleCamera);
+            toggleCaptureBtn.addEventListener('click', toggleCapture);
+            
+            sensitivitySlider.addEventListener('input', () => {
+                sensitivityValue.textContent = sensitivitySlider.value;
+            });
+            
+            closeModal.addEventListener('click', () => {
+                imageModal.style.display = 'none';
+            });
+            
+            saveImageBtn.addEventListener('click', saveImage);
+        }
+        
+        // 开始考试
+        function startExam() {
+            if (examStarted) return;
+            
+            examStarted = true;
+            examPaused = false;
+            secondsLeft = parseInt(examDuration.value) * 60;
+            
+            // 更新按钮状态
+            startExamBtn.disabled = true;
+            stopExamBtn.disabled = false;
+            
+            // 开始倒计时
+            updateTimer();
+            countdownInterval = setInterval(updateTimer, 1000);
+            
+            // 启用摄像头控制
+            toggleCameraBtn.disabled = false;
+            
+            // 尝试自动开启摄像头
+            if (!isCameraOn) {
+                toggleCamera();
+            }
+        }
+        
+        // 停止计时
+        function stopTimer() {
+            if (!examStarted || examPaused) return;
+            
+            clearInterval(countdownInterval);
+            examPaused = true;
+            stopExamBtn.innerHTML = '<i class="fas fa-play"></i> 继续计时';
+        }
+        
+        // 重置系统
+        function resetSystem() {
+            // 停止计时器
+            clearInterval(countdownInterval);
+            
+            // 关闭摄像头
+            if (isCameraOn) {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+                isCameraOn = false;
+                toggleCameraBtn.innerHTML = '<i class="fas fa-camera"></i> 开启摄像头';
+                cameraIndicator.classList.remove('active');
+                cameraStatus.textContent = '摄像头已关闭';
+            }
+            
+            // 停止捕捉
+            if (isCapturing) {
+                isCapturing = false;
+                toggleCaptureBtn.innerHTML = '<i class="fas fa-record-vinyl"></i> 开始捕捉';
+                captureIndicator.classList.remove('active');
+                captureStatus.textContent = '捕捉未激活';
+                detectionStatus.innerHTML = '<i class="fas fa-check-circle"></i> 当前没有检测到移动物体';
+                detectionStatus.classList.remove('active');
+            }
+            
+            // 重置变量
+            examStarted = false;
+            examPaused = false;
+            secondsLeft = 0;
+            screenshots = [];
+            
+            // 更新UI
+            timer.textContent = '00:00:00';
+            startExamBtn.disabled = false;
+            stopExamBtn.disabled = true;
+            stopExamBtn.innerHTML = '<i class="fas fa-pause"></i> 停止计时';
+            toggleCameraBtn.disabled = true;
+            toggleCaptureBtn.disabled = true;
+            sensitivitySlider.disabled = true;
+            
+            // 清除截图
+            screenshotsGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-camera"></i>
+                    <p>系统检测到移动时会自动截图</p>
+                </div>
+            `;
+        }
+        
+        // 更新倒计时
+        function updateTimer() {
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                timer.textContent = '00:00:00';
+                endExam();
+                return;
+            }
+            
+            const hours = Math.floor(secondsLeft / 3600);
+            const minutes = Math.floor((secondsLeft % 3600) / 60);
+            const seconds = secondsLeft % 60;
+            
+            timer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            secondsLeft--;
+        }
+        
+        // 结束考试
+        function endExam() {
+            examStarted = false;
+            startExamBtn.disabled = false;
+            stopExamBtn.disabled = true;
+            
+            // 显示结束消息
+            detectionStatus.innerHTML = '<i class="fas fa-flag-checkered"></i> 考试时间结束！';
+            detectionStatus.classList.add('active');
+        }
+        
+        // 切换摄像头
+        function toggleCamera() {
+            if (!isCameraOn) {
+                // 开启摄像头
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+                    .then(s => {
+                        stream = s;
+                        video.srcObject = stream;
+                        isCameraOn = true;
+                        toggleCameraBtn.innerHTML = '<i class="fas fa-camera-slash"></i> 关闭摄像头';
+                        cameraIndicator.classList.add('active');
+                        cameraStatus.textContent = '摄像头已开启';
+                        
+                        // 启用捕捉控制
+                        toggleCaptureBtn.disabled = false;
+                        sensitivitySlider.disabled = false;
+                        
+                        // 设置运动检测Canvas
+                        video.onplaying = () => {
+                            diffCanvas.width = video.videoWidth;
+                            diffCanvas.height = video.videoHeight;
+                            
+                            // 开始运动检测
+                            requestAnimationFrame(detectMotion);
+                        };
+                    })
+                    .catch(err => {
+                        console.error('摄像头访问错误:', err);
+                        alert('无法访问摄像头，请确保已授予权限');
+                    });
+            } else {
+                // 关闭摄像头
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+                isCameraOn = false;
+                toggleCameraBtn.innerHTML = '<i class="fas fa-camera"></i> 开启摄像头';
+                cameraIndicator.classList.remove('active');
+                cameraStatus.textContent = '摄像头已关闭';
+                
+                // 如果正在捕捉，停止捕捉
+                if (isCapturing) {
+                    toggleCapture();
+                }
+                
+                // 禁用捕捉控制
+                toggleCaptureBtn.disabled = true;
+                sensitivitySlider.disabled = true;
+            }
+        }
+        
+        // 运动检测
+        function detectMotion() {
+            if (!isCameraOn || !examStarted || examPaused) {
+                lastFrame = null;
+                return;
+            }
+            
+            // 确保Canvas尺寸正确
+            if (diffCanvas.width !== video.videoWidth || diffCanvas.height !== video.videoHeight) {
+                diffCanvas.width = video.videoWidth;
+                diffCanvas.height = video.videoHeight;
+            }
+            
+            // 绘制当前帧到临时Canvas
+            diffCtx.drawImage(video, 0, 0, diffCanvas.width, diffCanvas.height);
+            currentFrame = diffCtx.getImageData(0, 0, diffCanvas.width, diffCanvas.height);
+            
+            if (lastFrame) {
+                // 计算帧差异
+                const diff = calculateFrameDifference(lastFrame, currentFrame);
+                const sensitivity = sensitivitySlider.value / 100;
+                const threshold = 1 + (10 * sensitivity);
+                
+                if (diff > threshold && isCapturing) {
+                    detectionStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 检测到移动物体！`;
+                    detectionStatus.classList.add('active');
+                    
+                    // 检查是否满足截图频率要求
+                    const now = Date.now();
+                    if (now - lastScreenshotTime > 500) { // 500ms = 2次/秒
+                        captureScreenshot();
+                        lastScreenshotTime = now;
+                    }
+                } else if (isCapturing) {
+                    detectionStatus.innerHTML = '<i class="fas fa-check-circle"></i> 当前没有检测到移动物体';
+                    detectionStatus.classList.remove('active');
+                }
+            }
+            
+            lastFrame = currentFrame;
+            requestAnimationFrame(detectMotion);
+        }
+        
+        // 计算帧差异
+        function calculateFrameDifference(frame1, frame2) {
+            let diffPixels = 0;
+            const data1 = frame1.data;
+            const data2 = frame2.data;
+            const length = data1.length;
+            const pixelCount = length / 4;
+            
+            for (let i = 0; i < length; i += 4) {
+                // 计算灰度值
+                const gray1 = 0.299 * data1[i] + 0.587 * data1[i+1] + 0.114 * data1[i+2];
+                const gray2 = 0.299 * data2[i] + 0.587 * data2[i+1] + 0.114 * data2[i+2];
+                
+                // 计算差异
+                const diff = Math.abs(gray1 - gray2);
+                if (diff > 15) {
+                    diffPixels++;
+                }
+            }
+            
+            // 返回差异百分比
+            return (diffPixels / pixelCount) * 100;
+        }
+        
+        // 切换捕捉
+        function toggleCapture() {
+            if (!isCameraOn) return;
+            
+            if (!isCapturing) {
+                isCapturing = true;
+                toggleCaptureBtn.innerHTML = '<i class="fas fa-stop"></i> 停止捕捉';
+                captureIndicator.classList.add('active');
+                captureStatus.textContent = '捕捉进行中';
+                lastScreenshotTime = 0;
+            } else {
+                isCapturing = false;
+                toggleCaptureBtn.innerHTML = '<i class="fas fa-record-vinyl"></i> 开始捕捉';
+                captureIndicator.classList.remove('active');
+                captureStatus.textContent = '捕捉未激活';
+                detectionStatus.innerHTML = '<i class="fas fa-check-circle"></i> 当前没有检测到移动物体';
+                detectionStatus.classList.remove('active');
+            }
+        }
+        
+        // 捕捉截图（带时间戳）
+        function captureScreenshot() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 添加时间戳
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(10, canvas.height - 40, 200, 30);
+            ctx.font = '16px Arial';
+            ctx.fillStyle = 'white';
+            const now = new Date();
+            const timeString = now.toTimeString().split(' ')[0];
+            ctx.fillText(`截图时间: ${timeString}`, 15, canvas.height - 20);
+            
+            const dataURL = canvas.toDataURL('image/jpeg', 0.85);
+            screenshots.push({
+                url: dataURL,
+                timestamp: timeString
+            });
+            displayScreenshot(dataURL, timeString);
+        }
+        
+        // 显示截图（带时间戳）
+        function displayScreenshot(dataURL, timestamp) {
+            // 移除空状态
+            if (screenshotsGrid.querySelector('.empty-state')) {
+                screenshotsGrid.innerHTML = '';
+            }
+            
+            const screenshotItem = document.createElement('div');
+            screenshotItem.className = 'screenshot-item';
+            
+            const img = document.createElement('img');
+            img.src = dataURL;
+            img.alt = `捕捉截图 ${screenshots.length}`;
+            
+            const info = document.createElement('div');
+            info.className = 'screenshot-info';
+            info.innerHTML = `截图 #${screenshots.length}<span class="screenshot-time">${timestamp}</span>`;
+            
+            // 点击查看大图
+            img.addEventListener('click', () => {
+                modalImage.src = dataURL;
+                imageModal.style.display = 'flex';
+            });
+            
+            screenshotItem.appendChild(img);
+            screenshotItem.appendChild(info);
+            screenshotsGrid.prepend(screenshotItem);
+        }
+        
+        // 保存图片
+        function saveImage() {
+            const link = document.createElement('a');
+            link.href = modalImage.src;
+            link.download = `监考截图_${new Date().toISOString().replace(/[:.]/g, '-')}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // 初始化应用
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
