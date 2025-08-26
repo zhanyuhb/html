@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D学生名字球体展示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6',
+                        accent: '#F97316',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .control-btn {
+                @apply bg-dark/70 hover:bg-primary/80 backdrop-blur-sm rounded-full p-3 transition-all duration-300 cursor-pointer;
+            }
+            .settings-panel {
+                @apply fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300;
+            }
+            .settings-panel.active {
+                @apply opacity-100 pointer-events-auto;
+            }
+            .settings-content {
+                @apply bg-dark rounded-xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto transform scale-95 transition-transform duration-300;
+            }
+            .settings-panel.active .settings-content {
+                @apply scale-100;
+            }
+            .form-group {
+                @apply mb-5;
+            }
+            .form-label {
+                @apply block text-light mb-2 font-medium;
+            }
+            .form-control {
+                @apply w-full bg-dark/50 border border-primary/30 rounded-lg px-4 py-2 text-light focus:outline-none focus:ring-2 focus:ring-primary;
+            }
+            .notification {
+                @apply fixed bottom-6 right-6 bg-primary text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50;
+            }
+            .notification.show {
+                @apply translate-y-0 opacity-100;
+            }
+        }
+    </style>
+</head>
+<body class="bg-black min-h-screen flex flex-col items-center justify-center p-4 text-light overflow-hidden">
+    <header class="fixed top-0 left-0 w-full p-6 text-center z-10">
+        <h1 id="page-title" class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+            3D学生名字球体展示
+        </h1>
+        <p class="mt-2 text-slate-300 max-w-lg mx-auto">
+            拖动可旋转球体，滚轮可缩放。所有名字已优化为高可见性
+        </p>
+    </header>
+
+    <main class="relative w-full max-w-5xl h-[80vh] flex items-center justify-center">
+        <div id="sphere-container" class="w-full h-full"></div>
+        
+        <!-- 控制按钮 -->
+        <div class="absolute top-4 right-4 flex flex-col gap-3 z-10">
+            <button id="rotate-toggle" class="control-btn" title="暂停/继续旋转">
+                <i class="fa fa-pause text-light"></i>
+            </button>
+            <button id="zoom-in" class="control-btn" title="放大">
+                <i class="fa fa-search-plus text-light"></i>
+            </button>
+            <button id="zoom-out" class="control-btn" title="缩小">
+                <i class="fa fa-search-minus text-light"></i>
+            </button>
+            <button id="settings-btn" class="control-btn" title="设置">
+                <i class="fa fa-cog text-light"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- 设置面板 -->
+    <div id="settings-panel" class="settings-panel">
+        <div class="settings-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-primary">设置</h2>
+                <button id="close-settings" class="control-btn p-2">
+                    <i class="fa fa-times text-light"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- 标题设置 -->
+                <div class="form-group">
+                    <label for="title-input" class="form-label">网页标题</label>
+                    <input type="text" id="title-input" class="form-control" value="3D学生名字球体展示">
+                </div>
+                
+                <!-- 学生名单设置 -->
+                <div class="form-group">
+                    <label for="names-textarea" class="form-label">学生名单（每行一个名字）</label>
+                    <textarea id="names-textarea" class="form-control h-40" rows="10"></textarea>
+                </div>
+                
+                <!-- 旋转速度设置 -->
+                <div class="form-group">
+                    <label for="rotation-speed" class="form-label">旋转速度: <span id="rotation-value">2</span></label>
+                    <input type="range" id="rotation-speed" class="form-control" min="0" max="10" step="0.1" value="2">
+                </div>
+                
+                <!-- 球体大小/间距设置 -->
+                <div class="form-group">
+                    <label for="sphere-radius" class="form-label">球体大小（影响间距）: <span id="radius-value">5</span></label>
+                    <input type="range" id="sphere-radius" class="form-control" min="2" max="10" step="0.5" value="5">
+                </div>
+                
+                <!-- 字体大小设置 -->
+                <div class="form-group">
+                    <label for="font-size" class="form-label">字体大小: <span id="font-size-value">100</span></label>
+                    <input type="range" id="font-size" class="form-control" min="50" max="200" step="10" value="100">
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4">
+                    <button id="reset-settings" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors">重置</button>
+                    <button id="clear-settings" class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg transition-colors">清除本地数据</button>
+                    <button id="apply-settings" class="px-4 py-2 bg-primary hover:bg-primary/80 rounded-lg transition-colors">应用设置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知提示 -->
+    <div id="notification" class="notification">
+        设置已保存
+    </div>
+
+    <footer class="fixed bottom-0 left-0 w-full p-4 text-center text-slate-400 text-sm">
+        <p>3D名字球体展示 &copy; 2023</p>
+    </footer>
+
+    <script>
+        // 定义默认设置
+        const defaultSettings = {
+            studentNames: [
+                "陈沐阳", "林晚星", "赵子墨", "苏清禾", "王乐然",
+                "李知夏", "张景行", "刘语安", "黄叙白", "吴念初",
+                "徐砚书", "孙若汐", "周屿风", "郑清欢", "冯知许",
+                "董星辞", "萧予安", "程砚秋", "曹时宜", "袁慕言"
+            ],
+            title: "3D学生名字球体展示",
+            rotationSpeed: 2,
+            sphereRadius: 5,
+            fontSize: 100
+        };
+
+        // 全局变量存储当前设置
+        let currentSettings = {...defaultSettings};
+
+        // 高对比度颜色，确保在黑色背景上清晰可见
+        const nameColors = [
+            0x00FFFF, // 青色
+            0xFF00FF, // 洋红色
+            0xFFFF00, // 黄色
+            0x00FF00, // 绿色
+            0xFF0000, // 红色
+            0x0000FF, // 蓝色
+            0xFFFFFF, // 白色
+            0xFFA500, // 橙色
+            0x8A2BE2, // 紫色
+            0x00CED1  // 深青色
+        ];
+
+        // Three.js相关变量
+        let scene, camera, renderer, controls;
+        let nameObjects = [];
+
+        // 从本地存储加载设置
+        function loadSettingsFromLocalStorage() {
+            const savedSettings = localStorage.getItem('3dNameSphereSettings');
+            if (savedSettings) {
+                try {
+                    const parsedSettings = JSON.parse(savedSettings);
+                    // 合并保存的设置和默认设置，确保所有必要属性都存在
+                    currentSettings = {
+                        ...defaultSettings,
+                        ...parsedSettings
+                    };
+                    return true;
+                } catch (e) {
+                    console.error('加载保存的设置失败:', e);
+                    // 如果解析失败，使用默认设置
+                    currentSettings = {...defaultSettings};
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        // 保存设置到本地存储
+        function saveSettingsToLocalStorage() {
+            try {
+                localStorage.setItem('3dNameSphereSettings', JSON.stringify(currentSettings));
+                showNotification('设置已保存到本地');
+                return true;
+            } catch (e) {
+                console.error('保存设置失败:', e);
+                showNotification('保存设置失败', true);
+                return false;
+            }
+        }
+
+        // 清除本地存储的设置
+        function clearLocalSettings() {
+            if (confirm('确定要清除所有保存的设置吗？这将恢复为默认值。')) {
+                localStorage.removeItem('3dNameSphereSettings');
+                currentSettings = {...defaultSettings};
+                updateSettingsForm();
+                showNotification('本地数据已清除');
+                return true;
+            }
+            return false;
+        }
+
+        // 显示通知
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.remove('show', 'bg-primary', 'bg-red-500');
+            
+            if (isError) {
+                notification.classList.add('bg-red-500');
+            } else {
+                notification.classList.add('bg-primary');
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 初始化Three.js场景
+        function initSphere() {
+            // 创建场景 - 使用纯黑色背景增强对比度
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+            
+            // 增强光照
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+            scene.add(ambientLight);
+            
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1.0);
+            directionalLight1.position.set(1, 1, 1);
+            scene.add(directionalLight1);
+            
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight2.position.set(-1, -1, -1);
+            scene.add(directionalLight2);
+
+            // 创建相机 - 调整位置确保球体完全可见
+            camera = new THREE.PerspectiveCamera(
+                75, 
+                document.getElementById('sphere-container').clientWidth / 
+                document.getElementById('sphere-container').clientHeight, 
+                0.1, 
+                1000
+            );
+            camera.position.z = 10;
+
+            // 创建渲染器
+            const container = document.getElementById('sphere-container');
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true
+            });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // 添加控制器
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = currentSettings.rotationSpeed;
+            controls.enableZoom = true;
+            controls.zoomSpeed = 0.7;
+
+            // 初始化名字球体
+            updateNameSphere();
+
+            // 控制按钮功能
+            document.getElementById('rotate-toggle').addEventListener('click', () => {
+                controls.autoRotate = !controls.autoRotate;
+                document.getElementById('rotate-toggle').innerHTML = 
+                    controls.autoRotate ? 
+                    '<i class="fa fa-pause text-light"></i>' : 
+                    '<i class="fa fa-play text-light"></i>';
+            });
+            
+            document.getElementById('zoom-in').addEventListener('click', () => {
+                camera.position.z = Math.max(5, camera.position.z - 2);
+            });
+            
+            document.getElementById('zoom-out').addEventListener('click', () => {
+                camera.position.z = Math.min(50, camera.position.z + 2);
+            });
+
+            // 窗口大小调整
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            // 动画循环
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                
+                // 调整每个名字的大小和透明度
+                nameObjects.forEach(item => {
+                    const distance = camera.position.distanceTo(item.sprite.position);
+                    const scaleFactor = 3.0 / distance;
+                    
+                    // 确保名字足够大
+                    item.sprite.scale.copy(item.sprite.userData.originalScale).multiplyScalar(scaleFactor);
+                    
+                    // 高不透明度确保可见
+                    item.sprite.material.opacity = Math.max(0.8, 1 - (distance / 40));
+                    
+                    // 前方名字额外放大和高亮
+                    const vectorToCamera = new THREE.Vector3().subVectors(camera.position, item.sprite.position).normalize();
+                    const dotProduct = item.sprite.position.clone().normalize().dot(vectorToCamera);
+                    
+                    if (dotProduct > 0.9) {
+                        item.sprite.scale.multiplyScalar(1.5);
+                        item.sprite.material.opacity = 1.0;
+                    }
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            // 开始动画
+            animate();
+        }
+
+        // 更新名字球体
+        function updateNameSphere() {
+            // 清除现有名字
+            nameObjects.forEach(item => {
+                scene.remove(item.sprite);
+            });
+            nameObjects = [];
+            
+            // 创建新的名字标签
+            const radius = currentSettings.sphereRadius;
+            
+            currentSettings.studentNames.forEach((name, index) => {
+                // 计算球面上的位置
+                const y = 1 - (index / (currentSettings.studentNames.length - 1)) * 2;
+                const r = Math.sqrt(1 - y * y);
+                const theta = Math.PI * 2 * index * 0.618033988749895; // 黄金角分布
+                const x = Math.cos(theta) * r;
+                const z = Math.sin(theta) * r;
+                
+                // 随机选择鲜艳颜色
+                const randomColor = nameColors[Math.floor(Math.random() * nameColors.length)];
+                
+                // 创建Canvas用于文字
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = 400;
+                canvas.height = 200;
+                
+                // 设置字体大小
+                const fontSize = currentSettings.fontSize;
+                context.font = `Bold ${fontSize}px "Microsoft YaHei", "SimHei", "Arial", sans-serif`;
+                
+                // 文字样式
+                context.fillStyle = '#' + new THREE.Color(randomColor).getHexString();
+                context.strokeStyle = '#000000'; // 黑色描边
+                context.lineWidth = 4;
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                
+                // 先描边再填充，确保文字清晰
+                context.strokeText(name, canvas.width / 2, canvas.height / 2);
+                context.fillText(name, canvas.width / 2, canvas.height / 2);
+                
+                // 创建纹理和精灵
+                const texture = new THREE.CanvasTexture(canvas);
+                const material = new THREE.SpriteMaterial({ 
+                    map: texture,
+                    transparent: true
+                });
+                
+                const sprite = new THREE.Sprite(material);
+                sprite.position.set(x * radius, y * radius, z * radius);
+                sprite.scale.set(4, 2, 1);
+                
+                // 保存原始属性
+                sprite.userData.originalColor = new THREE.Color(randomColor);
+                sprite.userData.originalScale = new THREE.Vector3().copy(sprite.scale);
+                
+                scene.add(sprite);
+                nameObjects.push({sprite, name});
+            });
+        }
+
+        // 更新设置表单值
+        function updateSettingsForm() {
+            const titleInput = document.getElementById('title-input');
+            const namesTextarea = document.getElementById('names-textarea');
+            const rotationSpeed = document.getElementById('rotation-speed');
+            const rotationValue = document.getElementById('rotation-value');
+            const sphereRadius = document.getElementById('sphere-radius');
+            const radiusValue = document.getElementById('radius-value');
+            const fontSize = document.getElementById('font-size');
+            const fontSizeValue = document.getElementById('font-size-value');
+            
+            // 更新表单值
+            titleInput.value = currentSettings.title;
+            namesTextarea.value = currentSettings.studentNames.join('\n');
+            rotationSpeed.value = currentSettings.rotationSpeed;
+            rotationValue.textContent = currentSettings.rotationSpeed;
+            sphereRadius.value = currentSettings.sphereRadius;
+            radiusValue.textContent = currentSettings.sphereRadius;
+            fontSize.value = currentSettings.fontSize;
+            fontSizeValue.textContent = currentSettings.fontSize;
+            
+            // 更新页面标题
+            document.getElementById('page-title').textContent = currentSettings.title;
+            document.title = currentSettings.title;
+        }
+
+        // 初始化设置面板
+        function initSettingsPanel() {
+            const settingsPanel = document.getElementById('settings-panel');
+            const settingsBtn = document.getElementById('settings-btn');
+            const closeBtn = document.getElementById('close-settings');
+            const applyBtn = document.getElementById('apply-settings');
+            const resetBtn = document.getElementById('reset-settings');
+            const clearBtn = document.getElementById('clear-settings');
+            
+            const titleInput = document.getElementById('title-input');
+            const namesTextarea = document.getElementById('names-textarea');
+            const rotationSpeed = document.getElementById('rotation-speed');
+            const rotationValue = document.getElementById('rotation-value');
+            const sphereRadius = document.getElementById('sphere-radius');
+            const radiusValue = document.getElementById('radius-value');
+            const fontSize = document.getElementById('font-size');
+            const fontSizeValue = document.getElementById('font-size-value');
+            
+            // 初始化表单值
+            updateSettingsForm();
+            
+            // 显示/隐藏设置面板
+            settingsBtn.addEventListener('click', () => {
+                settingsPanel.classList.add('active');
+            });
+            
+            closeBtn.addEventListener('click', () => {
+                settingsPanel.classList.remove('active');
+            });
+            
+            // 点击面板外部关闭
+            settingsPanel.addEventListener('click', (e) => {
+                if (e.target === settingsPanel) {
+                    settingsPanel.classList.remove('active');
+                }
+            });
+            
+            // 实时显示滑块值
+            rotationSpeed.addEventListener('input', () => {
+                rotationValue.textContent = rotationSpeed.value;
+            });
+            
+            sphereRadius.addEventListener('input', () => {
+                radiusValue.textContent = sphereRadius.value;
+            });
+            
+            fontSize.addEventListener('input', () => {
+                fontSizeValue.textContent = fontSize.value;
+            });
+            
+            // 应用设置
+            applyBtn.addEventListener('click', () => {
+                // 更新标题
+                currentSettings.title = titleInput.value;
+                document.getElementById('page-title').textContent = currentSettings.title;
+                document.title = currentSettings.title;
+                
+                // 更新学生名单
+                const newNames = namesTextarea.value.split('\n')
+                    .map(name => name.trim())
+                    .filter(name => name.length > 0);
+                if (newNames.length > 0) {
+                    currentSettings.studentNames = newNames;
+                }
+                
+                // 更新旋转速度
+                currentSettings.rotationSpeed = parseFloat(rotationSpeed.value);
+                controls.autoRotateSpeed = currentSettings.rotationSpeed;
+                
+                // 更新球体大小
+                currentSettings.sphereRadius = parseFloat(sphereRadius.value);
+                
+                // 更新字体大小
+                currentSettings.fontSize = parseInt(fontSize.value);
+                
+                // 重新生成名字球体
+                updateNameSphere();
+                
+                // 保存到本地存储
+                saveSettingsToLocalStorage();
+                
+                // 关闭设置面板
+                settingsPanel.classList.remove('active');
+            });
+            
+            // 重置设置
+            resetBtn.addEventListener('click', () => {
+                currentSettings = {...defaultSettings};
+                updateSettingsForm();
+            });
+            
+            // 清除本地数据
+            clearBtn.addEventListener('click', clearLocalSettings);
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', () => {
+            // 尝试从本地存储加载设置
+            const loaded = loadSettingsFromLocalStorage();
+            if (loaded) {
+                showNotification('已加载保存的设置');
+            }
+            
+            initSphere();
+            initSettingsPanel();
+        });
+    </script>
+</body>
+</html>
