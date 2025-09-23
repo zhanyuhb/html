@@ -172,6 +172,22 @@
             background-color: #f00;
             opacity: 0;
         }
+
+        table {
+            margin-top: 30px;
+            border-collapse: collapse;
+            width: 400px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -197,12 +213,48 @@
         </div>
     </div>
 
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>小组</th>
+                <th>抽签结果</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>第一小组</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>第二小组</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>第三小组</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>第四小组</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>第五小组</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>第六小组</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
     <script>
         // 四大主题选项
         const themeOptions = ["成语类", "古诗词类", "传统节日类", "童话故事类","生活场景类","梦幻想象类"];
         let currentOptions = [...themeOptions];
         let isSpinning = false;
         let selectedResult = '';
+        let drawResults = [];
 
         // 初始化转盘
         function initWheel() {
@@ -213,6 +265,7 @@
             document.getElementById('resultText').textContent = selectedResult;
             document.getElementById('resultModal').style.display = 'block';
             createConfetti();
+            updateResultTable();
         }
 
         function hideResultModal() {
@@ -263,7 +316,7 @@
         }
 
         function startSpin() {
-            if (isSpinning) return;
+            if (isSpinning || drawResults.length >= 6) return;
             isSpinning = true;
 
             const wheel = document.getElementById('wheel');
@@ -271,6 +324,7 @@
             const angleStep = 360 / count;
             const selectedIndex = Math.floor(Math.random() * count);
             selectedResult = currentOptions[selectedIndex];
+            drawResults.push(selectedResult);
             const targetAngle = 360 * 5 + selectedIndex * angleStep + angleStep/2;
 
             wheel.style.transform = `rotate(-${targetAngle}deg)`;
@@ -325,6 +379,14 @@
                     confetti.remove();
                     style.remove();
                 }, animationDuration * 1000);
+            }
+        }
+
+        function updateResultTable() {
+            const table = document.getElementById('resultTable');
+            const rows = table.getElementsByTagName('tr');
+            for (let i = 0; i < drawResults.length; i++) {
+                rows[i + 1].getElementsByTagName('td')[1].textContent = drawResults[i];
             }
         }
 
