@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黑白小球概率模拟实验</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            width: 300px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 8px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #4a00e0;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #8e2de2;
+            transform: translateY(-2px);
+        }
+        
+        .simulation {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .box-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .box {
+            width: 300px;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        .ball {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .white {
+            background: white;
+            color: black;
+        }
+        
+        .black {
+            background: black;
+            color: white;
+        }
+        
+        .selected-ball {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s ease;
+        }
+        
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            height: 300px;
+        }
+        
+        .probability-info {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .controls, .simulation {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>黑白小球概率模拟实验</h1>
+            <p class="description">调整黑白小球的数量，然后点击"抓取"按钮随机抽取小球。观察随着抽取次数的增加，实际概率如何逐渐接近理论概率。</p>
+        </header>
+        
+        <div class="content">
+            <div class="controls">
+                <div class="control-group">
+                    <h2>设置小球数量</h2>
+                    <label for="white-balls">白色小球数量:</label>
+                    <input type="number" id="white-balls" min="1" max="100" value="5">
+                    
+                    <label for="black-balls">黑色小球数量:</label>
+                    <input type="number" id="black-balls" min="1" max="100" value="5">
+                </div>
+                
+                <div class="control-group">
+                    <h2>操作</h2>
+                    <button id="draw-btn">抓取一个小球</button>
+                    <button id="reset-btn">重置实验</button>
+                    <button id="auto-btn">自动抓取(10次)</button>
+                </div>
+                
+                <div class="control-group">
+                    <h2>理论概率</h2>
+                    <p>白色小球: <span id="white-prob">50.0%</span></p>
+                    <p>黑色小球: <span id="black-prob">50.0%</span></p>
+                </div>
+            </div>
+            
+            <div class="simulation">
+                <div class="box-container">
+                    <h2>盒子中的小球</h2>
+                    <div class="box" id="ball-box">
+                        <!-- 小球将通过JS动态生成 -->
+                    </div>
+                    
+                    <h2>本次抓取结果</h2>
+                    <div class="selected-ball" id="selected-ball">
+                        等待抓取...
+                    </div>
+                </div>
+                
+                <div class="stats">
+                    <h2>统计结果</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>总抓取次数</h3>
+                            <div class="stat-value" id="total-draws">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>白色小球</h3>
+                            <div class="stat-value" id="white-count">0</div>
+                            <p>实际概率: <span id="white-actual">0%</span></p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>黑色小球</h3>
+                            <div class="stat-value" id="black-count">0</div>
+                            <p>实际概率: <span id="black-actual">0%</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h2>概率变化趋势</h2>
+            <canvas id="probability-chart"></canvas>
+        </div>
+        
+        <div class="probability-info">
+            <p>随着抓取次数的增加，实际概率会逐渐接近理论概率，这体现了概率论中的<strong>大数定律</strong>。</p>
+            <p>尝试调整黑白小球的比例，观察概率变化！</p>
+        </div>
+    </div>
+
+    <script>
+        // 初始化变量
+        let whiteBalls = 5;
+        let blackBalls = 5;
+        let totalDraws = 0;
+        let whiteCount = 0;
+        let blackCount = 0;
+        let whiteProbability = 0.5;
+        let blackProbability = 0.5;
+        let probabilityHistory = [];
+        let chart;
+
+        // DOM元素
+        const whiteBallsInput = document.getElementById('white-balls');
+        const blackBallsInput = document.getElementById('black-balls');
+        const drawBtn = document.getElementById('draw-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const autoBtn = document.getElementById('auto-btn');
+        const ballBox = document.getElementById('ball-box');
+        const selectedBall = document.getElementById('selected-ball');
+        const totalDrawsElement = document.getElementById('total-draws');
+        const whiteCountElement = document.getElementById('white-count');
+        const blackCountElement = document.getElementById('black-count');
+        const whiteActualElement = document.getElementById('white-actual');
+        const blackActualElement = document.getElementById('black-actual');
+        const whiteProbElement = document.getElementById('white-prob');
+        const blackProbElement = document.getElementById('black-prob');
+
+        // 初始化
+        function init() {
+            updateBallCounts();
+            renderBalls();
+            updateProbabilities();
+            updateStats();
+            initChart();
+            
+            // 事件监听
+            whiteBallsInput.addEventListener('change', updateBallCounts);
+            blackBallsInput.addEventListener('change', updateBallCounts);
+            drawBtn.addEventListener('click', drawBall);
+            resetBtn.addEventListener('click', resetExperiment);
+            autoBtn.addEventListener('click', autoDraw);
+        }
+
+        // 更新小球数量
+        function updateBallCounts() {
+            whiteBalls = parseInt(whiteBallsInput.value) || 1;
+            blackBalls = parseInt(blackBallsInput.value) || 1;
+            
+            // 限制最大数量
+            if (whiteBalls > 100) whiteBalls = 100;
+            if (blackBalls > 100) blackBalls = 100;
+            
+            whiteBallsInput.value = whiteBalls;
+            blackBallsInput.value = blackBalls;
+            
+            renderBalls();
+            updateProbabilities();
+        }
+
+        // 渲染小球
+        function renderBalls() {
+            ballBox.innerHTML = '';
+            
+            // 显示部分小球（最多显示30个）
+            const totalBalls = whiteBalls + blackBalls;
+            const displayLimit = 30;
+            const scale = totalBalls > displayLimit ? displayLimit / totalBalls : 1;
+            
+            const whiteToShow = Math.max(1, Math.floor(whiteBalls * scale));
+            const blackToShow = Math.max(1, Math.floor(blackBalls * scale));
+            
+            for (let i = 0; i < whiteToShow; i++) {
+                const ball = document.createElement('div');
+                ball.className = 'ball white';
+                ball.textContent = '白';
+                ballBox.appendChild(ball);
+            }
+            
+            for (let i = 0; i < blackToShow; i++) {
+                const ball = document.createElement('div');
+                ball.className = 'ball black';
+                ball.textContent = '黑';
+                ballBox.appendChild(ball);
+            }
+            
+            // 如果有限制显示，添加提示
+            if (totalBalls > displayLimit) {
+                const info = document.createElement('div');
+                info.style.width = '100%';
+                info.style.textAlign = 'center';
+                info.style.marginTop = '10px';
+                info.textContent = `显示 ${whiteToShow + blackToShow} / ${totalBalls} 个小球`;
+                ballBox.appendChild(info);
+            }
+        }
+
+        // 更新理论概率
+        function updateProbabilities() {
+            const total = whiteBalls + blackBalls;
+            whiteProbability = whiteBalls / total;
+            blackProbability = blackBalls / total;
+            
+            whiteProbElement.textContent = (whiteProbability * 100).toFixed(1) + '%';
+            blackProbElement.textContent = (blackProbability * 100).toFixed(1) + '%';
+        }
+
+        // 抓取小球
+        function drawBall() {
+            const total = whiteBalls + blackBalls;
+            const random = Math.random();
+            
+            // 确定抓取结果
+            let result;
+            if (random < whiteProbability) {
+                result = 'white';
+                whiteCount++;
+            } else {
+                result = 'black';
+                blackCount++;
+            }
+            
+            totalDraws++;
+            
+            // 更新UI
+            updateStats();
+            animateDraw(result);
+            updateChart();
+        }
+
+        // 自动抓取10次
+        function autoDraw() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    drawBall();
+                }, i * 300);
+            }
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            totalDrawsElement.textContent = totalDraws;
+            whiteCountElement.textContent = whiteCount;
+            blackCountElement.textContent = blackCount;
+            
+            const whiteActual = totalDraws > 0 ? (whiteCount / totalDraws * 100).toFixed(1) : 0;
+            const blackActual = totalDraws > 0 ? (blackCount / totalDraws * 100).toFixed(1) : 0;
+            
+            whiteActualElement.textContent = whiteActual + '%';
+            blackActualElement.textContent = blackActual + '%';
+        }
+
+        // 抓取动画
+        function animateDraw(result) {
+            selectedBall.textContent = result === 'white' ? '白球' : '黑球';
+            selectedBall.className = 'selected-ball ' + result;
+            
+            // 添加动画效果
+            selectedBall.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                selectedBall.style.transform = 'scale(1)';
+            }, 300);
+        }
+
+        // 重置实验
+        function resetExperiment() {
+            totalDraws = 0;
+            whiteCount = 0;
+            blackCount = 0;
+            probabilityHistory = [];
+            
+            updateStats();
+            selectedBall.textContent = '等待抓取...';
+            selectedBall.className = 'selected-ball';
+            
+            if (chart) {
+                chart.destroy();
+                initChart();
+            }
+        }
+
+        // 初始化图表
+        function initChart() {
+            const ctx = document.getElementById('probability-chart').getContext('2d');
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '白色小球概率',
+                            data: [],
+                            borderColor: 'white',
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: '黑色小球概率',
+                            data: [],
+                            borderColor: 'black',
+                            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: '理论白球概率',
+                            data: [],
+                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                            borderDash: [5, 5],
+                            tension: 0,
+                            pointRadius: 0
+                        },
+                        {
+                            label: '理论黑球概率',
+                            data: [],
+                            borderColor: 'rgba(0, 0, 0, 0.5)',
+                            borderDash: [5, 5],
+                            tension: 0,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '抓取次数',
+                                color: 'white'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '概率',
+                                color: 'white'
+                            },
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white',
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y.toFixed(1) + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新图表
+        function updateChart() {
+            if (totalDraws === 0) return;
+            
+            const whiteActual = (whiteCount / totalDraws * 100).toFixed(1);
+            const blackActual = (blackCount / totalDraws * 100).toFixed(1);
+            
+            probabilityHistory.push({
+                white: whiteActual,
+                black: blackActual
+            });
+            
+            // 限制历史数据长度
+            if (probabilityHistory.length > 50) {
+                probabilityHistory.shift();
+            }
+            
+            // 更新图表数据
+            chart.data.labels = Array.from({length: probabilityHistory.length}, (_, i) => i + 1);
+            chart.data.datasets[0].data = probabilityHistory.map(p => p.white);
+            chart.data.datasets[1].data = probabilityHistory.map(p => p.black);
+            chart.data.datasets[2].data = Array(probabilityHistory.length).fill(whiteProbability * 100);
+            chart.data.datasets[3].data = Array(probabilityHistory.length).fill(blackProbability * 100);
+            
+            chart.update();
+        }
+
+        // 初始化应用
+        window.onload = init;
+    </script>
+</body>
+</html>
