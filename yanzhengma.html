@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔术的卡片</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .game-container {
+            position: relative;
+            margin-top: 20px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(6, 50px);
+            grid-template-rows: repeat(6, 50px);
+            gap: 2px;
+        }
+        
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .cell.black {
+            background-color: #333;
+        }
+        
+        .highlighted-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: calc(5 * 52px - 2px);
+            height: calc(5 * 52px - 2px);
+            border: 3px solid #ff5722;
+            pointer-events: none;
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>魔术的卡片</h1>
+    
+    <div class="game-container">
+        <div class="grid" id="grid"></div>
+        <div class="highlighted-area"></div>
+    </div>
+    
+    <div class="instructions">
+        <p>点击方格切换黑白颜色</p>
+        <p>橙色框内是5×5的游戏区域</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const grid = document.getElementById('grid');
+            const gridSize = 6;
+            
+            // 创建6×6的方格
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.addEventListener('click', function() {
+                    this.classList.toggle('black');
+                });
+                grid.appendChild(cell);
+            }
+        });
+    </script>
+</body>
+</html>
