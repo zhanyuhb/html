@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字猜谜游戏</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', '楷体', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6ecbf5, #ffb6c1);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            text-align: center;
+            border: 8px solid #ffcc00;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.8rem;
+            color: #ff6600;
+            text-shadow: 2px 2px 0 #ffcc00;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .game-area {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .player-section {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            flex: 1;
+            margin: 0 10px;
+            min-width: 300px;
+            border: 4px dashed;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .player1-section {
+            border-color: #ff5252;
+        }
+        
+        .player2-section {
+            border-color: #4caf50;
+        }
+        
+        .player-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .player1-section h2 {
+            color: #ff5252;
+        }
+        
+        .player2-section h2 {
+            color: #4caf50;
+        }
+        
+        .game-status {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 204, 0, 0.3);
+            border-radius: 10px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ffcc00;
+        }
+        
+        .input-area {
+            margin: 20px 0;
+        }
+        
+        input {
+            padding: 12px 15px;
+            font-size: 1.2rem;
+            border: 3px solid #6ecbf5;
+            border-radius: 10px;
+            width: 200px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background: #ff5722;
+            transform: translateY(-3px);
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .guess-history {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 2px solid #6ecbf5;
+        }
+        
+        .guess-history h3 {
+            margin-bottom: 10px;
+            color: #6ecbf5;
+        }
+        
+        .guess-item {
+            background: rgba(110, 203, 245, 0.2);
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .guess-number {
+            font-weight: bold;
+        }
+        
+        .guess-result {
+            font-style: italic;
+        }
+        
+        .counter {
+            font-size: 1.5rem;
+            margin: 15px 0;
+            color: #ff6600;
+            font-weight: bold;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #ffcc00;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #ff6600;
+        }
+        
+        .instructions ol {
+            text-align: left;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 8px 0;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 5px solid #ffcc00;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .modal h2 {
+            color: #ff6600;
+            margin-bottom: 20px;
+        }
+        
+        .emoji {
+            font-size: 3rem;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .player-section {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔢 数字猜谜游戏 🔢</h1>
+    
+    <div class="container">
+        <div class="game-status" id="gameStatus">玩家1请设置一个0-100之间的数字</div>
+        
+        <div class="game-area">
+            <div class="player-section player1-section">
+                <h2>👤 玩家1</h2>
+                <p>设置一个0-100之间的数字</p>
+                <div class="input-area">
+                    <button id="setNumberBtn">设置数字</button>
+                </div>
+                <div id="player1Info"></div>
+            </div>
+            
+            <div class="player-section player2-section">
+                <h2>👤 玩家2</h2>
+                <p>猜猜玩家1设置的数字</p>
+                <div class="input-area">
+                    <input type="number" id="guessInput" min="0" max="100" placeholder="输入0-100的数字">
+                    <br>
+                    <button id="guessBtn" disabled>猜一猜</button>
+                </div>
+                <div class="counter">
+                    猜测次数: <span id="guessCount">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="guess-history">
+            <h3>猜测记录</h3>
+            <div id="guessList"></div>
+        </div>
+        
+        <div class="instructions">
+            <h3>游戏规则</h3>
+            <ol>
+                <li>玩家1点击"设置数字"按钮，输入一个0-100之间的数字</li>
+                <li>玩家2在输入框中输入猜测的数字</li>
+                <li>系统会提示"大了"、"小了"或"猜对了"</li>
+                <li>玩家2需要尽量用最少的次数猜中数字</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="modal" id="numberModal">
+        <div class="modal-content">
+            <h2>设置数字</h2>
+            <p>请输入一个0-100之间的数字：</p>
+            <input type="number" id="numberInput" min="0" max="100" placeholder="0-100">
+            <br>
+            <button id="confirmBtn">确定</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <h2 id="resultTitle">恭喜!</h2>
+            <div class="emoji" id="resultEmoji">🎉</div>
+            <p id="resultMessage">你猜对了!</p>
+            <button id="playAgainBtn">再玩一次</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const gameStatus = document.getElementById('gameStatus');
+            const setNumberBtn = document.getElementById('setNumberBtn');
+            const guessInput = document.getElementById('guessInput');
+            const guessBtn = document.getElementById('guessBtn');
+            const guessCount = document.getElementById('guessCount');
+            const guessList = document.getElementById('guessList');
+            const player1Info = document.getElementById('player1Info');
+            const numberModal = document.getElementById('numberModal');
+            const numberInput = document.getElementById('numberInput');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const resultModal = document.getElementById('resultModal');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultEmoji = document.getElementById('resultEmoji');
+            const resultMessage = document.getElementById('resultMessage');
+            const playAgainBtn = document.getElementById('playAgainBtn');
+            
+            let targetNumber = null;
+            let count = 0;
+            let gameOver = false;
+            
+            // 玩家1设置数字
+            setNumberBtn.addEventListener('click', function() {
+                numberModal.style.display = 'flex';
+                numberInput.value = '';
+                numberInput.focus();
+            });
+            
+            // 确认设置数字
+            confirmBtn.addEventListener('click', function() {
+                const num = parseInt(numberInput.value);
+                
+                if (isNaN(num) || num < 0 || num > 100) {
+                    alert('请输入0-100之间的数字!');
+                    return;
+                }
+                
+                targetNumber = num;
+                numberModal.style.display = 'none';
+                gameStatus.textContent = '数字已设置! 玩家2请开始猜测';
+                player1Info.innerHTML = '<p>数字已设置!</p>';
+                guessBtn.disabled = false;
+                guessInput.disabled = false;
+                guessInput.focus();
+                
+                // 重置游戏状态
+                count = 0;
+                guessCount.textContent = count;
+                guessList.innerHTML = '';
+                gameOver = false;
+            });
+            
+            // 玩家2猜测
+            guessBtn.addEventListener('click', function() {
+                if (gameOver) return;
+                
+                const guess = parseInt(guessInput.value);
+                
+                if (isNaN(guess) || guess < 0 || guess > 100) {
+                    alert('请输入0-100之间的数字!');
+                    return;
+                }
+                
+                count++;
+                guessCount.textContent = count;
+                
+                // 添加猜测记录
+                const guessItem = document.createElement('div');
+                guessItem.className = 'guess-item';
+                
+                const guessNumber = document.createElement('span');
+                guessNumber.className = 'guess-number';
+                guessNumber.textContent = `第${count}次: ${guess}`;
+                
+                const guessResult = document.createElement('span');
+                guessResult.className = 'guess-result';
+                
+                if (guess === targetNumber) {
+                    guessResult.textContent = '猜对了!';
+                    guessResult.style.color = '#4caf50';
+                    guessResult.style.fontWeight = 'bold';
+                    
+                    gameStatus.textContent = `恭喜! 你用了${count}次猜中了数字${targetNumber}`;
+                    gameOver = true;
+                    
+                    // 显示结果模态框
+                    resultTitle.textContent = '恭喜你!';
+                    resultEmoji.textContent = '🎉';
+                    resultMessage.textContent = `你用了${count}次猜中了数字${targetNumber}`;
+                    resultModal.style.display = 'flex';
+                } else if (guess < targetNumber) {
+                    guessResult.textContent = '小了';
+                    guessResult.style.color = '#ff5252';
+                    gameStatus.textContent = '提示: 你猜的数字小了';
+                } else {
+                    guessResult.textContent = '大了';
+                    guessResult.style.color = '#ff5252';
+                    gameStatus.textContent = '提示: 你猜的数字大了';
+                }
+                
+                guessItem.appendChild(guessNumber);
+                guessItem.appendChild(guessResult);
+                guessList.appendChild(guessItem);
+                
+                // 滚动到最新记录
+                guessList.scrollTop = guessList.scrollHeight;
+                
+                // 清空输入框
+                guessInput.value = '';
+                guessInput.focus();
+            });
+            
+            // 按回车键猜测
+            guessInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    guessBtn.click();
+                }
+            });
+            
+            // 再玩一次
+            playAgainBtn.addEventListener('click', function() {
+                resultModal.style.display = 'none';
+                targetNumber = null;
+                gameStatus.textContent = '玩家1请设置一个0-100之间的数字';
+                player1Info.innerHTML = '';
+                guessBtn.disabled = true;
+                guessInput.disabled = true;
+                guessInput.value = '';
+                count = 0;
+                guessCount.textContent = count;
+                guessList.innerHTML = '';
+                gameOver = false;
+            });
+        });
+    </script>
+</body>
+</html>

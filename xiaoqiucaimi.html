@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小球猜谜游戏</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .player-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            flex: 1;
+            margin: 0 10px;
+            min-width: 200px;
+        }
+        
+        .player-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #ffcc00;
+        }
+        
+        .game-status {
+            text-align: center;
+            font-size: 1.3rem;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-gap: 5px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        
+        .ball {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ball:hover {
+            transform: scale(1.1);
+        }
+        
+        .ball.player1 {
+            background-color: #ff5252;
+        }
+        
+        .ball.player2 {
+            background-color: #4caf50;
+        }
+        
+        .ball.selected {
+            border: 3px solid #ffcc00;
+            box-shadow: 0 0 15px #ffcc00;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover {
+            background: #ff5722;
+            transform: translateY(-3px);
+        }
+        
+        button:disabled {
+            background: #777;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .steps {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .steps h3 {
+            margin-bottom: 10px;
+            color: #4caf50;
+        }
+        
+        .step-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .step {
+            background: rgba(76, 175, 80, 0.3);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .direction-hint {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 204, 0, 0.2);
+            border-radius: 8px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 600px) {
+            .game-board {
+                grid-template-columns: repeat(10, 1fr);
+            }
+            
+            .ball {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+            
+            .game-info {
+                flex-direction: column;
+            }
+            
+            .player-info {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>小球猜谜游戏</h1>
+    
+    <div class="container">
+        <div class="game-info">
+            <div class="player-info">
+                <h2>玩家1</h2>
+                <p>选择一个隐藏的小球</p>
+            </div>
+            <div class="player-info">
+                <h2>玩家2</h2>
+                <p>根据提示找到小球</p>
+            </div>
+        </div>
+        
+        <div class="game-status" id="gameStatus">玩家1请选择一个小球</div>
+        
+        <div class="direction-hint" id="directionHint"></div>
+        
+        <div class="game-board" id="gameBoard">
+            <!-- 小球将通过JavaScript生成 -->
+        </div>
+        
+        <div class="controls">
+            <button id="readyBtn" disabled>准备开始</button>
+            <button id="restartBtn">重新开始</button>
+        </div>
+        
+        <div class="steps">
+            <h3>玩家2的步骤记录</h3>
+            <div class="step-list" id="stepList"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const gameBoard = document.getElementById('gameBoard');
+            const gameStatus = document.getElementById('gameStatus');
+            const directionHint = document.getElementById('directionHint');
+            const readyBtn = document.getElementById('readyBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const stepList = document.getElementById('stepList');
+            
+            let player1Selected = null;
+            let player2Selected = null;
+            let gamePhase = 'player1Select'; // player1Select, player2Select, gameOver
+            let steps = [];
+            let stepCount = 0;
+            
+            // 创建100个小球
+            for (let i = 0; i < 100; i++) {
+                const ball = document.createElement('div');
+                ball.className = 'ball';
+                ball.dataset.index = i;
+                
+                ball.addEventListener('click', function() {
+                    handleBallClick(i);
+                });
+                
+                gameBoard.appendChild(ball);
+            }
+            
+            // 处理小球点击事件
+            function handleBallClick(index) {
+                if (gamePhase === 'player1Select') {
+                    // 玩家1选择阶段
+                    if (player1Selected !== null) {
+                        // 清除之前的选择
+                        const prevBall = document.querySelector(`.ball[data-index="${player1Selected}"]`);
+                        prevBall.classList.remove('player1', 'selected');
+                    }
+                    
+                    player1Selected = index;
+                    const ball = document.querySelector(`.ball[data-index="${index}"]`);
+                    ball.classList.add('player1', 'selected');
+                    
+                    readyBtn.disabled = false;
+                    gameStatus.textContent = `玩家1已选择小球，点击"准备开始"按钮`;
+                    
+                } else if (gamePhase === 'player2Select') {
+                    // 玩家2选择阶段
+                    if (player2Selected !== null) {
+                        // 清除之前的选择
+                        const prevBall = document.querySelector(`.ball[data-index="${player2Selected}"]`);
+                        prevBall.classList.remove('player2', 'selected');
+                    }
+                    
+                    player2Selected = index;
+                    const ball = document.querySelector(`.ball[data-index="${index}"]`);
+                    ball.classList.add('player2', 'selected');
+                    
+                    stepCount++;
+                    steps.push({step: stepCount, position: index});
+                    updateStepList();
+                    
+                    // 计算方向提示
+                    const direction = calculateDirection(index, player1Selected);
+                    directionHint.textContent = direction;
+                    
+                    // 检查是否找到目标
+                    if (index === player1Selected) {
+                        gamePhase = 'gameOver';
+                        gameStatus.textContent = `恭喜！玩家2找到了目标小球，用了${stepCount}步`;
+                        directionHint.textContent = '恭喜找到目标！';
+                    }
+                }
+            }
+            
+            // 计算方向提示
+            function calculateDirection(selectedIndex, targetIndex) {
+                if (selectedIndex === targetIndex) return '找到了！';
+                
+                const selectedRow = Math.floor(selectedIndex / 10);
+                const selectedCol = selectedIndex % 10;
+                const targetRow = Math.floor(targetIndex / 10);
+                const targetCol = targetIndex % 10;
+                
+                let vertical = '';
+                let horizontal = '';
+                
+                if (selectedRow < targetRow) {
+                    vertical = '下';
+                } else if (selectedRow > targetRow) {
+                    vertical = '上';
+                }
+                
+                if (selectedCol < targetCol) {
+                    horizontal = '右';
+                } else if (selectedCol > targetCol) {
+                    horizontal = '左';
+                }
+                
+                return vertical + horizontal;
+            }
+            
+            // 更新步骤列表
+            function updateStepList() {
+                stepList.innerHTML = '';
+                steps.forEach(step => {
+                    const stepElement = document.createElement('div');
+                    stepElement.className = 'step';
+                    stepElement.textContent = `步骤${step.step}: 位置${step.position}`;
+                    stepList.appendChild(stepElement);
+                });
+            }
+            
+            // 准备开始按钮点击事件
+            readyBtn.addEventListener('click', function() {
+                if (gamePhase === 'player1Select' && player1Selected !== null) {
+                    // 清除所有小球样式
+                    const balls = document.querySelectorAll('.ball');
+                    balls.forEach(ball => {
+                        ball.className = 'ball';
+                    });
+                    
+                    gamePhase = 'player2Select';
+                    gameStatus.textContent = '玩家2请选择一个小球';
+                    directionHint.textContent = '请选择一个小球开始';
+                    readyBtn.disabled = true;
+                }
+            });
+            
+            // 重新开始按钮点击事件
+            restartBtn.addEventListener('click', function() {
+                // 重置所有状态
+                player1Selected = null;
+                player2Selected = null;
+                gamePhase = 'player1Select';
+                steps = [];
+                stepCount = 0;
+                
+                // 清除所有小球样式
+                const balls = document.querySelectorAll('.ball');
+                balls.forEach(ball => {
+                    ball.className = 'ball';
+                });
+                
+                // 重置UI
+                gameStatus.textContent = '玩家1请选择一个小球';
+                directionHint.textContent = '';
+                stepList.innerHTML = '';
+                readyBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>
