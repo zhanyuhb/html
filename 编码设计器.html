@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编码设计器 - 小学四年级版</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
+        }
+        
+        body {
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #4a6baf;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #4a6baf;
+            font-size: 18px;
+        }
+        
+        .segment-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .segment {
+            background-color: #e6f2ff;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            background-color: #4a6baf;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #3a5a9f;
+        }
+        
+        .preview {
+            background-color: #e6f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .preview-code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a6baf;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+        
+        .help {
+            background-color: #fff9e6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .example {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .text-input {
+            display: none;
+        }
+        
+        .text-input.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>编码设计器</h1>
+        <div class="subtitle">设计属于你自己的编码规则！</div>
+        
+        <div class="section">
+            <div class="section-title">第一步：设置编码段数</div>
+            <label for="segment-count">编码一共分几段？</label>
+            <select id="segment-count">
+                <option value="1">1段</option>
+                <option value="2" selected>2段</option>
+                <option value="3">3段</option>
+                <option value="4">4段</option>
+                <option value="5">5段</option>
+            </select>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">第二步：设置每段的规则</div>
+            <div id="segment-controls" class="segment-controls">
+                <!-- 动态生成的段控制区域 -->
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">第三步：生成编码</div>
+            <button id="generate-btn">生成示例编码</button>
+            <button id="reset-btn">重置所有设置</button>
+            
+            <div class="preview">
+                <div>预览你的编码：</div>
+                <div id="preview-code" class="preview-code">A1-文字</div>
+            </div>
+        </div>
+        
+        <div class="help">
+            <div class="section-title">帮助说明</div>
+            <p><strong>什么是编码？</strong></p>
+            <p>编码就像给物品起一个特殊的"名字"，让计算机能够识别和管理它们。</p>
+            
+            <p><strong>编码的组成部分：</strong></p>
+            <ul>
+                <li><strong>段数</strong>：编码由几部分组成</li>
+                <li><strong>类型</strong>：每部分可以使用字母、数字或文字</li>
+                <li><strong>位数</strong>：每部分有几个字符</li>
+            </ul>
+            
+            <div class="example">
+                <p><strong>示例：</strong></p>
+                <p>假设我们要给班级图书编码：</p>
+                <p>第一段：图书类别（文字，2位）→ 文学</p>
+                <p>第二段：图书编号（数字，3位）→ 001</p>
+                <p>编码结果：<strong>文学-001</strong></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            编码设计器 - 适合小学四年级学生使用
+        </div>
+    </div>
+
+    <script>
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            const segmentCountSelect = document.getElementById('segment-count');
+            const segmentControls = document.getElementById('segment-controls');
+            const generateBtn = document.getElementById('generate-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const previewCode = document.getElementById('preview-code');
+            
+            // 生成段控制区域
+            function generateSegmentControls() {
+                const segmentCount = parseInt(segmentCountSelect.value);
+                segmentControls.innerHTML = '';
+                
+                for (let i = 1; i <= segmentCount; i++) {
+                    const segmentDiv = document.createElement('div');
+                    segmentDiv.className = 'segment';
+                    segmentDiv.innerHTML = `
+                        <div class="section-title">第${i}段</div>
+                        <label for="segment-type-${i}">使用什么类型？</label>
+                        <select id="segment-type-${i}" class="segment-type">
+                            <option value="letter">字母</option>
+                            <option value="number">数字</option>
+                            <option value="text">文字</option>
+                        </select>
+                        <label for="segment-length-${i}">用几位表示？</label>
+                        <select id="segment-length-${i}" class="segment-length">
+                            <option value="1">1位</option>
+                            <option value="2" selected>2位</option>
+                            <option value="3">3位</option>
+                            <option value="4">4位</option>
+                        </select>
+                        <div id="text-input-${i}" class="text-input">
+                            <label for="custom-text-${i}">输入文字内容：</label>
+                            <input type="text" id="custom-text-${i}" placeholder="例如：文学、科学等">
+                        </div>
+                    `;
+                    segmentControls.appendChild(segmentDiv);
+                }
+                
+                // 为所有类型选择框添加事件监听
+                document.querySelectorAll('.segment-type').forEach(select => {
+                    select.addEventListener('change', function() {
+                        const segmentId = this.id.split('-')[2];
+                        const textInput = document.getElementById(`text-input-${segmentId}`);
+                        
+                        if (this.value === 'text') {
+                            textInput.classList.add('active');
+                        } else {
+                            textInput.classList.remove('active');
+                        }
+                        
+                        updatePreview();
+                    });
+                });
+                
+                // 更新预览
+                updatePreview();
+            }
+            
+            // 更新预览
+            function updatePreview() {
+                const segmentCount = parseInt(segmentCountSelect.value);
+                let previewText = '';
+                
+                for (let i = 1; i <= segmentCount; i++) {
+                    const type = document.getElementById(`segment-type-${i}`).value;
+                    const length = parseInt(document.getElementById(`segment-length-${i}`).value);
+                    
+                    let example = '';
+                    if (type === 'letter') {
+                        example = 'A'.repeat(length);
+                    } else if (type === 'number') {
+                        example = '1'.repeat(length);
+                    } else {
+                        // 对于文字类型，使用自定义内容或默认值
+                        const customText = document.getElementById(`custom-text-${i}`).value;
+                        if (customText) {
+                            example = customText.substring(0, length);
+                        } else {
+                            example = '文字'.substring(0, length);
+                        }
+                    }
+                    
+                    previewText += example;
+                    if (i < segmentCount) {
+                        previewText += '-';
+                    }
+                }
+                
+                previewCode.textContent = previewText;
+            }
+            
+            // 生成示例编码
+            function generateExampleCode() {
+                const segmentCount = parseInt(segmentCountSelect.value);
+                let code = '';
+                
+                // 示例数据
+                const letterExamples = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                const numberExamples = ['1', '2', '3', '4', '5', '6', '7', '8'];
+                const textExamples = ['文学', '科学', '历史', '艺术', '数学', '英语', '体育', '音乐'];
+                
+                for (let i = 1; i <= segmentCount; i++) {
+                    const type = document.getElementById(`segment-type-${i}`).value;
+                    const length = parseInt(document.getElementById(`segment-length-${i}`).value);
+                    
+                    let segment = '';
+                    if (type === 'letter') {
+                        for (let j = 0; j < length; j++) {
+                            segment += letterExamples[Math.floor(Math.random() * letterExamples.length)];
+                        }
+                    } else if (type === 'number') {
+                        for (let j = 0; j < length; j++) {
+                            segment += numberExamples[Math.floor(Math.random() * numberExamples.length)];
+                        }
+                    } else {
+                        // 对于文字类型，检查是否有自定义内容
+                        const customText = document.getElementById(`custom-text-${i}`).value;
+                        if (customText) {
+                            segment = customText.substring(0, length);
+                        } else {
+                            segment = textExamples[Math.floor(Math.random() * textExamples.length)].substring(0, length);
+                        }
+                    }
+                    
+                    code += segment;
+                    if (i < segmentCount) {
+                        code += '-';
+                    }
+                }
+                
+                previewCode.textContent = code;
+            }
+            
+            // 重置所有设置
+            function resetAll() {
+                segmentCountSelect.value = '2';
+                generateSegmentControls();
+            }
+            
+            // 事件监听
+            segmentCountSelect.addEventListener('change', generateSegmentControls);
+            generateBtn.addEventListener('click', generateExampleCode);
+            resetBtn.addEventListener('click', resetAll);
+            
+            // 为所有段控制添加事件监听
+            document.addEventListener('change', function(e) {
+                if (e.target.id.startsWith('segment-type-') || 
+                    e.target.id.startsWith('segment-length-') ||
+                    e.target.id.startsWith('custom-text-')) {
+                    updatePreview();
+                }
+            });
+            
+            // 初始化
+            generateSegmentControls();
+        });
+    </script>
+</body>
+</html>
