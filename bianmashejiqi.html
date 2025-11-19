@@ -73,12 +73,17 @@
             font-weight: bold;
         }
         
-        select, input {
+        select, input, textarea {
             width: 100%;
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 10px;
+        }
+        
+        textarea {
+            height: 80px;
+            resize: vertical;
         }
         
         button {
@@ -113,6 +118,43 @@
             letter-spacing: 2px;
         }
         
+        .generated-code {
+            background-color: #fff0e0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            border: 3px solid #ff9900;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .generated-code-text {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 15px 0;
+            letter-spacing: 3px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .generated-codes-list {
+            margin-top: 15px;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .generated-code-item {
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.7);
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
         .help {
             background-color: #fff9e6;
             padding: 15px;
@@ -142,6 +184,64 @@
         .text-input.active {
             display: block;
         }
+        
+        .text-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+        
+        .text-options {
+            font-size: 12px;
+            color: #4a6baf;
+            margin-top: 5px;
+        }
+        
+        .generate-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .color-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .color-item {
+            display: flex;
+            align-items: center;
+            margin: 5px;
+        }
+        
+        .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 5px;
+        }
+        
+        .color-label {
+            font-size: 14px;
+        }
+        
+        .count-selector {
+            display: inline-block;
+            margin-left: 15px;
+        }
+        
+        .count-selector label {
+            display: inline;
+            margin-right: 8px;
+        }
+        
+        .count-selector select {
+            width: auto;
+            display: inline;
+        }
     </style>
 </head>
 <body>
@@ -150,7 +250,7 @@
         <div class="subtitle">设计属于你自己的编码规则！</div>
         
         <div class="section">
-            <div class="section-title">第一步：设置编码段数</div>
+            <div class="section-title">第一步：设置编码基本规则</div>
             <label for="segment-count">编码一共分几段？</label>
             <select id="segment-count">
                 <option value="1">1段</option>
@@ -159,6 +259,16 @@
                 <option value="4">4段</option>
                 <option value="5">5段</option>
             </select>
+            
+            <label for="color-count">编码可用几种颜色显示？</label>
+            <select id="color-count">
+                <option value="1">1种颜色</option>
+                <option value="2" selected>2种颜色</option>
+                <option value="3">3种颜色</option>
+                <option value="4">4种颜色</option>
+                <option value="5">5种颜色</option>
+            </select>
+            <div class="text-hint">提示：不同颜色可以表示编码的不同含义，比如不同类别、不同优先级等</div>
         </div>
         
         <div class="section">
@@ -170,12 +280,42 @@
         
         <div class="section">
             <div class="section-title">第三步：生成编码</div>
-            <button id="generate-btn">生成示例编码</button>
-            <button id="reset-btn">重置所有设置</button>
+            <div class="generate-section">
+                <button id="generate-btn">生成示例编码</button>
+                <button id="reset-btn">重置所有设置</button>
+                <div class="count-selector">
+                    <label for="code-count">生成数量：</label>
+                    <select id="code-count">
+                        <option value="1" selected>1个</option>
+                        <option value="2">2个</option>
+                        <option value="3">3个</option>
+                        <option value="4">4个</option>
+                        <option value="5">5个</option>
+                        <option value="6">6个</option>
+                        <option value="7">7个</option>
+                        <option value="8">8个</option>
+                        <option value="9">9个</option>
+                        <option value="10">10个</option>
+                    </select>
+                </div>
+            </div>
             
             <div class="preview">
-                <div>预览你的编码：</div>
+                <div>当前编码格式预览：</div>
                 <div id="preview-code" class="preview-code">A1-文字</div>
+            </div>
+            
+            <div class="generated-code">
+                <div>生成的编码：</div>
+                <div id="generated-code-text" class="generated-code-text">点击上方按钮生成编码</div>
+                
+                <div id="generated-codes-list" class="generated-codes-list">
+                    <!-- 多个编码将在这里显示 -->
+                </div>
+                
+                <div id="color-legend" class="color-legend">
+                    <!-- 颜色图例将在这里显示 -->
+                </div>
             </div>
         </div>
         
@@ -189,14 +329,29 @@
                 <li><strong>段数</strong>：编码由几部分组成</li>
                 <li><strong>类型</strong>：每部分可以使用字母、数字或文字</li>
                 <li><strong>位数</strong>：每部分有几个字符</li>
+                <li><strong>颜色</strong>：用不同颜色区分编码的不同含义</li>
             </ul>
+            
+            <p><strong>颜色区分功能：</strong></p>
+            <p>你可以选择编码使用几种颜色显示。不同颜色可以表示编码的不同含义，比如：</p>
+            <ul>
+                <li>红色表示重要物品</li>
+                <li>蓝色表示普通物品</li>
+                <li>绿色表示已完成的任务</li>
+                <li>等等...</li>
+            </ul>
+            
+            <p><strong>文字编码小技巧：</strong></p>
+            <p>当选择"文字"类型时，你可以在文本框中输入多个文字选项，每行一个。系统会随机选择一个选项来生成编码。</p>
             
             <div class="example">
                 <p><strong>示例：</strong></p>
                 <p>假设我们要给班级图书编码：</p>
-                <p>第一段：图书类别（文字，2位）→ 文学</p>
+                <p>第一段：图书类别（文字，2位）→ 每行输入一个类别</p>
                 <p>第二段：图书编号（数字，3位）→ 001</p>
-                <p>编码结果：<strong>文学-001</strong></p>
+                <p>编码结果可能是：<strong>文学-001</strong>、<strong>科学-002</strong> 或 <strong>历史-003</strong></p>
+                <p>同时，我们可以用颜色区分：</p>
+                <p>红色表示文学类，蓝色表示科学类，绿色表示历史类</p>
             </div>
         </div>
         
@@ -209,10 +364,29 @@
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function() {
             const segmentCountSelect = document.getElementById('segment-count');
+            const colorCountSelect = document.getElementById('color-count');
+            const codeCountSelect = document.getElementById('code-count');
             const segmentControls = document.getElementById('segment-controls');
             const generateBtn = document.getElementById('generate-btn');
             const resetBtn = document.getElementById('reset-btn');
             const previewCode = document.getElementById('preview-code');
+            const generatedCodeText = document.getElementById('generated-code-text');
+            const generatedCodesList = document.getElementById('generated-codes-list');
+            const colorLegend = document.getElementById('color-legend');
+            
+            // 预定义颜色数组
+            const colorPalette = [
+                { name: "红色", value: "#ff4d4d" },
+                { name: "蓝色", value: "#4d79ff" },
+                { name: "绿色", value: "#4dff88" },
+                { name: "橙色", value: "#ffa64d" },
+                { name: "紫色", value: "#b84dff" },
+                { name: "青色", value: "#4ddbff" },
+                { name: "粉色", value: "#ff4dd9" },
+                { name: "棕色", value: "#cc7a00" },
+                { name: "灰色", value: "#999999" },
+                { name: "深绿", value: "#009933" }
+            ];
             
             // 生成段控制区域
             function generateSegmentControls() {
@@ -236,10 +410,17 @@
                             <option value="2" selected>2位</option>
                             <option value="3">3位</option>
                             <option value="4">4位</option>
+                            <option value="5">5位</option>
+
                         </select>
                         <div id="text-input-${i}" class="text-input">
-                            <label for="custom-text-${i}">输入文字内容：</label>
-                            <input type="text" id="custom-text-${i}" placeholder="例如：文学、科学等">
+                            <label for="custom-text-${i}">输入文字内容（每行一个选项）：</label>
+                            <textarea id="custom-text-${i}" placeholder="例如：
+文学
+科学
+历史"></textarea>
+                            <div class="text-hint">提示：每行输入一个文字选项，系统会随机选择一个</div>
+                            <div id="text-options-${i}" class="text-options"></div>
                         </div>
                     `;
                     segmentControls.appendChild(segmentDiv);
@@ -253,6 +434,7 @@
                         
                         if (this.value === 'text') {
                             textInput.classList.add('active');
+                            updateTextOptions(segmentId);
                         } else {
                             textInput.classList.remove('active');
                         }
@@ -261,52 +443,66 @@
                     });
                 });
                 
+                // 为所有文字输入框添加事件监听
+                document.addEventListener('input', function(e) {
+                    if (e.target.id.startsWith('custom-text-')) {
+                        const segmentId = e.target.id.split('-')[2];
+                        updateTextOptions(segmentId);
+                        updatePreview();
+                    }
+                });
+                
                 // 更新预览
                 updatePreview();
+                updateColorLegend();
             }
             
-            // 更新预览
-            function updatePreview() {
-                const segmentCount = parseInt(segmentCountSelect.value);
-                let previewText = '';
+            // 更新文字选项显示
+            function updateTextOptions(segmentId) {
+                const textInput = document.getElementById(`custom-text-${segmentId}`);
+                const textOptions = document.getElementById(`text-options-${segmentId}`);
                 
-                for (let i = 1; i <= segmentCount; i++) {
-                    const type = document.getElementById(`segment-type-${i}`).value;
-                    const length = parseInt(document.getElementById(`segment-length-${i}`).value);
-                    
-                    let example = '';
-                    if (type === 'letter') {
-                        example = 'A'.repeat(length);
-                    } else if (type === 'number') {
-                        example = '1'.repeat(length);
-                    } else {
-                        // 对于文字类型，使用自定义内容或默认值
-                        const customText = document.getElementById(`custom-text-${i}`).value;
-                        if (customText) {
-                            example = customText.substring(0, length);
-                        } else {
-                            example = '文字'.substring(0, length);
-                        }
-                    }
-                    
-                    previewText += example;
-                    if (i < segmentCount) {
-                        previewText += '-';
-                    }
+                if (textInput.value.trim()) {
+                    const options = textInput.value.split('\n').map(opt => opt.trim()).filter(opt => opt);
+                    textOptions.innerHTML = `当前选项 (${options.length}个): ${options.join(', ')}`;
+                } else {
+                    textOptions.innerHTML = '当前选项: 无';
                 }
-                
-                previewCode.textContent = previewText;
             }
             
-            // 生成示例编码
-            function generateExampleCode() {
+            // 获取文字选项数组
+            function getTextOptions(segmentId) {
+                const textInput = document.getElementById(`custom-text-${segmentId}`);
+                if (textInput.value.trim()) {
+                    return textInput.value.split('\n').map(opt => opt.trim()).filter(opt => opt);
+                }
+                return [];
+            }
+            
+            // 更新颜色图例
+            function updateColorLegend() {
+                const colorCount = parseInt(colorCountSelect.value);
+                colorLegend.innerHTML = '<div class="section-title">颜色含义：</div>';
+                
+                for (let i = 0; i < colorCount; i++) {
+                    const colorItem = document.createElement('div');
+                    colorItem.className = 'color-item';
+                    colorItem.innerHTML = `
+                        <div class="color-box" style="background-color: ${colorPalette[i].value}"></div>
+                        <div class="color-label">${colorPalette[i].name}</div>
+                    `;
+                    colorLegend.appendChild(colorItem);
+                }
+            }
+            
+            // 生成单个编码
+            function generateSingleCode() {
                 const segmentCount = parseInt(segmentCountSelect.value);
                 let code = '';
                 
                 // 示例数据
                 const letterExamples = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-                const numberExamples = ['1', '2', '3', '4', '5', '6', '7', '8'];
-                const textExamples = ['文学', '科学', '历史', '艺术', '数学', '英语', '体育', '音乐'];
+                const numberExamples = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
                 
                 for (let i = 1; i <= segmentCount; i++) {
                     const type = document.getElementById(`segment-type-${i}`).value;
@@ -323,11 +519,15 @@
                         }
                     } else {
                         // 对于文字类型，检查是否有自定义内容
-                        const customText = document.getElementById(`custom-text-${i}`).value;
-                        if (customText) {
-                            segment = customText.substring(0, length);
+                        const textOptions = getTextOptions(i);
+                        if (textOptions.length > 0) {
+                            // 从选项中随机选择一个
+                            const randomOption = textOptions[Math.floor(Math.random() * textOptions.length)];
+                            segment = randomOption.substring(0, length);
                         } else {
-                            segment = textExamples[Math.floor(Math.random() * textExamples.length)].substring(0, length);
+                            // 如果没有自定义选项，使用默认文字
+                            const defaultTexts = ['文学', '科学', '历史', '艺术', '数学', '英语', '体育', '音乐'];
+                            segment = defaultTexts[Math.floor(Math.random() * defaultTexts.length)].substring(0, length);
                         }
                     }
                     
@@ -337,25 +537,106 @@
                     }
                 }
                 
-                previewCode.textContent = code;
+                return code;
+            }
+            
+            // 更新预览
+            function updatePreview() {
+                previewCode.textContent = generateSingleCode();
+            }
+            
+            // 生成多个示例编码
+            function generateExampleCodes() {
+                const codeCount = parseInt(codeCountSelect.value);
+                const colorCount = parseInt(colorCountSelect.value);
+                
+                // 清空之前的编码列表
+                generatedCodesList.innerHTML = '';
+                
+                // 如果只生成一个编码，使用原来的突出显示方式
+                if (codeCount === 1) {
+                    const code = generateSingleCode();
+                    const randomColorIndex = Math.floor(Math.random() * colorCount);
+                    const selectedColor = colorPalette[randomColorIndex];
+                    
+                    generatedCodeText.textContent = code;
+                    generatedCodeText.style.color = selectedColor.value;
+                    
+                    // 添加动画效果
+                    generatedCodeText.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        generatedCodeText.style.transform = 'scale(1)';
+                    }, 300);
+                    
+                    // 高亮显示当前使用的颜色
+                    highlightSelectedColor(randomColorIndex);
+                } else {
+                    // 生成多个编码
+                    generatedCodeText.textContent = `已生成 ${codeCount} 个编码示例`;
+                    generatedCodeText.style.color = '#4a6baf';
+                    
+                    for (let i = 0; i < codeCount; i++) {
+                        const code = generateSingleCode();
+                        const randomColorIndex = Math.floor(Math.random() * colorCount);
+                        const selectedColor = colorPalette[randomColorIndex];
+                        
+                        const codeItem = document.createElement('div');
+                        codeItem.className = 'generated-code-item';
+                        codeItem.textContent = `${i+1}. ${code}`;
+                        codeItem.style.color = selectedColor.value;
+                        
+                        generatedCodesList.appendChild(codeItem);
+                    }
+                    
+                    // 不清除颜色高亮
+                    clearColorHighlight();
+                }
+            }
+            
+            // 高亮显示当前使用的颜色
+            function highlightSelectedColor(colorIndex) {
+                const colorItems = document.querySelectorAll('.color-item');
+                colorItems.forEach((item, index) => {
+                    if (index === colorIndex) {
+                        item.style.fontWeight = 'bold';
+                        item.style.transform = 'scale(1.1)';
+                    } else {
+                        item.style.fontWeight = 'normal';
+                        item.style.transform = 'scale(1)';
+                    }
+                });
+            }
+            
+            // 清除颜色高亮
+            function clearColorHighlight() {
+                const colorItems = document.querySelectorAll('.color-item');
+                colorItems.forEach(item => {
+                    item.style.fontWeight = 'normal';
+                    item.style.transform = 'scale(1)';
+                });
             }
             
             // 重置所有设置
             function resetAll() {
                 segmentCountSelect.value = '2';
+                colorCountSelect.value = '2';
+                codeCountSelect.value = '1';
                 generateSegmentControls();
+                generatedCodeText.textContent = '点击上方按钮生成编码';
+                generatedCodeText.style.color = '#ff6600';
+                generatedCodesList.innerHTML = '';
             }
             
             // 事件监听
             segmentCountSelect.addEventListener('change', generateSegmentControls);
-            generateBtn.addEventListener('click', generateExampleCode);
+            colorCountSelect.addEventListener('change', updateColorLegend);
+            generateBtn.addEventListener('click', generateExampleCodes);
             resetBtn.addEventListener('click', resetAll);
             
             // 为所有段控制添加事件监听
             document.addEventListener('change', function(e) {
                 if (e.target.id.startsWith('segment-type-') || 
-                    e.target.id.startsWith('segment-length-') ||
-                    e.target.id.startsWith('custom-text-')) {
+                    e.target.id.startsWith('segment-length-')) {
                     updatePreview();
                 }
             });
