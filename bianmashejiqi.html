@@ -177,15 +177,15 @@
             font-size: 14px;
         }
         
-        .text-input {
+        .text-input, .range-input {
             display: none;
         }
         
-        .text-input.active {
+        .text-input.active, .range-input.active {
             display: block;
         }
         
-        .text-hint {
+        .text-hint, .range-hint {
             font-size: 12px;
             color: #666;
             margin-top: -5px;
@@ -241,6 +241,19 @@
         .count-selector select {
             width: auto;
             display: inline;
+        }
+        
+        .range-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .range-inputs div {
+            flex: 1;
+        }
+        
+        .number-range-input input {
+            font-family: monospace;
         }
     </style>
 </head>
@@ -328,8 +341,17 @@
             <ul>
                 <li><strong>段数</strong>：编码由几部分组成</li>
                 <li><strong>类型</strong>：每部分可以使用字母、数字或文字</li>
-                <li><strong>位数</strong>：每部分有几个字符</li>
+                <li><strong>位数</strong>：每部分有几个字符（最多5位）</li>
+                <li><strong>范围</strong>：字母或数字的起始和终止范围</li>
                 <li><strong>颜色</strong>：用不同颜色区分编码的不同含义</li>
+            </ul>
+            
+            <p><strong>范围设置功能：</strong></p>
+            <p>当选择字母或数字类型时，你可以设置起始和终止范围：</p>
+            <ul>
+                <li>字母范围：例如从A到D，系统只会使用A、B、C、D这些字母</li>
+                <li>数字范围：例如从10到90，系统只会使用10到90之间的数字</li>
+                <li>如果不设置范围，系统会使用默认范围（字母A-Z，数字根据位数自动计算）</li>
             </ul>
             
             <p><strong>颜色区分功能：</strong></p>
@@ -348,8 +370,8 @@
                 <p><strong>示例：</strong></p>
                 <p>假设我们要给班级图书编码：</p>
                 <p>第一段：图书类别（文字，2位）→ 每行输入一个类别</p>
-                <p>第二段：图书编号（数字，3位）→ 001</p>
-                <p>编码结果可能是：<strong>文学-001</strong>、<strong>科学-002</strong> 或 <strong>历史-003</strong></p>
+                <p>第二段：图书编号（数字，3位）→ 范围从10到90</p>
+                <p>编码结果可能是：<strong>文学-015</strong>、<strong>科学-032</strong> 或 <strong>历史-007</strong></p>
                 <p>同时，我们可以用颜色区分：</p>
                 <p>红色表示文学类，蓝色表示科学类，绿色表示历史类</p>
             </div>
@@ -411,8 +433,33 @@
                             <option value="3">3位</option>
                             <option value="4">4位</option>
                             <option value="5">5位</option>
-
                         </select>
+                        <div id="letter-range-input-${i}" class="range-input">
+                            <div class="range-inputs">
+                                <div>
+                                    <label for="letter-range-start-${i}">起始字母：</label>
+                                    <input type="text" id="letter-range-start-${i}" placeholder="如A" maxlength="1">
+                                </div>
+                                <div>
+                                    <label for="letter-range-end-${i}">终止字母：</label>
+                                    <input type="text" id="letter-range-end-${i}" placeholder="如D" maxlength="1">
+                                </div>
+                            </div>
+                            <div class="range-hint">提示：输入单个字母，如A到D。不设置则使用A-Z</div>
+                        </div>
+                        <div id="number-range-input-${i}" class="range-input">
+                            <div class="range-inputs">
+                                <div>
+                                    <label for="number-range-start-${i}">起始数字：</label>
+                                    <input type="number" id="number-range-start-${i}" placeholder="如10">
+                                </div>
+                                <div>
+                                    <label for="number-range-end-${i}">终止数字：</label>
+                                    <input type="number" id="number-range-end-${i}" placeholder="如90">
+                                </div>
+                            </div>
+                            <div class="range-hint">提示：输入数字范围，如10到90。不设置则使用0-9</div>
+                        </div>
                         <div id="text-input-${i}" class="text-input">
                             <label for="custom-text-${i}">输入文字内容（每行一个选项）：</label>
                             <textarea id="custom-text-${i}" placeholder="例如：
@@ -431,12 +478,20 @@
                     select.addEventListener('change', function() {
                         const segmentId = this.id.split('-')[2];
                         const textInput = document.getElementById(`text-input-${segmentId}`);
+                        const letterRangeInput = document.getElementById(`letter-range-input-${segmentId}`);
+                        const numberRangeInput = document.getElementById(`number-range-input-${segmentId}`);
+                        
+                        // 隐藏所有输入区域
+                        textInput.classList.remove('active');
+                        letterRangeInput.classList.remove('active');
+                        numberRangeInput.classList.remove('active');
                         
                         if (this.value === 'text') {
                             textInput.classList.add('active');
-                            updateTextOptions(segmentId);
-                        } else {
-                            textInput.classList.remove('active');
+                        } else if (this.value === 'letter') {
+                            letterRangeInput.classList.add('active');
+                        } else if (this.value === 'number') {
+                            numberRangeInput.classList.add('active');
                         }
                         
                         updatePreview();
@@ -450,6 +505,28 @@
                         updateTextOptions(segmentId);
                         updatePreview();
                     }
+                });
+                
+                // 为所有范围输入框添加事件监听
+                document.addEventListener('input', function(e) {
+                    if (e.target.id.startsWith('letter-range-start-') || 
+                        e.target.id.startsWith('letter-range-end-') ||
+                        e.target.id.startsWith('number-range-start-') || 
+                        e.target.id.startsWith('number-range-end-')) {
+                        updatePreview();
+                    }
+                });
+                
+                // 为所有位数选择框添加事件监听
+                document.querySelectorAll('.segment-length').forEach(select => {
+                    select.addEventListener('change', function() {
+                        updatePreview();
+                    });
+                });
+                
+                // 初始化显示范围设置
+                document.querySelectorAll('.segment-type').forEach(select => {
+                    select.dispatchEvent(new Event('change'));
                 });
                 
                 // 更新预览
@@ -479,6 +556,44 @@
                 return [];
             }
             
+            // 获取字母范围设置
+            function getLetterRange(segmentId) {
+                const startInput = document.getElementById(`letter-range-start-${segmentId}`);
+                const endInput = document.getElementById(`letter-range-end-${segmentId}`);
+                
+                let start = startInput.value.trim().toUpperCase();
+                let end = endInput.value.trim().toUpperCase();
+                
+                // 如果没有设置范围，使用默认值
+                if (!start || !end) {
+                    return { start: 'A', end: 'Z' };
+                }
+                
+                // 确保只使用第一个字符
+                if (start.length > 0) start = start[0];
+                if (end.length > 0) end = end[0];
+                
+                return { start, end };
+            }
+            
+            // 获取数字范围设置
+            function getNumberRange(segmentId) {
+                const startInput = document.getElementById(`number-range-start-${segmentId}`);
+                const endInput = document.getElementById(`number-range-end-${segmentId}`);
+                const length = parseInt(document.getElementById(`segment-length-${segmentId}`).value);
+                
+                let start = parseInt(startInput.value);
+                let end = parseInt(endInput.value);
+                
+                // 如果没有设置范围，使用默认值
+                if (isNaN(start) || isNaN(end)) {
+                    start = 0;
+                    end = Math.pow(10, length) - 1;
+                }
+                
+                return { start, end };
+            }
+            
             // 更新颜色图例
             function updateColorLegend() {
                 const colorCount = parseInt(colorCountSelect.value);
@@ -495,14 +610,23 @@
                 }
             }
             
+            // 生成字母编码
+            function generateLetterCode(length, range) {
+                let code = '';
+                const startCharCode = range.start.charCodeAt(0);
+                const endCharCode = range.end.charCodeAt(0);
+                
+                for (let i = 0; i < length; i++) {
+                    const randomCharCode = Math.floor(Math.random() * (endCharCode - startCharCode + 1)) + startCharCode;
+                    code += String.fromCharCode(randomCharCode);
+                }
+                return code;
+            }
+            
             // 生成单个编码
             function generateSingleCode() {
                 const segmentCount = parseInt(segmentCountSelect.value);
                 let code = '';
-                
-                // 示例数据
-                const letterExamples = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-                const numberExamples = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
                 
                 for (let i = 1; i <= segmentCount; i++) {
                     const type = document.getElementById(`segment-type-${i}`).value;
@@ -510,12 +634,18 @@
                     
                     let segment = '';
                     if (type === 'letter') {
-                        for (let j = 0; j < length; j++) {
-                            segment += letterExamples[Math.floor(Math.random() * letterExamples.length)];
-                        }
+                        // 字母类型：根据范围生成指定位数的字母
+                        const range = getLetterRange(i);
+                        segment = generateLetterCode(length, range);
                     } else if (type === 'number') {
-                        for (let j = 0; j < length; j++) {
-                            segment += numberExamples[Math.floor(Math.random() * numberExamples.length)];
+                        // 数字类型：生成指定范围内的随机数
+                        const range = getNumberRange(i);
+                        const randomNum = Math.floor(Math.random() * (range.end - range.start + 1)) + range.start;
+                        segment = randomNum.toString();
+                        
+                        // 如果数字长度小于指定位数，前面补0
+                        while (segment.length < length) {
+                            segment = '0' + segment;
                         }
                     } else {
                         // 对于文字类型，检查是否有自定义内容
