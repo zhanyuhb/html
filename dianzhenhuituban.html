@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>点阵绘图板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .tool-panel {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .canvas-container {
+            flex: 3;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .grid-size-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .size-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .size-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .size-btn.active {
+            background: rgba(103, 58, 183, 0.7);
+            box-shadow: 0 0 10px rgba(103, 58, 183, 0.5);
+        }
+        
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .color-btn {
+            aspect-ratio: 1;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-btn.active {
+            transform: scale(1.15);
+            box-shadow: 0 0 0 3px white;
+        }
+        
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tool-btn {
+            padding: 12px 5px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .tool-btn.active {
+            background: rgba(33, 150, 243, 0.7);
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .action-btn.primary {
+            background: rgba(76, 175, 80, 0.7);
+        }
+        
+        .action-btn.primary:hover {
+            background: rgba(76, 175, 80, 0.9);
+        }
+        
+        .action-btn.secondary {
+            background: rgba(33, 150, 243, 0.7);
+        }
+        
+        .action-btn.secondary:hover {
+            background: rgba(33, 150, 243, 0.9);
+        }
+        
+        .grid-canvas {
+            display: grid;
+            gap: 1px;
+            background-color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            max-width: 100%;
+        }
+        
+        .pixel {
+            background-color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+        
+        .pixel:hover {
+            opacity: 0.8;
+        }
+        
+        .grid-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .presets {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .preset-btn {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .preset-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .tool-panel, .canvas-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>点阵绘图板</h1>
+            <p class="subtitle">创建像素艺术、图标和文字符号</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="tool-panel">
+                <h2 class="section-title">设置</h2>
+                
+                <div class="setting-group">
+                    <h3>点阵尺寸</h3>
+                    <div class="grid-size-selector">
+                        <button class="size-btn active" data-size="16">16×16</button>
+                        <button class="size-btn" data-size="24">24×24</button>
+                        <button class="size-btn" data-size="32">32×32</button>
+                        <button class="size-btn" data-size="48">48×48</button>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3>颜色选择</h3>
+                    <div class="color-palette">
+                        <button class="color-btn active" style="background-color: #000000;" data-color="#000000"></button>
+                        <button class="color-btn" style="background-color: #FF0000;" data-color="#FF0000"></button>
+                        <button class="color-btn" style="background-color: #00FF00;" data-color="#00FF00"></button>
+                        <button class="color-btn" style="background-color: #0000FF;" data-color="#0000FF"></button>
+                        <button class="color-btn" style="background-color: #FFFF00;" data-color="#FFFF00"></button>
+                        <button class="color-btn" style="background-color: #FF00FF;" data-color="#FF00FF"></button>
+                        <button class="color-btn" style="background-color: #00FFFF;" data-color="#00FFFF"></button>
+                        <button class="color-btn" style="background-color: #FFFFFF;" data-color="#FFFFFF"></button>
+                        <button class="color-btn" style="background-color: #FFA500;" data-color="#FFA500"></button>
+                        <button class="color-btn" style="background-color: #800080;" data-color="#800080"></button>
+                        <button class="color-btn" style="background-color: #FFC0CB;" data-color="#FFC0CB"></button>
+                        <button class="color-btn" style="background-color: #A52A2A;" data-color="#A52A2A"></button>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3>绘图工具</h3>
+                    <div class="tools">
+                        <button class="tool-btn active" data-tool="pencil">画笔</button>
+                        <button class="tool-btn" data-tool="eraser">橡皮擦</button>
+                        <button class="tool-btn" data-tool="fill">填充</button>
+                        <button class="tool-btn" data-tool="line">直线</button>
+                        <button class="tool-btn" data-tool="rectangle">矩形</button>
+                        <button class="tool-btn" data-tool="circle">圆形</button>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3>操作</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn primary" id="save-btn">保存图像</button>
+                        <button class="action-btn" id="clear-btn">清除画布</button>
+                        <button class="action-btn secondary" id="import-btn">导入图像</button>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3>预设图形</h3>
+                    <div class="presets">
+                        <button class="preset-btn" data-preset="heart">心形</button>
+                        <button class="preset-btn" data-preset="smiley">笑脸</button>
+                        <button class="preset-btn" data-preset="arrow">箭头</button>
+                        <button class="preset-btn" data-preset="house">房屋</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <h2 class="section-title">绘图区域</h2>
+                <div class="grid-canvas" id="grid-canvas"></div>
+                <div class="grid-info">
+                    <span>当前尺寸: <span id="current-size">16×16</span></span>
+                    <span>提示: 点击单元格改变颜色，拖动进行连续绘制</span>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>点阵绘图板 &copy; 2023 | 使用HTML5、CSS3和JavaScript创建</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 应用状态
+            const state = {
+                gridSize: 16,
+                currentColor: '#000000',
+                currentTool: 'pencil',
+                isDrawing: false,
+                grid: [],
+                startPixel: null,
+                tempGrid: null,
+                isShapeDrawing: false
+            };
+            
+            // DOM元素
+            const gridCanvas = document.getElementById('grid-canvas');
+            const currentSizeDisplay = document.getElementById('current-size');
+            const sizeButtons = document.querySelectorAll('.size-btn');
+            const colorButtons = document.querySelectorAll('.color-btn');
+            const toolButtons = document.querySelectorAll('.tool-btn');
+            const actionButtons = document.querySelectorAll('.action-btn');
+            const presetButtons = document.querySelectorAll('.preset-btn');
+            
+            // 初始化网格
+            function initializeGrid(size) {
+                state.gridSize = size;
+                state.grid = [];
+                
+                // 更新显示
+                currentSizeDisplay.textContent = `${size}×${size}`;
+                
+                // 清除现有网格
+                gridCanvas.innerHTML = '';
+                
+                // 设置网格样式
+                const cellSize = Math.min(500 / size, 30); // 限制最大单元格尺寸
+                gridCanvas.style.gridTemplateColumns = `repeat(${size}, ${cellSize}px)`;
+                gridCanvas.style.gridTemplateRows = `repeat(${size}, ${cellSize}px)`;
+                
+                // 创建网格单元格
+                for (let i = 0; i < size * size; i++) {
+                    const pixel = document.createElement('div');
+                    pixel.className = 'pixel';
+                    pixel.dataset.index = i;
+                    
+                    // 初始化状态
+                    state.grid[i] = '#ffffff';
+                    
+                    // 事件监听器
+                    pixel.addEventListener('mousedown', startDrawing);
+                    pixel.addEventListener('mouseenter', draw);
+                    pixel.addEventListener('touchstart', handleTouch);
+                    
+                    gridCanvas.appendChild(pixel);
+                }
+                
+                // 添加鼠标抬起事件监听器到整个文档
+                document.addEventListener('mouseup', stopDrawing);
+            }
+            
+            // 开始绘制
+            function startDrawing(e) {
+                e.preventDefault();
+                state.isDrawing = true;
+                
+                const pixel = e.target;
+                if (!pixel.classList.contains('pixel')) return;
+                
+                const index = parseInt(pixel.dataset.index);
+                state.startPixel = index;
+                
+                // 保存当前网格状态用于形状绘制预览
+                if (['line', 'rectangle', 'circle'].includes(state.currentTool)) {
+                    state.tempGrid = [...state.grid];
+                    state.isShapeDrawing = true;
+                }
+                
+                draw(e);
+            }
+            
+            // 绘制
+            function draw(e) {
+                if (!state.isDrawing) return;
+                
+                const pixel = e.target;
+                if (!pixel.classList.contains('pixel')) return;
+                
+                const index = parseInt(pixel.dataset.index);
+                
+                if (state.currentTool === 'pencil') {
+                    state.grid[index] = state.currentColor;
+                    pixel.style.backgroundColor = state.currentColor;
+                } else if (state.currentTool === 'eraser') {
+                    state.grid[index] = '#ffffff';
+                    pixel.style.backgroundColor = '#ffffff';
+                } else if (state.currentTool === 'fill') {
+                    floodFill(index, state.currentColor);
+                } else if (['line', 'rectangle', 'circle'].includes(state.currentTool) && state.isShapeDrawing) {
+                    // 临时绘制形状预览
+                    drawShapePreview(state.startPixel, index);
+                }
+            }
+            
+            // 停止绘制
+            function stopDrawing() {
+                if (state.isDrawing && ['line', 'rectangle', 'circle'].includes(state.currentTool) && state.isShapeDrawing) {
+                    // 应用形状到实际网格
+                    applyShape(state.startPixel, state.endPixel);
+                }
+                state.isDrawing = false;
+                state.startPixel = null;
+                state.isShapeDrawing = false;
+                state.tempGrid = null;
+            }
+            
+            // 处理触摸事件
+            function handleTouch(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const pixel = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if (pixel && pixel.classList.contains('pixel')) {
+                    const index = parseInt(pixel.dataset.index);
+                    
+                    if (state.currentTool === 'pencil') {
+                        state.grid[index] = state.currentColor;
+                        pixel.style.backgroundColor = state.currentColor;
+                    } else if (state.currentTool === 'eraser') {
+                        state.grid[index] = '#ffffff';
+                        pixel.style.backgroundColor = '#ffffff';
+                    } else if (state.currentTool === 'fill') {
+                        floodFill(index, state.currentColor);
+                    }
+                }
+            }
+            
+            // 洪水填充算法
+            function floodFill(startIndex, fillColor) {
+                const targetColor = state.grid[startIndex];
+                if (targetColor === fillColor) return;
+                
+                const queue = [startIndex];
+                const size = state.gridSize;
+                
+                while (queue.length > 0) {
+                    const index = queue.shift();
+                    
+                    if (state.grid[index] !== targetColor) continue;
+                    
+                    state.grid[index] = fillColor;
+                    const pixel = gridCanvas.children[index];
+                    if (pixel) {
+                        pixel.style.backgroundColor = fillColor;
+                    }
+                    
+                    // 检查相邻像素
+                    const x = index % size;
+                    const y = Math.floor(index / size);
+                    
+                    if (x > 0) queue.push(index - 1);
+                    if (x < size - 1) queue.push(index + 1);
+                    if (y > 0) queue.push(index - size);
+                    if (y < size - 1) queue.push(index + size);
+                }
+            }
+            
+            // 绘制形状预览
+            function drawShapePreview(startIndex, endIndex) {
+                if (!state.tempGrid) return;
+                
+                const size = state.gridSize;
+                const startX = startIndex % size;
+                const startY = Math.floor(startIndex / size);
+                const endX = endIndex % size;
+                const endY = Math.floor(endIndex / size);
+                
+                // 恢复临时网格状态（显示之前绘制的内容）
+                for (let i = 0; i < state.grid.length; i++) {
+                    const pixel = gridCanvas.children[i];
+                    if (pixel) {
+                        pixel.style.backgroundColor = state.tempGrid[i];
+                    }
+                }
+                
+                // 绘制预览形状
+                if (state.currentTool === 'line') {
+                    drawLine(startX, startY, endX, endY, state.currentColor, true);
+                } else if (state.currentTool === 'rectangle') {
+                    drawRectangle(startX, startY, endX, endY, state.currentColor, true);
+                } else if (state.currentTool === 'circle') {
+                    drawCircle(startX, startY, endX, endY, state.currentColor, true);
+                }
+                
+                // 保存结束点
+                state.endPixel = endIndex;
+            }
+            
+            // 应用形状
+            function applyShape(startIndex, endIndex) {
+                const size = state.gridSize;
+                const startX = startIndex % size;
+                const startY = Math.floor(startIndex / size);
+                const endX = endIndex % size;
+                const endY = Math.floor(endIndex / size);
+                
+                // 应用形状到实际网格
+                if (state.currentTool === 'line') {
+                    drawLine(startX, startY, endX, endY, state.currentColor, false);
+                } else if (state.currentTool === 'rectangle') {
+                    drawRectangle(startX, startY, endX, endY, state.currentColor, false);
+                } else if (state.currentTool === 'circle') {
+                    drawCircle(startX, startY, endX, endY, state.currentColor, false);
+                }
+            }
+            
+            // 绘制直线
+            function drawLine(x0, y0, x1, y1, color, preview = false) {
+                const dx = Math.abs(x1 - x0);
+                const dy = Math.abs(y1 - y0);
+                const sx = (x0 < x1) ? 1 : -1;
+                const sy = (y0 < y1) ? 1 : -1;
+                let err = dx - dy;
+                
+                while (true) {
+                    const index = y0 * state.gridSize + x0;
+                    if (preview) {
+                        const pixel = gridCanvas.children[index];
+                        if (pixel) {
+                            pixel.style.backgroundColor = color;
+                        }
+                    } else {
+                        state.grid[index] = color;
+                        const pixel = gridCanvas.children[index];
+                        if (pixel) {
+                            pixel.style.backgroundColor = color;
+                        }
+                    }
+                    
+                    if (x0 === x1 && y0 === y1) break;
+                    const e2 = 2 * err;
+                    if (e2 > -dy) {
+                        err -= dy;
+                        x0 += sx;
+                    }
+                    if (e2 < dx) {
+                        err += dx;
+                        y0 += sy;
+                    }
+                }
+            }
+            
+            // 绘制矩形
+            function drawRectangle(x0, y0, x1, y1, color, preview = false) {
+                const minX = Math.min(x0, x1);
+                const maxX = Math.max(x0, x1);
+                const minY = Math.min(y0, y1);
+                const maxY = Math.max(y0, y1);
+                
+                for (let y = minY; y <= maxY; y++) {
+                    for (let x = minX; x <= maxX; x++) {
+                        // 只绘制边框
+                        if (x === minX || x === maxX || y === minY || y === maxY) {
+                            const index = y * state.gridSize + x;
+                            if (preview) {
+                                const pixel = gridCanvas.children[index];
+                                if (pixel) {
+                                    pixel.style.backgroundColor = color;
+                                }
+                            } else {
+                                state.grid[index] = color;
+                                const pixel = gridCanvas.children[index];
+                                if (pixel) {
+                                    pixel.style.backgroundColor = color;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 绘制圆形
+            function drawCircle(x0, y0, x1, y1, color, preview = false) {
+                const radius = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
+                
+                for (let y = 0; y < state.gridSize; y++) {
+                    for (let x = 0; x < state.gridSize; x++) {
+                        const distance = Math.sqrt(Math.pow(x - x0, 2) + Math.pow(y - y0, 2));
+                        if (Math.abs(distance - radius) < 0.5) {
+                            const index = y * state.gridSize + x;
+                            if (preview) {
+                                const pixel = gridCanvas.children[index];
+                                if (pixel) {
+                                    pixel.style.backgroundColor = color;
+                                }
+                            } else {
+                                state.grid[index] = color;
+                                const pixel = gridCanvas.children[index];
+                                if (pixel) {
+                                    pixel.style.backgroundColor = color;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 改变网格尺寸
+            sizeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const size = parseInt(this.dataset.size);
+                    
+                    // 更新活动按钮
+                    sizeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 重新初始化网格
+                    initializeGrid(size);
+                });
+            });
+            
+            // 改变颜色
+            colorButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const color = this.dataset.color;
+                    state.currentColor = color;
+                    
+                    // 更新活动按钮
+                    colorButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 改变工具
+            toolButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tool = this.dataset.tool;
+                    state.currentTool = tool;
+                    
+                    // 更新活动按钮
+                    toolButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 操作按钮
+            document.getElementById('clear-btn').addEventListener('click', function() {
+                if (confirm('确定要清除画布吗？')) {
+                    initializeGrid(state.gridSize);
+                }
+            });
+            
+            document.getElementById('save-btn').addEventListener('click', function() {
+                alert('图像已保存到本地存储中！');
+                localStorage.setItem('pixelArt', JSON.stringify({
+                    grid: state.grid,
+                    size: state.gridSize
+                }));
+            });
+            
+            document.getElementById('import-btn').addEventListener('click', function() {
+                const saved = localStorage.getItem('pixelArt');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (confirm('是否导入之前保存的图像？当前画布将被覆盖。')) {
+                        initializeGrid(data.size);
+                        // 应用保存的网格数据
+                        data.grid.forEach((color, index) => {
+                            state.grid[index] = color;
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = color;
+                            }
+                        });
+                    }
+                } else {
+                    alert('没有找到保存的图像！');
+                }
+            });
+            
+            // 预设图形
+            presetButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const preset = this.dataset.preset;
+                    applyPreset(preset);
+                });
+            });
+            
+            // 应用预设图形
+            function applyPreset(preset) {
+                // 清除画布
+                initializeGrid(state.gridSize);
+                
+                // 根据预设类型绘制不同的图形
+                switch(preset) {
+                    case 'heart':
+                        drawHeart();
+                        break;
+                    case 'smiley':
+                        drawSmiley();
+                        break;
+                    case 'arrow':
+                        drawArrow();
+                        break;
+                    case 'house':
+                        drawHouse();
+                        break;
+                }
+            }
+            
+            // 绘制心形
+            function drawHeart() {
+                const size = state.gridSize;
+                const centerX = Math.floor(size / 2);
+                const centerY = Math.floor(size / 2);
+                const radius = Math.floor(size / 4);
+                
+                for (let y = 0; y < size; y++) {
+                    for (let x = 0; x < size; x++) {
+                        // 心形数学公式
+                        const dx = (x - centerX) / radius;
+                        const dy = (y - centerY) / radius;
+                        const heart = Math.pow(dx, 2) + Math.pow(dy - Math.sqrt(Math.abs(dx)), 2);
+                        
+                        if (heart <= 1.1) {
+                            const index = y * size + x;
+                            state.grid[index] = '#FF0000';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#FF0000';
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 绘制笑脸
+            function drawSmiley() {
+                const size = state.gridSize;
+                const centerX = Math.floor(size / 2);
+                const centerY = Math.floor(size / 2);
+                const radius = Math.floor(size / 3);
+                
+                for (let y = 0; y < size; y++) {
+                    for (let x = 0; x < size; x++) {
+                        const dx = x - centerX;
+                        const dy = y - centerY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        // 绘制圆形脸部
+                        if (distance <= radius) {
+                            const index = y * size + x;
+                            state.grid[index] = '#FFFF00';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#FFFF00';
+                            }
+                        }
+                        
+                        // 绘制眼睛
+                        const eyeRadius = Math.floor(size / 10);
+                        const leftEyeX = centerX - Math.floor(size / 4);
+                        const rightEyeX = centerX + Math.floor(size / 4);
+                        const eyeY = centerY - Math.floor(size / 6);
+                        
+                        if (Math.sqrt(Math.pow(x - leftEyeX, 2) + Math.pow(y - eyeY, 2)) <= eyeRadius ||
+                            Math.sqrt(Math.pow(x - rightEyeX, 2) + Math.pow(y - eyeY, 2)) <= eyeRadius) {
+                            const index = y * size + x;
+                            state.grid[index] = '#000000';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#000000';
+                            }
+                        }
+                        
+                        // 绘制嘴巴
+                        if (y === centerY + Math.floor(size / 6) && 
+                            x >= centerX - Math.floor(size / 4) && 
+                            x <= centerX + Math.floor(size / 4)) {
+                            const index = y * size + x;
+                            state.grid[index] = '#000000';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#000000';
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 绘制箭头
+            function drawArrow() {
+                const size = state.gridSize;
+                const centerX = Math.floor(size / 2);
+                const centerY = Math.floor(size / 2);
+                
+                for (let y = 0; y < size; y++) {
+                    for (let x = 0; x < size; x++) {
+                        // 绘制箭头主体
+                        if (x >= centerX - Math.floor(size / 4) && 
+                            x <= centerX + Math.floor(size / 4) && 
+                            y >= centerY - Math.floor(size / 8) && 
+                            y <= centerY + Math.floor(size / 8)) {
+                            const index = y * size + x;
+                            state.grid[index] = '#0000FF';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#0000FF';
+                            }
+                        }
+                        
+                        // 绘制箭头头部
+                        if (x >= centerX + Math.floor(size / 4) && 
+                            x <= centerX + Math.floor(size / 3) && 
+                            Math.abs(y - centerY) <= (x - centerX - Math.floor(size / 4))) {
+                            const index = y * size + x;
+                            state.grid[index] = '#0000FF';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#0000FF';
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 绘制房屋
+            function drawHouse() {
+                const size = state.gridSize;
+                const centerX = Math.floor(size / 2);
+                const centerY = Math.floor(size / 2);
+                const houseWidth = Math.floor(size / 2);
+                const houseHeight = Math.floor(size / 3);
+                
+                for (let y = 0; y < size; y++) {
+                    for (let x = 0; x < size; x++) {
+                        // 绘制房屋主体
+                        if (x >= centerX - houseWidth/2 && 
+                            x <= centerX + houseWidth/2 && 
+                            y >= centerY - houseHeight/2 && 
+                            y <= centerY + houseHeight/2) {
+                            const index = y * size + x;
+                            state.grid[index] = '#FFA500';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#FFA500';
+                            }
+                        }
+                        
+                        // 绘制屋顶
+                        const roofHeight = Math.floor(houseHeight / 2);
+                        if (y >= centerY - houseHeight/2 - roofHeight && 
+                            y <= centerY - houseHeight/2 && 
+                            Math.abs(x - centerX) <= (houseWidth/2 - (y - (centerY - houseHeight/2 - roofHeight)) * (houseWidth/2) / roofHeight)) {
+                            const index = y * size + x;
+                            state.grid[index] = '#A52A2A';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#A52A2A';
+                            }
+                        }
+                        
+                        // 绘制门
+                        const doorWidth = Math.floor(houseWidth / 4);
+                        const doorHeight = Math.floor(houseHeight / 2);
+                        if (x >= centerX - doorWidth/2 && 
+                            x <= centerX + doorWidth/2 && 
+                            y >= centerY + houseHeight/2 - doorHeight && 
+                            y <= centerY + houseHeight/2) {
+                            const index = y * size + x;
+                            state.grid[index] = '#800080';
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = '#800080';
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 初始化应用
+            initializeGrid(16);
+        });
+    </script>
+</body>
+</html>
