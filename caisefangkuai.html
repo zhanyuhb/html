@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彩色方格游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', '楷体', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f9ff;
+            padding: 20px;
+            background-image: linear-gradient(to bottom right, #e0f7fa, #bbdefb);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 150, 255, 0.2);
+            border: 5px solid #4fc3f7;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #0288d1;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 0 #b3e5fc;
+            letter-spacing: 1px;
+        }
+        
+        .description {
+            text-align: center;
+            color: #0277bd;
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 30px;
+        }
+        
+        .grid-container, .table-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        h2 {
+            color: #0288d1;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.8rem;
+            padding-bottom: 8px;
+            border-bottom: 3px dashed #4fc3f7;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 4px;
+            width: 100%;
+            aspect-ratio: 1/1;
+            background-color: #e1f5fe;
+            padding: 10px;
+            border-radius: 15px;
+            border: 3px solid #4fc3f7;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cell {
+            background-color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #b3e5fc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: transparent;
+        }
+        
+        .cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 8px rgba(2, 136, 209, 0.5);
+            z-index: 1;
+        }
+        
+        .cell.black {
+            background-color: #ff5722;
+            border-color: #d84315;
+        }
+        
+        .cell.white {
+            background-color: white;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        
+        .table td {
+            width: 10%;
+            height: 30px;
+            text-align: center;
+            border: 1px solid #b3e5fc;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .table td:hover {
+            background-color: #e1f5fe;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background-color: #4fc3f7;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 #0288d1;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: #29b6f6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #0288d1;
+        }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #0288d1;
+        }
+        
+        .clear-btn {
+            background-color: #ff9800;
+            box-shadow: 0 4px 0 #ef6c00;
+        }
+        
+        .clear-btn:hover {
+            background-color: #fb8c00;
+            box-shadow: 0 6px 0 #ef6c00;
+        }
+        
+        .clear-btn:active {
+            box-shadow: 0 2px 0 #ef6c00;
+        }
+        
+        .random-btn {
+            background-color: #9c27b0;
+            box-shadow: 0 4px 0 #7b1fa2;
+        }
+        
+        .random-btn:hover {
+            background-color: #8e24aa;
+            box-shadow: 0 6px 0 #7b1fa2;
+        }
+        
+        .random-btn:active {
+            box-shadow: 0 2px 0 #7b1fa2;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #0288d1;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .grid-container, .table-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 彩色方格游戏 🎨</h1>
+        <p class="description">点击左侧的方格改变颜色，观察右侧表格的变化！<br>白色方格对应数字"0"，橙色方格对应数字"1"</p>
+        
+        <div class="content">
+            <div class="grid-container">
+                <h2>彩色方格</h2>
+                <div class="grid" id="grid"></div>
+            </div>
+            
+            <div class="table-container">
+                <h2>数字表格</h2>
+                <table class="table" id="table"></table>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="clear-btn" id="clearBtn">全部清除</button>
+            <button class="random-btn" id="randomBtn">随机图案</button>
+        </div>
+        
+        <p class="footer">试试创造有趣的图案吧！看看你能用0和1组成什么？</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const grid = document.getElementById('grid');
+            const table = document.getElementById('table');
+            const clearBtn = document.getElementById('clearBtn');
+            const randomBtn = document.getElementById('randomBtn');
+            
+            const rows = 10;
+            const cols = 10;
+            
+            // 创建网格和表格
+            function createGridAndTable() {
+                grid.innerHTML = '';
+                table.innerHTML = '';
+                
+                for (let i = 0; i < rows; i++) {
+                    // 创建表格行
+                    const tableRow = document.createElement('tr');
+                    
+                    for (let j = 0; j < cols; j++) {
+                        // 创建网格单元格
+                        const cell = document.createElement('div');
+                        cell.className = 'cell white';
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        
+                        cell.addEventListener('click', function() {
+                            toggleCell(this);
+                        });
+                        
+                        grid.appendChild(cell);
+                        
+                        // 创建表格单元格
+                        const tableCell = document.createElement('td');
+                        tableCell.textContent = '0';
+                        tableCell.dataset.row = i;
+                        tableCell.dataset.col = j;
+                        tableRow.appendChild(tableCell);
+                    }
+                    
+                    table.appendChild(tableRow);
+                }
+            }
+            
+            // 切换单元格状态
+            function toggleCell(cell) {
+                cell.classList.toggle('white');
+                cell.classList.toggle('black');
+                
+                const row = cell.dataset.row;
+                const col = cell.dataset.col;
+                
+                const tableCell = document.querySelector(`td[data-row="${row}"][data-col="${col}"]`);
+                tableCell.textContent = cell.classList.contains('black') ? '1' : '0';
+            }
+            
+            // 清除所有单元格
+            function clearAll() {
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    cell.classList.remove('black');
+                    cell.classList.add('white');
+                });
+                
+                const tableCells = document.querySelectorAll('.table td');
+                tableCells.forEach(cell => {
+                    cell.textContent = '0';
+                });
+            }
+            
+            // 生成随机图案
+            function generateRandom() {
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    const isBlack = Math.random() > 0.7;
+                    
+                    if (isBlack) {
+                        cell.classList.remove('white');
+                        cell.classList.add('black');
+                    } else {
+                        cell.classList.remove('black');
+                        cell.classList.add('white');
+                    }
+                    
+                    const row = cell.dataset.row;
+                    const col = cell.dataset.col;
+                    const tableCell = document.querySelector(`td[data-row="${row}"][data-col="${col}"]`);
+                    tableCell.textContent = isBlack ? '1' : '0';
+                });
+            }
+            
+            // 事件监听
+            clearBtn.addEventListener('click', clearAll);
+            randomBtn.addEventListener('click', generateRandom);
+            
+            // 初始化
+            createGridAndTable();
+        });
+    </script>
+</body>
+</html>
