@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闰年判断器 - 小学生版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', '楷体', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 0 #ffe66d;
+        }
+        
+        .year-input {
+            margin: 25px 0;
+        }
+        
+        input {
+            width: 150px;
+            padding: 12px 15px;
+            font-size: 1.5rem;
+            text-align: center;
+            border: 3px solid #4ecdc4;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+        
+        button {
+            background-color: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px 0 25px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0 #1a936f;
+        }
+        
+        button:hover {
+            background-color: #45b7af;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1a936f;
+        }
+        
+        .rules {
+            background-color: #ffe66d;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        .rules h2 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .rules ul {
+            padding-left: 20px;
+        }
+        
+        .rules li {
+            margin-bottom: 8px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .leap-year {
+            background-color: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .not-leap-year {
+            background-color: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .calculation {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: left;
+            font-size: 1.1rem;
+        }
+        
+        .calculation h3 {
+            color: #495057;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .step {
+            margin: 10px 0;
+            padding: 8px;
+            border-left: 4px solid #4ecdc4;
+            background-color: white;
+        }
+        
+        .emoji {
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .decoration {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .decoration span {
+            font-size: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>闰年判断器</h1>
+        
+        <div class="decoration">
+            <span>🌞</span>
+            <span>📅</span>
+            <span>🎉</span>
+        </div>
+        
+        <div class="rules">
+            <h2>闰年规则</h2>
+            <ul>
+                <li>能被4整除但不能被100整除的年份是闰年</li>
+                <li>能被400整除的年份也是闰年</li>
+                <li>其他年份都是平年</li>
+            </ul>
+        </div>
+        
+        <div class="year-input">
+            <input type="number" id="yearInput" placeholder="输入年份" min="1" max="9999">
+        </div>
+        
+        <button id="checkBtn">判断是否是闰年</button>
+        
+        <div id="result" class="result">
+            <div id="emoji" class="emoji"></div>
+            <h2 id="resultText"></h2>
+            <div class="calculation">
+                <h3>计算过程</h3>
+                <div id="calculationSteps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('checkBtn').addEventListener('click', function() {
+            const yearInput = document.getElementById('yearInput');
+            const year = parseInt(yearInput.value);
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+            const emoji = document.getElementById('emoji');
+            const calculationSteps = document.getElementById('calculationSteps');
+            
+            if (isNaN(year) || year < 1 || year > 9999) {
+                alert('请输入一个有效的年份（1-9999）');
+                return;
+            }
+            
+            // 判断闰年
+            const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+            
+            // 显示结果
+            if (isLeapYear) {
+                resultDiv.className = 'result leap-year';
+                resultText.textContent = `${year}年是闰年！`;
+                emoji.textContent = '🎉🎊✨';
+            } else {
+                resultDiv.className = 'result not-leap-year';
+                resultText.textContent = `${year}年不是闰年`;
+                emoji.textContent = '😊';
+            }
+            
+            // 显示计算过程
+            calculationSteps.innerHTML = '';
+            
+            const step1 = document.createElement('div');
+            step1.className = 'step';
+            step1.innerHTML = `<strong>第一步：</strong>检查${year}是否能被4整除？`;
+            
+            const step2 = document.createElement('div');
+            step2.className = 'step';
+            step2.innerHTML = `<strong>第二步：</strong>检查${year}是否能被100整除？`;
+            
+            const step3 = document.createElement('div');
+            step3.className = 'step';
+            step3.innerHTML = `<strong>第三步：</strong>检查${year}是否能被400整除？`;
+            
+            const step4 = document.createElement('div');
+            step4.className = 'step';
+            
+            calculationSteps.appendChild(step1);
+            calculationSteps.appendChild(step2);
+            calculationSteps.appendChild(step3);
+            calculationSteps.appendChild(step4);
+            
+            // 第一步
+            if (year % 4 === 0) {
+                step1.innerHTML += ` <span style="color:green">✓ 是的，${year} ÷ 4 = ${year/4}</span>`;
+            } else {
+                step1.innerHTML += ` <span style="color:red">✗ 不是，${year} ÷ 4 = ${(year/4).toFixed(2)}，有余数${year%4}</span>`;
+            }
+            
+            // 第二步
+            if (year % 100 === 0) {
+                step2.innerHTML += ` <span style="color:green">✓ 是的，${year} ÷ 100 = ${year/100}</span>`;
+            } else {
+                step2.innerHTML += ` <span style="color:red">✗ 不是，${year} ÷ 100 = ${(year/100).toFixed(2)}，有余数${year%100}</span>`;
+            }
+            
+            // 第三步
+            if (year % 400 === 0) {
+                step3.innerHTML += ` <span style="color:green">✓ 是的，${year} ÷ 400 = ${year/400}</span>`;
+            } else {
+                step3.innerHTML += ` <span style="color:red">✗ 不是，${year} ÷ 400 = ${(year/400).toFixed(2)}，有余数${year%400}</span>`;
+            }
+            
+            // 第四步：结论
+            if (isLeapYear) {
+                if (year % 400 === 0) {
+                    step4.innerHTML = `<strong>结论：</strong>因为${year}能被400整除，所以${year}年是闰年！`;
+                } else {
+                    step4.innerHTML = `<strong>结论：</strong>因为${year}能被4整除但不能被100整除，所以${year}年是闰年！`;
+                }
+            } else {
+                if (year % 4 !== 0) {
+                    step4.innerHTML = `<strong>结论：</strong>因为${year}不能被4整除，所以${year}年不是闰年。`;
+                } else {
+                    step4.innerHTML = `<strong>结论：</strong>虽然${year}能被4整除，但也能被100整除且不能被400整除，所以${year}年不是闰年。`;
+                }
+            }
+            
+            resultDiv.style.display = 'block';
+        });
+        
+        // 按回车键也可以触发判断
+        document.getElementById('yearInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                document.getElementById('checkBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>
