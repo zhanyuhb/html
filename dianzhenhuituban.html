@@ -202,12 +202,14 @@
             margin-bottom: 20px;
             overflow: hidden;
             max-width: 100%;
+            box-shadow: 0 0 0 1px #e0e0e0 inset;
         }
         
         .pixel {
             background-color: #ffffff;
             cursor: pointer;
             transition: background-color 0.1s;
+            border: 1px solid #e0e0e0;
         }
         
         .pixel:hover {
@@ -360,7 +362,7 @@
                 grid: [],
                 startPixel: null,
                 tempGrid: null,
-                isShapeDrawing: false
+                shapePreview: false
             };
             
             // DOM元素
@@ -420,13 +422,17 @@
                 const index = parseInt(pixel.dataset.index);
                 state.startPixel = index;
                 
-                // 保存当前网格状态用于形状绘制预览
+                // 保存当前网格状态用于形状绘制
                 if (['line', 'rectangle', 'circle'].includes(state.currentTool)) {
                     state.tempGrid = [...state.grid];
-                    state.isShapeDrawing = true;
+                    state.shapePreview = true;
+                } else if (state.currentTool === 'fill') {
+                    // 填充工具立即执行
+                    floodFill(index, state.currentColor);
+                } else {
+                    // 画笔和橡皮擦直接绘制
+                    draw(e);
                 }
-                
-                draw(e);
             }
             
             // 绘制
@@ -444,9 +450,7 @@
                 } else if (state.currentTool === 'eraser') {
                     state.grid[index] = '#ffffff';
                     pixel.style.backgroundColor = '#ffffff';
-                } else if (state.currentTool === 'fill') {
-                    floodFill(index, state.currentColor);
-                } else if (['line', 'rectangle', 'circle'].includes(state.currentTool) && state.isShapeDrawing) {
+                } else if (['line', 'rectangle', 'circle'].includes(state.currentTool) && state.shapePreview) {
                     // 临时绘制形状预览
                     drawShapePreview(state.startPixel, index);
                 }
@@ -454,14 +458,14 @@
             
             // 停止绘制
             function stopDrawing() {
-                if (state.isDrawing && ['line', 'rectangle', 'circle'].includes(state.currentTool) && state.isShapeDrawing) {
+                if (state.isDrawing && ['line', 'rectangle', 'circle'].includes(state.currentTool) && state.shapePreview) {
                     // 应用形状到实际网格
-                    applyShape(state.startPixel, state.endPixel);
+                    applyShape();
                 }
                 state.isDrawing = false;
                 state.startPixel = null;
-                state.isShapeDrawing = false;
                 state.tempGrid = null;
+                state.shapePreview = false;
             }
             
             // 处理触摸事件
@@ -485,16 +489,20 @@
                 }
             }
             
-            // 洪水填充算法
+            // 洪水填充算法 - 修复版本
             function floodFill(startIndex, fillColor) {
                 const targetColor = state.grid[startIndex];
                 if (targetColor === fillColor) return;
                 
                 const queue = [startIndex];
                 const size = state.gridSize;
+                const visited = new Set();
                 
                 while (queue.length > 0) {
                     const index = queue.shift();
+                    
+                    if (visited.has(index)) continue;
+                    visited.add(index);
                     
                     if (state.grid[index] !== targetColor) continue;
                     
@@ -508,10 +516,15 @@
                     const x = index % size;
                     const y = Math.floor(index / size);
                     
-                    if (x > 0) queue.push(index - 1);
-                    if (x < size - 1) queue.push(index + 1);
-                    if (y > 0) queue.push(index - size);
-                    if (y < size - 1) queue.push(index + size);
+                    // 只添加相邻且颜色相同的像素
+                    if (x > 0 && state.grid[index - 1] === targetColor) 
+                        queue.push(index - 1);
+                    if (x < size - 1 && state.grid[index + 1] === targetColor) 
+                        queue.push(index + 1);
+                    if (y > 0 && state.grid[index - size] === targetColor) 
+                        queue.push(index - size);
+                    if (y < size - 1 && state.grid[index + size] === targetColor) 
+                        queue.push(index + size);
                 }
             }
             
@@ -525,8 +538,9 @@
                 const endX = endIndex % size;
                 const endY = Math.floor(endIndex / size);
                 
-                // 恢复临时网格状态（显示之前绘制的内容）
+                // 恢复临时网格状态
                 for (let i = 0; i < state.grid.length; i++) {
+                    state.grid[i] = state.tempGrid[i];
                     const pixel = gridCanvas.children[i];
                     if (pixel) {
                         pixel.style.backgroundColor = state.tempGrid[i];
@@ -541,20 +555,34 @@
                 } else if (state.currentTool === 'circle') {
                     drawCircle(startX, startY, endX, endY, state.currentColor, true);
                 }
-                
-                // 保存结束点
-                state.endPixel = endIndex;
             }
             
             // 应用形状
-            function applyShape(startIndex, endIndex) {
+            function applyShape() {
+                if (!state.tempGrid || state.startPixel === null) return;
+                
                 const size = state.gridSize;
-                const startX = startIndex % size;
-                const startY = Math.floor(startIndex / size);
+                const startX = state.startPixel % size;
+                const startY = Math.floor(state.startPixel / size);
+                
+                // 获取当前鼠标位置
+                const pixels = document.querySelectorAll('.pixel');
+                let currentPixel = null;
+                
+                for (let pixel of pixels) {
+                    if (pixel.matches(':hover')) {
+                        currentPixel = pixel;
+                        break;
+                    }
+                }
+                
+                if (!currentPixel) return;
+                
+                const endIndex = parseInt(currentPixel.dataset.index);
                 const endX = endIndex % size;
                 const endY = Math.floor(endIndex / size);
                 
-                // 应用形状到实际网格
+                // 绘制最终形状
                 if (state.currentTool === 'line') {
                     drawLine(startX, startY, endX, endY, state.currentColor, false);
                 } else if (state.currentTool === 'rectangle') {
@@ -562,6 +590,9 @@
                 } else if (state.currentTool === 'circle') {
                     drawCircle(startX, startY, endX, endY, state.currentColor, false);
                 }
+                
+                state.tempGrid = null;
+                state.shapePreview = false;
             }
             
             // 绘制直线
@@ -574,16 +605,18 @@
                 
                 while (true) {
                     const index = y0 * state.gridSize + x0;
-                    if (preview) {
-                        const pixel = gridCanvas.children[index];
-                        if (pixel) {
-                            pixel.style.backgroundColor = color;
-                        }
-                    } else {
-                        state.grid[index] = color;
-                        const pixel = gridCanvas.children[index];
-                        if (pixel) {
-                            pixel.style.backgroundColor = color;
+                    if (index >= 0 && index < state.grid.length) {
+                        if (preview) {
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = color;
+                            }
+                        } else {
+                            state.grid[index] = color;
+                            const pixel = gridCanvas.children[index];
+                            if (pixel) {
+                                pixel.style.backgroundColor = color;
+                            }
                         }
                     }
                     
@@ -612,16 +645,18 @@
                         // 只绘制边框
                         if (x === minX || x === maxX || y === minY || y === maxY) {
                             const index = y * state.gridSize + x;
-                            if (preview) {
-                                const pixel = gridCanvas.children[index];
-                                if (pixel) {
-                                    pixel.style.backgroundColor = color;
-                                }
-                            } else {
-                                state.grid[index] = color;
-                                const pixel = gridCanvas.children[index];
-                                if (pixel) {
-                                    pixel.style.backgroundColor = color;
+                            if (index >= 0 && index < state.grid.length) {
+                                if (preview) {
+                                    const pixel = gridCanvas.children[index];
+                                    if (pixel) {
+                                        pixel.style.backgroundColor = color;
+                                    }
+                                } else {
+                                    state.grid[index] = color;
+                                    const pixel = gridCanvas.children[index];
+                                    if (pixel) {
+                                        pixel.style.backgroundColor = color;
+                                    }
                                 }
                             }
                         }
@@ -638,16 +673,18 @@
                         const distance = Math.sqrt(Math.pow(x - x0, 2) + Math.pow(y - y0, 2));
                         if (Math.abs(distance - radius) < 0.5) {
                             const index = y * state.gridSize + x;
-                            if (preview) {
-                                const pixel = gridCanvas.children[index];
-                                if (pixel) {
-                                    pixel.style.backgroundColor = color;
-                                }
-                            } else {
-                                state.grid[index] = color;
-                                const pixel = gridCanvas.children[index];
-                                if (pixel) {
-                                    pixel.style.backgroundColor = color;
+                            if (index >= 0 && index < state.grid.length) {
+                                if (preview) {
+                                    const pixel = gridCanvas.children[index];
+                                    if (pixel) {
+                                        pixel.style.backgroundColor = color;
+                                    }
+                                } else {
+                                    state.grid[index] = color;
+                                    const pixel = gridCanvas.children[index];
+                                    if (pixel) {
+                                        pixel.style.backgroundColor = color;
+                                    }
                                 }
                             }
                         }
