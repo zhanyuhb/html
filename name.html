@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机姓名生成器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        h1 i {
+            color: #3498db;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .control-panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .result-panel {
+            flex: 2;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        select:focus, input[type="number"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-area {
+            flex: 1;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            border: 2px solid #e9ecef;
+            min-height: 300px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .name-list {
+            list-style-type: none;
+            display: block;
+        }
+        
+        .name-item {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            font-size: 1.1rem;
+        }
+        
+        .name-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .name-item.en {
+            border-left-color: #e74c3c;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .count-badge {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .copy-btn, .export-btn {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .copy-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .copy-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .export-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .export-btn:hover {
+            background-color: #8e44ad;
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification.error {
+            background-color: #e74c3c;
+        }
+        
+        .hint {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f39c12;
+            margin-top: 20px;
+        }
+        
+        .hint p {
+            margin: 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background-color: #e8f4fc;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-user-circle"></i> 随机姓名生成器</h1>
+            <p class="subtitle">快速生成随机中文或英文姓名，支持自定义数量和格式，适用于游戏角色、测试数据、创作灵感等场景。</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="control-panel">
+                <h2 class="section-title"><i class="fas fa-sliders-h"></i> 控制面板</h2>
+                
+                <div class="control-group">
+                    <label><i class="fas fa-globe"></i> 选择语言</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="language" value="chinese" checked>
+                            <span>中文姓名</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="language" value="english">
+                            <span>英文姓名</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="control-group" id="chinese-options">
+                    <label><i class="fas fa-flag"></i> 中文姓名格式</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="chinese-format" value="two" checked>
+                            <span>两个字</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="chinese-format" value="three">
+                            <span>三个字</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="chinese-format" value="mixed">
+                            <span>混合 (2-3个字)</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="count"><i class="fas fa-list-ol"></i> 生成数量 (1-100)</label>
+                    <input type="number" id="count" min="1" max="100" value="10">
+                </div>
+                
+                <button class="btn" id="generate-btn">
+                    <i class="fas fa-magic"></i> 生成姓名
+                </button>
+                
+                <div class="hint">
+                    <p><i class="fas fa-lightbulb"></i> <strong>注意：</strong> 中文姓名字数 = 姓氏(1个字) + 名字(1-2个字)。选择"两个字"时生成的是单名，选择"三个字"时生成的是双名。</p>
+                </div>
+            </div>
+            
+            <div class="result-panel">
+                <div class="result-header">
+                    <h2 class="section-title"><i class="fas fa-list-alt"></i> 生成结果</h2>
+                    <div class="count-badge">0 个姓名</div>
+                </div>
+                
+                <div id="stats-area" class="stats"></div>
+                
+                <div class="result-area">
+                    <ul class="name-list" id="name-list">
+                        <li class="name-item">姓名将在这里显示</li>
+                    </ul>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="copy-btn" id="copy-btn">
+                        <i class="far fa-copy"></i> 复制到剪贴板
+                    </button>
+                    <button class="export-btn" id="export-btn">
+                        <i class="fas fa-file-export"></i> 导出为文本文件
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>随机姓名生成器 &copy; 2023 | 本工具生成的名字为随机组合，如有雷同，纯属巧合</p>
+        </footer>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>已复制到剪贴板！</span>
+    </div>
+
+    <script>
+        // 姓名数据 - 重新组织以确保字数准确
+        const chineseSurnames = ['李', '王', '张', '刘', '陈', '杨', '赵', '黄', '周', '吴', 
+                                '徐', '孙', '胡', '朱', '高', '林', '何', '郭', '马', '罗',
+                                '梁', '宋', '郑', '谢', '韩', '唐', '冯', '于', '董', '萧'];
+        
+        // 单字名字 - 用于生成2个字的名字（姓+单名）
+        const chineseSingleNames = ['伟', '芳', '娜', '敏', '静', '丽', '强', '磊', '军', '洋',
+                                  '勇', '艳', '杰', '娟', '涛', '明', '超', '霞', '平', '刚',
+                                  '文', '华', '云', '兰', '鹏', '飞', '建', '红', '玉', '亮',
+                                  '梅', '佳', '倩', '雷', '斌', '宇', '浩', '婷', '宁', '丹'];
+        
+        // 双字名字的第一部分 - 用于生成3个字的名字（姓+双名）
+        const chineseDoubleNamesFirst = ['志', '建', '文', '明', '国', '家', '天', '海', '春', '秋',
+                                       '晓', '俊', '美', '秀', '淑', '桂', '小', '大', '永', '长',
+                                       '正', '德', '福', '寿', '安', '康', '荣', '华', '富', '贵'];
+        
+        // 双字名字的第二部分 - 用于生成3个字的名字（姓+双名）
+        const chineseDoubleNamesSecond = ['强', '国', '华', '明', '军', '伟', '芳', '英', '兰', '珍',
+                                        '霞', '丽', '娟', '燕', '芬', '玲', '娜', '敏', '慧', '洁',
+                                        '勇', '刚', '峰', '龙', '虎', '生', '辉', '光', '亮', '荣'];
+        
+        const englishFirstNames = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles',
+                                 'Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen',
+                                 'Christopher', 'Daniel', 'Matthew', 'Anthony', 'Donald', 'Mark', 'Paul', 'Steven', 'Andrew', 'Kenneth',
+                                 'Lisa', 'Nancy', 'Betty', 'Sandra', 'Margaret', 'Ashley', 'Kimberly', 'Emily', 'Donna', 'Michelle'];
+        
+        const englishLastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
+                                'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+                                'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson',
+                                'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores'];
+        
+        // DOM元素
+        const generateBtn = document.getElementById('generate-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const nameList = document.getElementById('name-list');
+        const countInput = document.getElementById('count');
+        const chineseOptions = document.getElementById('chinese-options');
+        const countBadge = document.querySelector('.count-badge');
+        const notification = document.getElementById('notification');
+        const statsArea = document.getElementById('stats-area');
+        
+        // 存储当前生成的姓名数据
+        let currentNames = [];
+        
+        // 语言切换显示/隐藏中文选项
+        document.querySelectorAll('input[name="language"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                chineseOptions.style.display = this.value === 'chinese' ? 'block' : 'none';
+            });
+        });
+        
+        // 生成随机中文姓名 - 修复版
+        function generateChineseName(format) {
+            const surname = chineseSurnames[Math.floor(Math.random() * chineseSurnames.length)];
+            let givenName = '';
+            
+            if (format === 'two') {
+                // 两个字：姓 + 单名
+                givenName = chineseSingleNames[Math.floor(Math.random() * chineseSingleNames.length)];
+            } else if (format === 'three') {
+                // 三个字：姓 + 双名
+                const first = chineseDoubleNamesFirst[Math.floor(Math.random() * chineseDoubleNamesFirst.length)];
+                const second = chineseDoubleNamesSecond[Math.floor(Math.random() * chineseDoubleNamesSecond.length)];
+                givenName = first + second;
+            } else { // mixed
+                // 混合：随机选择2或3个字
+                const length = Math.random() > 0.5 ? 2 : 3;
+                if (length === 2) {
+                    givenName = chineseSingleNames[Math.floor(Math.random() * chineseSingleNames.length)];
+                } else {
+                    const first = chineseDoubleNamesFirst[Math.floor(Math.random() * chineseDoubleNamesFirst.length)];
+                    const second = chineseDoubleNamesSecond[Math.floor(Math.random() * chineseDoubleNamesSecond.length)];
+                    givenName = first + second;
+                }
+            }
+            
+            return surname + givenName;
+        }
+        
+        // 生成随机英文姓名
+        function generateEnglishName() {
+            const firstName = englishFirstNames[Math.floor(Math.random() * englishFirstNames.length)];
+            const lastName = englishLastNames[Math.floor(Math.random() * englishLastNames.length)];
+            return `${firstName} ${lastName}`;
+        }
+        
+        // 生成姓名列表
+        function generateNames() {
+            const language = document.querySelector('input[name="language"]:checked').value;
+            const count = Math.min(100, Math.max(1, parseInt(countInput.value) || 10));
+            let chineseFormat = 'two';
+            
+            if (language === 'chinese') {
+                chineseFormat = document.querySelector('input[name="chinese-format"]:checked').value;
+            }
+            
+            nameList.innerHTML = '';
+            statsArea.innerHTML = '';
+            
+            // 清空当前姓名数组
+            currentNames = [];
+            
+            // 统计信息
+            let lengthStats = {};
+            
+            for (let i = 0; i < count; i++) {
+                const nameItem = document.createElement('li');
+                nameItem.className = 'name-item';
+                
+                let name;
+                if (language === 'chinese') {
+                    name = generateChineseName(chineseFormat);
+                    nameItem.textContent = name;
+                    
+                    // 统计字数（中文按字符数统计）
+                    const charCount = name.length;
+                    if (!lengthStats[charCount]) {
+                        lengthStats[charCount] = 0;
+                    }
+                    lengthStats[charCount]++;
+                } else {
+                    name = generateEnglishName();
+                    nameItem.textContent = name;
+                    nameItem.classList.add('en');
+                    
+                    // 统计单词数
+                    const wordCount = 2; // 英文姓名总是2个单词
+                    if (!lengthStats[wordCount]) {
+                        lengthStats[wordCount] = 0;
+                    }
+                    lengthStats[wordCount]++;
+                }
+                
+                nameList.appendChild(nameItem);
+                currentNames.push(name);
+            }
+            
+            // 更新计数徽章
+            countBadge.textContent = `${count} 个姓名`;
+            
+            // 显示统计信息
+            if (language === 'chinese') {
+                let statsHTML = '';
+                const sortedLengths = Object.keys(lengthStats).sort((a, b) => a - b);
+                
+                sortedLengths.forEach(length => {
+                    const count = lengthStats[length];
+                    const percentage = ((count / currentNames.length) * 100).toFixed(1);
+                    statsHTML += `<div class="stat-item">${length}个字: ${count}个 (${percentage}%)</div>`;
+                });
+                
+                // 添加格式说明
+                const formatText = chineseFormat === 'two' ? '单名(姓+1字名)' : 
+                                 chineseFormat === 'three' ? '双名(姓+2字名)' : '混合(单名/双名)';
+                statsHTML += `<div class="stat-item">格式: ${formatText}</div>`;
+                
+                statsArea.innerHTML = statsHTML;
+            } else {
+                // 英文统计
+                statsArea.innerHTML = `<div class="stat-item">格式: 英文姓名 (名+姓)</div>`;
+            }
+        }
+        
+        // 显示通知
+        function showNotification(message, isError = false) {
+            const notificationIcon = notification.querySelector('i');
+            const notificationText = notification.querySelector('span');
+            
+            notificationText.textContent = message;
+            notification.classList.remove('error');
+            
+            if (isError) {
+                notification.classList.add('error');
+                notificationIcon.className = 'fas fa-exclamation-circle';
+            } else {
+                notificationIcon.className = 'fas fa-check-circle';
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 复制到剪贴板 - 修复版
+        function copyToClipboard() {
+            if (currentNames.length === 0 || (currentNames.length === 1 && currentNames[0] === "姓名将在这里显示")) {
+                showNotification("没有可复制的姓名，请先生成姓名", true);
+                return;
+            }
+            
+            const text = currentNames.join('\n');
+            
+            // 使用现代 Clipboard API 的兼容性写法
+            if (navigator.clipboard && window.isSecureContext) {
+                // 现代浏览器，安全上下文
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification(`已复制 ${currentNames.length} 个姓名到剪贴板`);
+                }).catch(err => {
+                    // 如果 Clipboard API 失败，回退到传统方法
+                    fallbackCopyText(text);
+                });
+            } else {
+                // 传统方法
+                fallbackCopyText(text);
+            }
+        }
+        
+        // 传统的复制方法
+        function fallbackCopyText(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.top = '-9999px';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showNotification(`已复制 ${currentNames.length} 个姓名到剪贴板`);
+                } else {
+                    showNotification("复制失败，请手动选择文本复制", true);
+                }
+            } catch (err) {
+                console.error('复制失败: ', err);
+                showNotification("复制失败，请手动选择文本复制", true);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+        
+        // 导出为文本文件 - 修复版（只导出名字）
+        function exportToTextFile() {
+            if (currentNames.length === 0 || (currentNames.length === 1 && currentNames[0] === "姓名将在这里显示")) {
+                showNotification("没有可导出的姓名，请先生成姓名", true);
+                return;
+            }
+            
+            const language = document.querySelector('input[name="language"]:checked').value;
+            const chineseFormat = language === 'chinese' ? 
+                document.querySelector('input[name="chinese-format"]:checked').value : '';
+            const count = currentNames.length;
+            
+            // 创建文件名
+            let filename = `随机姓名_`;
+            if (language === 'chinese') {
+                filename += `中文_${chineseFormat === 'two' ? '单名' : chineseFormat === 'three' ? '双名' : '混合'}`;
+            } else {
+                filename += `英文`;
+            }
+            filename += `_${count}个_${new Date().getTime()}.txt`;
+            
+            // 只包含名字，每行一个
+            const text = currentNames.join('\n');
+            
+            // 创建Blob对象并下载
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            
+            // 清理
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showNotification(`已导出 ${currentNames.length} 个姓名到文件: ${filename}`);
+            }, 100);
+        }
+        
+        // 初始化事件监听器
+        generateBtn.addEventListener('click', generateNames);
+        copyBtn.addEventListener('click', copyToClipboard);
+        exportBtn.addEventListener('click', exportToTextFile);
+        
+        // 页面加载时生成一些示例
+        window.addEventListener('load', () => {
+            // 初始示例名字
+            nameList.innerHTML = '';
+            currentNames = [];
+            
+            // 生成10个中文名字作为示例
+            for (let i = 0; i < 10; i++) {
+                const nameItem = document.createElement('li');
+                nameItem.className = 'name-item';
+                const name = generateChineseName('mixed');
+                nameItem.textContent = name;
+                nameList.appendChild(nameItem);
+                currentNames.push(name);
+            }
+            
+            countBadge.textContent = `10 个姓名`;
+            statsArea.innerHTML = `<div class="stat-item">格式: 混合(单名/双名)</div><div class="stat-item">2个字: 5个 (50.0%)</div><div class="stat-item">3个字: 5个 (50.0%)</div>`;
+        });
+        
+        // 限制数量输入范围
+        countInput.addEventListener('change', function() {
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
+            } else if (value > 100) {
+                this.value = 100;
+            }
+        });
+    </script>
+</body>
+</html>
