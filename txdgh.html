@@ -1,0 +1,1448 @@
+<!doctype html>
+<html lang="zh-CN"><head><script src="https://lf-cdn.coze.cn/obj/unpkg/coze-space/page-editor-general-web/0.1.0-alpha.274555/dist/umd/index.js"></script><script src="https://lf-cdn.coze.cn/obj/unpkg/coze-webapp/console-bridge/0.0.1-alpha.b2eb33/dist/index.js"></script><script src="https://lf-cdn.coze.cn/obj/unpkg/coze-webapp/history-bridge/0.0.1-alpha.9e64d9/dist/index.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>探险队过河 - 逻辑思维课件</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sky-top: #87CEEB;
+      --sky-bottom: #E0F0FF;
+      --water: #4A90D9;
+      --water-light: #6BB3E0;
+      --bank: #6B8E23;
+      --bank-light: #8FBC3F;
+      --boat: #8B4513;
+      --adult-color: #E74C3C;
+      --adult-light: #FF6B6B;
+      --boy-color: #F39C12;
+      --boy-light: #FFB84D;
+      --text: #2C3E50;
+      --text-light: #7F8C8D;
+      --white: #FFFFFF;
+      --shadow: rgba(0,0,0,0.15);
+      --success: #27AE60;
+      --danger: #E74C3C;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 50%, var(--bank-light) 50.1%, var(--bank) 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text);
+    }
+
+    /* ===== Header ===== */
+    .header {
+      text-align: center;
+      padding: 14px 20px 10px;
+      background: linear-gradient(135deg, #2C3E50, #34495E);
+      color: var(--white);
+      box-shadow: 0 2px 12px var(--shadow);
+      position: relative;
+      z-index: 10;
+    }
+    .header h1 {
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    .header p {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      line-height: 1.5;
+    }
+
+    /* ===== Settings Bar ===== */
+    .settings-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #F8F9FA, #E9ECEF);
+      border-bottom: 1px solid #dee2e6;
+      flex-wrap: wrap;
+    }
+    .setting-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .setting-group .setting-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .setting-group .adult-icon { color: var(--adult-color); }
+    .setting-group .boy-icon { color: var(--boy-color); }
+    .number-input {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 2px solid #dee2e6;
+      border-radius: 10px;
+      overflow: hidden;
+      background: white;
+    }
+    .number-input button {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: #f1f3f5;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .number-input button:hover { background: #e9ecef; }
+    .number-input button:active { background: #dee2e6; }
+    .number-input .num-value {
+      width: 40px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      border: none;
+      outline: none;
+      background: transparent;
+      -moz-appearance: textfield;
+    }
+    .number-input .num-value::-webkit-inner-spin-button,
+    .number-input .num-value::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .btn-apply {
+      padding: 8px 18px;
+      background: linear-gradient(135deg, #3498DB, #2980B9);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .btn-apply:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(52,152,219,0.3); }
+    .btn-apply:active { transform: translateY(1px); }
+
+    /* ===== Info Bar ===== */
+    .info-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.95);
+      border-bottom: 1px solid #e0e0e0;
+      flex-wrap: wrap;
+    }
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .info-item .label { color: var(--text-light); }
+    .info-item .value { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+    .info-item .value.highlight { color: var(--adult-color); }
+
+    /* ===== Game Area ===== */
+    .game-container {
+      display: flex;
+      align-items: stretch;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 480px;
+      padding: 10px;
+      gap: 0;
+      position: relative;
+    }
+
+    /* ===== Banks ===== */
+    .bank {
+      flex: 1;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .bank-label {
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 4px 16px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+    .left-bank .bank-label {
+      background: linear-gradient(135deg, #27AE60, #2ECC71);
+      color: white;
+    }
+    .right-bank .bank-label {
+      background: linear-gradient(135deg, #2980B9, #3498DB);
+      color: white;
+    }
+    .bank-people {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      align-content: flex-start;
+      flex: 1;
+      padding: 8px;
+      min-height: 200px;
+    }
+
+    /* ===== River ===== */
+    .river {
+      width: 280px;
+      min-width: 220px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .river-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, var(--water) 0%, var(--water-light) 50%, var(--water) 100%);
+      z-index: 0;
+    }
+    .wave {
+      position: absolute;
+      width: 200%;
+      height: 20px;
+      opacity: 0.3;
+      z-index: 1;
+    }
+    .wave svg { width: 100%; height: 100%; }
+    .wave-1 { top: 20%; animation: waveMove 4s linear infinite; }
+    .wave-2 { top: 45%; animation: waveMove 5s linear infinite reverse; }
+    .wave-3 { top: 70%; animation: waveMove 6s linear infinite; }
+    .wave-4 { top: 90%; animation: waveMove 4.5s linear infinite reverse; }
+
+    @keyframes waveMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ===== Boat ===== */
+    .boat-area {
+      position: absolute;
+      z-index: 5;
+      transition: left 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .boat-area.at-left { left: 10px; }
+    .boat-area.at-right { left: calc(100% - 120px); }
+
+    .boat-passengers {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      min-height: 56px;
+      align-items: flex-end;
+    }
+
+    .boat-svg {
+      width: 110px;
+      height: 50px;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+    }
+    .boat-crossing .boat-svg {
+      animation: boatRock 0.6s ease-in-out infinite;
+    }
+    @keyframes boatRock {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg); }
+    }
+
+    /* ===== Characters ===== */
+    .person {
+      width: 48px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .person:hover {
+      transform: translateY(-4px) scale(1.08);
+      box-shadow: 0 6px 16px var(--shadow);
+    }
+    .person:active { transform: translateY(-1px) scale(1.02); }
+    .person.on-boat { width: 40px; height: 50px; }
+    .person.on-boat .person-icon { font-size: 1.3rem; }
+    .person.on-boat .person-label { font-size: 0.55rem; }
+
+    .person.adult {
+      background: linear-gradient(135deg, var(--adult-color), var(--adult-light));
+      color: white;
+      box-shadow: 0 3px 8px rgba(231,76,60,0.3);
+    }
+    .person.boy {
+      background: linear-gradient(135deg, var(--boy-color), var(--boy-light));
+      color: white;
+      box-shadow: 0 3px 8px rgba(243,156,18,0.3);
+    }
+    .person.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .person-icon { font-size: 1.6rem; line-height: 1; }
+    .person-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-top: 2px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    /* ===== Controls ===== */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: rgba(255,255,255,0.95);
+      border-top: 1px solid #e0e0e0;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-cross {
+      background: linear-gradient(135deg, #3498DB, #2980B9);
+      color: white;
+      font-size: 1rem;
+      padding: 12px 28px;
+      box-shadow: 0 4px 12px rgba(52,152,219,0.4);
+    }
+    .btn-cross:hover:not(:disabled) {
+      box-shadow: 0 6px 18px rgba(52,152,219,0.5);
+    }
+    .btn-reset {
+      background: linear-gradient(135deg, #95A5A6, #7F8C8D);
+      color: white;
+    }
+    .btn-hint {
+      background: linear-gradient(135deg, #F39C12, #E67E22);
+      color: white;
+    }
+    .btn-auto {
+      background: linear-gradient(135deg, var(--success), #219A52);
+      color: white;
+    }
+    .btn-download {
+      background: linear-gradient(135deg, #8E44AD, #9B59B6);
+      color: white;
+    }
+
+    /* ===== Message ===== */
+    .message-area {
+      text-align: center;
+      padding: 8px 16px;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .message {
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    .message.info { background: #E8F4FD; color: #2980B9; }
+    .message.error { background: #FDEDEC; color: var(--danger); }
+    .message.success { background: #E8F8F0; color: var(--success); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Rules Panel ===== */
+    .rules-panel {
+      max-width: 1200px;
+      margin: 0 auto 10px;
+      padding: 0 16px;
+    }
+    .panel-toggle {
+      width: 100%;
+      padding: 10px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .panel-toggle:hover { background: white; }
+    .panel-content {
+      display: none;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #e0e0e0;
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      padding: 14px 18px;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+    .panel-content.open { display: block; }
+    .panel-content li { margin-left: 16px; }
+
+    /* ===== History ===== */
+    .history-panel {
+      max-width: 1200px;
+      margin: 0 auto 16px;
+      padding: 0 16px;
+    }
+    .history-content {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+      line-height: 1.8;
+    }
+    .history-item { padding: 2px 0; border-bottom: 1px solid #f0f0f0; }
+    .history-item:last-child { border-bottom: none; }
+
+    /* ===== Victory Overlay ===== */
+    .victory-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.5s ease;
+    }
+    .victory-overlay.show { display: flex; }
+    .victory-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: victoryPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 400px;
+      width: 90%;
+    }
+    @keyframes victoryPop {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .victory-card h2 {
+      font-size: 1.8rem;
+      color: var(--success);
+      margin-bottom: 8px;
+    }
+    .victory-card p { color: var(--text-light); margin-bottom: 6px; font-size: 0.95rem; }
+    .victory-card .big-num { font-size: 2.5rem; font-weight: 900; color: var(--adult-color); }
+    .victory-card .btn { margin-top: 18px; }
+
+    /* ===== Grass decoration ===== */
+    .left-bank::before, .right-bank::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: linear-gradient(180deg, rgba(107,142,35,0.1), rgba(107,142,35,0.3));
+      border-radius: 0 0 16px 16px;
+      z-index: -1;
+    }
+    .left-bank { background: linear-gradient(180deg, rgba(139,195,74,0.15), rgba(139,195,74,0.35)); border-radius: 16px; }
+    .right-bank { background: linear-gradient(180deg, rgba(100,181,246,0.1), rgba(100,181,246,0.25)); border-radius: 16px; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .game-container {
+        flex-direction: column;
+        min-height: auto;
+      }
+      .river {
+        width: 100%;
+        min-width: unset;
+        height: 200px;
+        order: 2;
+      }
+      .boat-area.at-left { left: 10px; }
+      .boat-area.at-right { left: calc(100% - 120px); }
+      .left-bank { order: 1; }
+      .right-bank { order: 3; }
+      .bank-people { min-height: 80px; }
+      .header h1 { font-size: 1.3rem; }
+      .header p { font-size: 0.75rem; }
+      .settings-bar { gap: 12px; }
+    }
+
+    /* ===== Confetti ===== */
+    .confetti-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 101;
+      overflow: hidden;
+    }
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      top: -10px;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      to {
+        top: 110vh;
+        transform: rotate(720deg);
+      }
+    }
+  </style>
+<link rel="stylesheet" href="https://fonts.bytedance.com/dfd/api/v1/css?family=DOUYINSANSBOLD-GB:500&amp;display=swap&amp;t=fd8d3e33-ea5c-40c1-a38b-bf6529186903"><style id="imt-injected-styles">
+      /* 翻译加载器样式 */
+      .imt-loading-indicator {
+        vertical-align: middle !important;
+        width: 10px !important;
+        height: 10px !important;
+        display: inline-block !important;
+        margin: 0 4px !important;
+        border: 2px rgba(221, 244, 255, 0.6) solid !important;
+        border-top: 2px rgba(0, 0, 0, 0.375) solid !important;
+        border-left: 2px rgba(0, 0, 0, 0.375) solid !important;
+        border-radius: 50% !important;
+        padding: 0 !important;
+        -webkit-animation: imt-loading-animation 0.6s infinite linear !important;
+        animation: imt-loading-animation 0.6s infinite linear !important;
+      }
+
+      @-webkit-keyframes imt-loading-animation {
+        from {
+          -webkit-transform: rotate(0deg);
+        }
+
+        to {
+          -webkit-transform: rotate(359deg);
+        }
+      }
+
+      @keyframes imt-loading-animation {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(359deg);
+        }
+      }
+      .se_imt_html {
+        height: 100%;
+      }
+      .se_imt_html body {
+        position: relative;
+        min-height: 100%;
+        top: 40px;
+      }
+      @media print {
+        #imt-webext {
+          display: none !important;
+        }
+      }
+    </style></head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>探险队过河</h1>
+    <p id="headerDesc">10位成年人和2位少年，用1条小船如何全部过河？小船每次只能承载1个成年人或2个少年</p>
+  </div>
+
+  <!-- Settings Bar -->
+  <div class="settings-bar">
+    <div class="setting-group">
+      <span class="setting-label"><span class="adult-icon">🧑</span> 成年人</span>
+      <div class="number-input">
+        <button onclick="adjustAdults(-1)">−</button>
+        <input class="num-value" id="adultCountInput" type="number" value="10" min="1" max="30">
+        <button onclick="adjustAdults(1)">+</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <span class="setting-label"><span class="boy-icon">👦</span> 少年</span>
+      <div class="number-input">
+        <button onclick="adjustBoys(-1)">−</button>
+        <input class="num-value" id="boyCountInput" type="number" value="2" min="1" max="10">
+        <button onclick="adjustBoys(1)">+</button>
+      </div>
+    </div>
+    <button class="btn-apply" onclick="applySettings()">开始新游戏</button>
+  </div>
+
+  <!-- Info Bar -->
+  <div class="info-bar">
+    <div class="info-item">
+      <span class="label">已用步数</span>
+      <span class="value highlight" id="stepCount">0</span>
+    </div>
+    <div class="info-item">
+      <span class="label">最少步数</span>
+      <span class="value" id="minStepsDisplay">41</span>
+    </div>
+    <div class="info-item">
+      <span class="label">船在</span>
+      <span class="value" id="boatSide">左岸</span>
+    </div>
+    <div class="info-item">
+      <span class="label">船上人数</span>
+      <span class="value" id="boatCount">0</span>
+    </div>
+  </div>
+
+  <!-- Message -->
+  <div class="message-area">
+    <div class="message info" id="messageBox">点击左岸上的人物让他们上船，然后点击「过河」按钮</div>
+  </div>
+
+  <!-- Game Area -->
+  <div class="game-container">
+    <!-- Left Bank -->
+    <div class="bank left-bank">
+      <div class="bank-label">出发岸（左）</div>
+      <div class="bank-people" id="leftBank"><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人1</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人2</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人3</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人4</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人5</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人6</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人7</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人8</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人9</span></div><div class="person adult"><span class="person-icon">🧑</span><span class="person-label">大人10</span></div><div class="person boy"><span class="person-icon">👦</span><span class="person-label">少年1</span></div><div class="person boy"><span class="person-icon">👦</span><span class="person-label">少年2</span></div></div>
+    </div>
+
+    <!-- River -->
+    <div class="river" id="river">
+      <div class="river-bg"></div>
+      <div class="wave wave-1">
+        <svg viewBox="0 0 1200 20" preserveAspectRatio="none"><path d="M0 10 Q150 0 300 10 T600 10 T900 10 T1200 10" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"></path></svg>
+      </div>
+      <div class="wave wave-2">
+        <svg viewBox="0 0 1200 20" preserveAspectRatio="none"><path d="M0 10 Q150 20 300 10 T600 10 T900 10 T1200 10" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"></path></svg>
+      </div>
+      <div class="wave wave-3">
+        <svg viewBox="0 0 1200 20" preserveAspectRatio="none"><path d="M0 10 Q150 0 300 10 T600 10 T900 10 T1200 10" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"></path></svg>
+      </div>
+      <div class="wave wave-4">
+        <svg viewBox="0 0 1200 20" preserveAspectRatio="none"><path d="M0 10 Q150 20 300 10 T600 10 T900 10 T1200 10" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"></path></svg>
+      </div>
+
+      <!-- Boat -->
+      <div class="boat-area at-left" id="boatArea">
+        <div class="boat-passengers" id="boatPassengers"></div>
+        <svg class="boat-svg" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="boatGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#A0522D"></stop>
+              <stop offset="100%" stop-color="#6B3410"></stop>
+            </linearGradient>
+          </defs>
+          <path d="M10 35 Q15 55 60 55 Q105 55 110 35 Z" fill="url(#boatGrad)" stroke="#4A2508" stroke-width="2"></path>
+          <path d="M10 35 L110 35" stroke="#C8963E" stroke-width="2" fill="none"></path>
+          <line x1="60" y1="8" x2="60" y2="35" stroke="#5C3317" stroke-width="3"></line>
+          <path d="M62 10 Q85 20 62 32" fill="#F5E6C8" stroke="#C8963E" stroke-width="1" opacity="0.8"></path>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Right Bank -->
+    <div class="bank right-bank">
+      <div class="bank-label">目的岸（右）</div>
+      <div class="bank-people" id="rightBank"></div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-cross" id="btnCross" onclick="crossRiver()" disabled="">🚣 过河</button>
+    <button class="btn btn-reset" onclick="resetGame()">🔄 重新开始</button>
+    <button class="btn btn-hint" id="btnHint" onclick="showHint()">💡 提示</button>
+    <button class="btn btn-auto" id="btnAuto" onclick="autoSolve()">▶ 自动演示</button>
+    <button class="btn btn-download" onclick="downloadPage()">📥 下载网页</button>
+  </div>
+
+  <!-- Rules -->
+  <div class="rules-panel">
+    <button class="panel-toggle" onclick="togglePanel('rules')">
+      <span>📜</span> 查看规则与解题思路
+      <span id="rulesArrow">▼</span>
+    </button>
+    <div class="panel-content" id="rulesContent">
+      <ol>
+        <li>小船每次只能承载 <strong>1个成年人</strong> 或者 <strong>2个少年</strong>（不能混合乘坐）</li>
+        <li>船上必须有人才能划船过河</li>
+        <li>点击人物可以让他们上船或下船</li>
+        <li>目标：所有人从左岸到达右岸</li>
+      </ol>
+      <p style="margin-top:10px;font-weight:600;color:#2C3E50;">解题思路：</p>
+      <p>关键在于利用少年来回划船接送成年人。每次循环四步：</p>
+      <ol>
+        <li>2位少年划船到右岸</li>
+        <li>1位少年划船返回左岸</li>
+        <li>1位成年人划船到右岸</li>
+        <li>1位少年划船返回左岸</li>
+      </ol>
+      <p>重复以上循环N次（N = 成年人数量），最后所有少年一起过河。</p>
+      <p>最少步数公式：<strong>N × 4 + 1</strong>（当少年 ≥ 2 时）。</p>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="history-panel">
+    <button class="panel-toggle" onclick="togglePanel('history')">
+      <span>📝</span> 操作记录
+      <span id="historyArrow">▼</span>
+    </button>
+    <div class="panel-content history-content" id="historyContent"></div>
+  </div>
+
+  <!-- Victory Overlay -->
+  <div class="victory-overlay" id="victoryOverlay">
+    <div class="victory-card">
+      <h2>🎉 全员过河！</h2>
+      <p>恭喜你成功让所有人过河</p>
+      <p>总共用了 <span class="big-num" id="victorySteps">0</span> 步</p>
+      <p id="victoryMsg"></p>
+      <button class="btn btn-cross" onclick="closeVictory()">再来一次</button>
+    </div>
+  </div>
+
+  <!-- Confetti container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <script>
+    // ===== Configuration =====
+    let config = {
+      adultCount: 10,
+      boyCount: 2,
+    };
+
+    // ===== Game State =====
+    const state = {
+      leftBank: [],
+      rightBank: [],
+      boat: [],
+      boatSide: 'left',
+      steps: 0,
+      history: [],
+      isAnimating: false,
+      autoPlaying: false,
+      gameWon: false,
+    };
+
+    // Calculate minimum steps
+    function calcMinSteps() {
+      // With 2+ boys: each adult needs 4 steps (2 boys cross, 1 returns, 1 adult crosses, 1 boy returns)
+      // Then remaining boys cross together: 1 step
+      // Total: adultCount * 4 + 1
+      // With 1 boy: adult crosses, boy returns => adultCount * 2 steps, but this is impossible
+      // because with 1 boy, after the adult crosses, the boy is on the same side as the boat
+      // Actually with 1 boy: boy crosses (1), adult crosses... no, boy can't carry adult.
+      // With 1 boy: impossible to transport adults (adult goes alone, boy stays, no one to bring boat back)
+      // So with 1 boy, min steps = adultCount * 2 if we assume adults can row back? No, the puzzle
+      // states adults can row. Let me reconsider.
+      // Actually re-reading: the boat carries 1 adult OR 2 boys. Adults CAN row.
+      // With 1 boy and N adults:
+      //   boy crosses → boy returns (useless). We need: adult crosses, boy returns.
+      //   But after adult crosses alone, boat is on right. Boy is on left. No way to get boat back.
+      //   Unless... adult returns? That's a loop.
+      //   With 1 boy: boy goes right, boy returns left (waste). 
+      //   Actually: 1 adult goes right, then 1 adult comes back (waste).
+      //   With 1 boy the puzzle is unsolvable for N>0 adults unless the boy shuttles.
+      //   boy crosses alone → boy on right, boat on right → boy returns → same state.
+      //   So with 1 boy: impossible for any adults to cross.
+      //   UNLESS boy+adult can share... but rules say no.
+      //   So with 1 boy and adults > 0, it's impossible.
+      //   With 1 boy and 0 adults: just 1 step.
+      //   With 2+ boys: adultCount * 4 + 1 (as calculated above, but need to handle final step)
+      //   Actually for the final step: after all adults are across, remaining boys on left cross.
+      //   If boyCount >= 2: boys go 2 at a time. But they need to shuttle too.
+      //   Wait, after the last adult crosses, there's 1 boy on the right (who brought the boat back
+      //   for previous cycles). After the last adult goes right, the boat is on the right.
+      //   Then 1 boy on right brings it back left. Then all remaining boys on left cross.
+      //   Let me trace more carefully for 10 adults, 2 boys:
+      //   Cycle (4 steps × 10):
+      //     2 boys cross, 1 boy returns, 1 adult crosses, 1 boy returns → 4 steps, 1 adult moved
+      //   After 10 cycles: 10 adults on right, 2 boys on left, boat on left
+      //   Final: 2 boys cross → 1 step
+      //   Total: 10×4 + 1 = 41
+      //
+      //   For boyCount > 2:
+      //   After moving all adults (each needs: 2 boys cross, 1 boy returns, adult crosses, 1 boy returns = 4 steps)
+      //   Then we have all adults on right, boyCount boys on left, boat on left
+      //   Final: boys cross 2 at a time: ceil(boyCount/2) steps? No, they can go 2 at a time without shuttle.
+      //   Actually after last adult cycle, boat is on left with all boys.
+      //   Boys can just cross in groups of 2. But some may need to go back? No, they all need to go right.
+      //   ceil(boyCount/2) crossings for the boys.
+      //   Wait, but each crossing is one direction. They all go right.
+      //   For boyCount=3: 2 boys cross (step 1), now 1 boy left, boat on right.
+      //     1 boy returns (step 2), then 2 boys... wait there's only 1 left.
+      //     Actually: 2 boys cross, 1 boy returns, 1 boy+1 boy? No, only 1 left.
+      //     1 boy crosses alone (step 3). Done: 3 extra steps.
+      //   For boyCount=2: 1 step.
+      //   For boyCount=3: 3 steps (2 cross, 1 returns, 1+1 cross... no)
+      //     Let me recount: after adults done, 3 boys on left.
+      //     2 boys cross → 2 boys right, 1 boy left, boat right (1 step)
+      //     1 boy returns → 1 boy right, 2 boys left, boat left (2 steps)
+      //     2 boys cross → 3 boys right, boat right (3 steps)
+      //   For boyCount=4: 2 boys cross, 2 boys cross = 2 steps
+      //   For boyCount=5: 2 cross, 1 return, 2 cross, 1 return, 2 cross... 
+      //     = ceil(5/2) * 2 - 1 = 5 steps? Let me trace:
+      //     2 cross (step1: 2R 3L boat R)
+      //     1 return (step2: 1R 4L boat L)
+      //     2 cross (step3: 3R 2L boat R)
+      //     1 return (step4: 2R 3L boat L)
+      //     2 cross (step5: 4R 1L boat R)
+      //     1 return (step6: 3R 2L boat L) -- this is getting circular
+      //   Hmm, with boys only: they can go 2 at a time, and since any boy can row,
+      //   it's like moving N items across with capacity 2:
+      //   Trips = 2*ceil(N/2) - 1
+      //   For 2: 2*1-1=1 ✓
+      //   For 3: 2*2-1=3 ✓
+      //   For 4: 2*2-1=3... let me verify: 2 cross(s1), 1 return(s2), 2 cross(s3) → 3 steps ✓
+      //   For 5: 2*3-1=5
+      //   General: 2*ceil(boyCount/2) - 1
+
+      if (config.adultCount === 0) {
+        // Only boys need to cross
+        return 2 * Math.ceil(config.boyCount / 2) - 1;
+      }
+
+      if (config.boyCount === 0) {
+        // No boys, adults can each row alone but no one brings boat back
+        // Impossible unless only 1 adult
+        return config.adultCount === 1 ? 1 : -1;
+      }
+
+      if (config.boyCount === 1 && config.adultCount > 0) {
+        // 1 boy can't help shuttle adults (after adult crosses, boy is on wrong side)
+        return -1; // impossible
+      }
+
+      // boyCount >= 2, adultCount >= 1
+      const adultShuttles = config.adultCount * 4;
+      const boyCrossings = 2 * Math.ceil(config.boyCount / 2) - 1;
+      return adultShuttles + boyCrossings;
+    }
+
+    // ===== Settings Controls =====
+    function adjustAdults(delta) {
+      const input = document.getElementById('adultCountInput');
+      let val = parseInt(input.value) || 10;
+      val = Math.max(0, Math.min(30, val + delta));
+      input.value = val;
+    }
+
+    function adjustBoys(delta) {
+      const input = document.getElementById('boyCountInput');
+      let val = parseInt(input.value) || 2;
+      val = Math.max(1, Math.min(10, val + delta));
+      input.value = val;
+    }
+
+    function applySettings() {
+      const adultVal = Math.max(0, Math.min(30, parseInt(document.getElementById('adultCountInput').value) || 10));
+      const boyVal = Math.max(1, Math.min(10, parseInt(document.getElementById('boyCountInput').value) || 2));
+      document.getElementById('adultCountInput').value = adultVal;
+      document.getElementById('boyCountInput').value = boyVal;
+
+      config.adultCount = adultVal;
+      config.boyCount = boyVal;
+
+      const minSteps = calcMinSteps();
+      if (minSteps === -1) {
+        if (config.boyCount === 0 && config.adultCount > 1) {
+          showMessage('没有少年，成年人们无法把船划回来，此组合无解！', 'error');
+        } else if (config.boyCount === 1 && config.adultCount > 0) {
+          showMessage('只有1个少年时无法接送成年人过河，此组合无解！', 'error');
+        }
+        return;
+      }
+
+      document.getElementById('historyContent').innerHTML = '';
+      initGame();
+      showMessage('新游戏已开始，点击人物上船后过河', 'success');
+    }
+
+    // ===== Person factory =====
+    function createPerson(id, type) {
+      return { id, type };
+    }
+
+    // ===== Initialize game =====
+    function initGame() {
+      state.leftBank = [];
+      state.rightBank = [];
+      state.boat = [];
+      state.boatSide = 'left';
+      state.steps = 0;
+      state.history = [];
+      state.isAnimating = false;
+      state.autoPlaying = false;
+      state.gameWon = false;
+
+      // Adults
+      for (let i = 1; i <= config.adultCount; i++) {
+        state.leftBank.push(createPerson('adult-' + i, 'adult'));
+      }
+      // Boys
+      for (let i = 1; i <= config.boyCount; i++) {
+        state.leftBank.push(createPerson('boy-' + i, 'boy'));
+      }
+
+      // Update header
+      const desc = config.adultCount + '位成年人和' + config.boyCount + '位少年，用1条小船如何全部过河？小船每次只能承载1个成年人或2个少年';
+      document.getElementById('headerDesc').textContent = desc;
+
+      // Update min steps display
+      const minSteps = calcMinSteps();
+      document.getElementById('minStepsDisplay').textContent = minSteps === -1 ? '无解' : minSteps;
+
+      render();
+      if (minSteps !== -1) {
+        showMessage('点击左岸上的人物让他们上船，然后点击「过河」按钮', 'info');
+      }
+    }
+
+    // ===== Rendering =====
+    function render() {
+      renderBank('left');
+      renderBank('right');
+      renderBoat();
+      updateInfo();
+    }
+
+    function renderBank(side) {
+      const container = document.getElementById(side === 'left' ? 'leftBank' : 'rightBank');
+      const people = side === 'left' ? state.leftBank : state.rightBank;
+      const isBoatSide = state.boatSide === side;
+
+      container.innerHTML = '';
+      people.forEach(function(person) {
+        const el = createPersonElement(person, false, isBoatSide);
+        container.appendChild(el);
+      });
+    }
+
+    function renderBoat() {
+      const container = document.getElementById('boatPassengers');
+      container.innerHTML = '';
+      state.boat.forEach(function(person) {
+        const el = createPersonElement(person, true, true);
+        container.appendChild(el);
+      });
+
+      const boatArea = document.getElementById('boatArea');
+      boatArea.className = 'boat-area at-' + state.boatSide;
+    }
+
+    function createPersonElement(person, onBoat, isBoatSide) {
+      const el = document.createElement('div');
+      const typeClass = person.type;
+      const onBoatClass = onBoat ? ' on-boat' : '';
+      const disabledClass = (!isBoatSide && !onBoat) ? ' disabled' : '';
+      el.className = 'person ' + typeClass + onBoatClass + disabledClass;
+
+      const icon = person.type === 'adult' ? '🧑' : '👦';
+      const label = person.type === 'adult'
+        ? '大人' + person.id.split('-')[1]
+        : '少年' + person.id.split('-')[1];
+
+      el.innerHTML =
+        '<span class="person-icon">' + icon + '</span>' +
+        '<span class="person-label">' + label + '</span>';
+
+      if (!disabledClass) {
+        el.addEventListener('click', function() {
+          if (state.isAnimating || state.gameWon) return;
+          if (onBoat) {
+            disembark(person);
+          } else {
+            board(person);
+          }
+        });
+      }
+
+      return el;
+    }
+
+    function updateInfo() {
+      document.getElementById('stepCount').textContent = state.steps;
+      document.getElementById('boatSide').textContent = state.boatSide === 'left' ? '左岸' : '右岸';
+      document.getElementById('boatCount').textContent = state.boat.length;
+
+      const btnCross = document.getElementById('btnCross');
+      btnCross.disabled = state.boat.length === 0 || state.isAnimating;
+
+      const btnAuto = document.getElementById('btnAuto');
+      btnAuto.textContent = state.autoPlaying ? '⏹ 停止演示' : '▶ 自动演示';
+    }
+
+    // ===== Game Actions =====
+    function board(person) {
+      const side = state.boatSide;
+      const bankPeople = side === 'left' ? state.leftBank : state.rightBank;
+
+      const idx = bankPeople.findIndex(function(p) { return p.id === person.id; });
+      if (idx === -1) return;
+
+      if (!canBoard(person)) return;
+
+      bankPeople.splice(idx, 1);
+      state.boat.push(person);
+
+      showMessage(getPersonLabel(person) + ' 上船了', 'info');
+      render();
+    }
+
+    function canBoard(person) {
+      const boatAdults = state.boat.filter(function(p) { return p.type === 'adult'; }).length;
+      const boatBoys = state.boat.filter(function(p) { return p.type === 'boy'; }).length;
+
+      if (person.type === 'adult') {
+        if (boatAdults >= 1) {
+          showMessage('船只能载1个成年人！', 'error');
+          return false;
+        }
+        if (boatBoys >= 1) {
+          showMessage('成年人和少年不能同时乘船！', 'error');
+          return false;
+        }
+      }
+      if (person.type === 'boy') {
+        if (boatAdults >= 1) {
+          showMessage('成年人和少年不能同时乘船！', 'error');
+          return false;
+        }
+        if (boatBoys >= 2) {
+          showMessage('船最多载2个少年！', 'error');
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function disembark(person) {
+      const side = state.boatSide;
+      const bankPeople = side === 'left' ? state.leftBank : state.rightBank;
+
+      const idx = state.boat.findIndex(function(p) { return p.id === person.id; });
+      if (idx === -1) return;
+
+      state.boat.splice(idx, 1);
+      bankPeople.push(person);
+
+      showMessage(getPersonLabel(person) + ' 下船了', 'info');
+      render();
+    }
+
+    function crossRiver() {
+      if (state.isAnimating || state.gameWon) return;
+      if (state.boat.length === 0) {
+        showMessage('船上没有人，无法过河！', 'error');
+        return;
+      }
+
+      state.isAnimating = true;
+      const from = state.boatSide;
+      const to = from === 'left' ? 'right' : 'left';
+
+      const boatArea = document.getElementById('boatArea');
+      boatArea.classList.add('boat-crossing');
+
+      state.boatSide = to;
+      boatArea.className = 'boat-area at-' + to + ' boat-crossing';
+
+      state.steps++;
+      const labels = state.boat.map(function(p) { return getPersonLabel(p); }).join('、');
+      addHistory('第' + state.steps + '步：' + labels + ' 从' + (from === 'left' ? '左岸' : '右岸') + '划到' + (to === 'left' ? '左岸' : '右岸'));
+
+      updateInfo();
+
+      setTimeout(function() {
+        boatArea.classList.remove('boat-crossing');
+        state.isAnimating = false;
+
+        // Auto disembark all people on boat
+        while (state.boat.length > 0) {
+          const person = state.boat[0];
+          const bankPeople = state.boatSide === 'left' ? state.leftBank : state.rightBank;
+          state.boat.splice(0, 1);
+          bankPeople.push(person);
+        }
+
+        showMessage('船已到达' + (to === 'left' ? '左岸' : '右岸') + '，所有人自动下船', 'info');
+        render();
+
+        checkVictory();
+      }, 1300);
+    }
+
+    function checkVictory() {
+      const rightAdults = state.rightBank.filter(function(p) { return p.type === 'adult'; }).length;
+      const rightBoys = state.rightBank.filter(function(p) { return p.type === 'boy'; }).length;
+
+      if (rightAdults === config.adultCount && rightBoys === config.boyCount) {
+        state.gameWon = true;
+        setTimeout(showVictory, 300);
+      }
+    }
+
+    // ===== Messages =====
+    function showMessage(text, type) {
+      const box = document.getElementById('messageBox');
+      box.className = 'message ' + type;
+      box.textContent = text;
+    }
+
+    function getPersonLabel(person) {
+      if (person.type === 'adult') {
+        return '大人' + person.id.split('-')[1];
+      }
+      return '少年' + person.id.split('-')[1];
+    }
+
+    // ===== History =====
+    function addHistory(text) {
+      state.history.push(text);
+      const container = document.getElementById('historyContent');
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.textContent = text;
+      container.appendChild(item);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function togglePanel(name) {
+      const contentId = name === 'rules' ? 'rulesContent' : 'historyContent';
+      const arrowId = name === 'rules' ? 'rulesArrow' : 'historyArrow';
+      const content = document.getElementById(contentId);
+      const arrow = document.getElementById(arrowId);
+      content.classList.toggle('open');
+      arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
+    }
+
+    // ===== Reset =====
+    function resetGame() {
+      state.autoPlaying = false;
+      document.getElementById('historyContent').innerHTML = '';
+      initGame();
+    }
+
+    // ===== Hint =====
+    function showHint() {
+      const minSteps = calcMinSteps();
+      if (minSteps === -1) {
+        showMessage('当前配置无解，请调整人数后重新开始', 'error');
+        return;
+      }
+
+      const currentBank = state.boatSide;
+      const bankPeople = currentBank === 'left' ? state.leftBank : state.rightBank;
+      const boatAdults = state.boat.filter(function(p) { return p.type === 'adult'; }).length;
+      const boatBoys = state.boat.filter(function(p) { return p.type === 'boy'; }).length;
+
+      if (state.boat.length === 0) {
+        const boysOnBank = bankPeople.filter(function(p) { return p.type === 'boy'; }).length;
+        const adultsOnBank = bankPeople.filter(function(p) { return p.type === 'adult'; }).length;
+
+        if (currentBank === 'left') {
+          if (boysOnBank >= 2 && adultsOnBank > 0) {
+            showMessage('💡 提示：让2个少年上船过河', 'info');
+          } else if (boysOnBank >= 2 && adultsOnBank === 0) {
+            showMessage('💡 提示：所有大人已过河，让少年们过河', 'info');
+          } else if (boysOnBank === 1 && adultsOnBank > 0) {
+            showMessage('💡 提示：需要少年先回来，再让2个少年一起过河', 'info');
+          } else if (boysOnBank === 0 && adultsOnBank > 0) {
+            showMessage('💡 提示：需要右岸的少年划船回来接人', 'info');
+          } else {
+            showMessage('💡 提示：让少年们上船过河', 'info');
+          }
+        } else {
+          const leftAdults = state.leftBank.filter(function(p) { return p.type === 'adult'; }).length;
+          const leftBoys = state.leftBank.filter(function(p) { return p.type === 'boy'; }).length;
+
+          if (leftAdults > 0 && boysOnBank >= 1) {
+            showMessage('💡 提示：让1个少年划船回左岸', 'info');
+          } else if (leftAdults === 0 && leftBoys > 0) {
+            showMessage('💡 提示：让1个少年划船回左岸接其他人', 'info');
+          } else if (leftAdults === 0 && leftBoys === 0) {
+            showMessage('💡 提示：已全部过河！', 'success');
+          } else {
+            showMessage('💡 提示：让少年划船回左岸', 'info');
+          }
+        }
+      } else {
+        if (boatAdults > 0) {
+          showMessage('💡 提示：成年人已上船，直接过河即可', 'info');
+        } else if (boatBoys === 1) {
+          const bankBoys = bankPeople.filter(function(p) { return p.type === 'boy'; }).length;
+          if (currentBank === 'left' && bankBoys >= 1) {
+            showMessage('💡 提示：可以再让1个少年上船，2人一起过河', 'info');
+          } else if (currentBank === 'left' && bankBoys === 0) {
+            const bankAdults = bankPeople.filter(function(p) { return p.type === 'adult'; }).length;
+            if (bankAdults > 0) {
+              showMessage('💡 提示：少年单独过河效率低，先下船让成年人上', 'info');
+            } else {
+              showMessage('💡 提示：可以过河了', 'info');
+            }
+          } else {
+            showMessage('💡 提示：可以过河了', 'info');
+          }
+        } else if (boatBoys >= 2) {
+          showMessage('💡 提示：少年们已上船，可以过河了', 'info');
+        }
+      }
+    }
+
+    // ===== Download standalone HTML =====
+    function downloadPage() {
+      const html = document.documentElement.outerHTML;
+      const blob = new Blob(['<!doctype html>\n' + html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '探险队过河.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showMessage('网页文件已下载，可直接在浏览器中打开', 'success');
+    }
+
+    // ===== Auto Solve =====
+    async function autoSolve() {
+      if (state.autoPlaying) {
+        state.autoPlaying = false;
+        updateInfo();
+        return;
+      }
+
+      const minSteps = calcMinSteps();
+      if (minSteps === -1) {
+        showMessage('当前配置无解，无法自动演示', 'error');
+        return;
+      }
+
+      // Reset first
+      state.autoPlaying = true;
+      document.getElementById('historyContent').innerHTML = '';
+      initGame();
+      state.autoPlaying = true;
+
+      await sleep(600);
+
+      const boyCount = config.boyCount;
+      const adultCount = config.adultCount;
+
+      // Phase 1: Shuttle adults using first 2 boys
+      for (let i = 0; i < adultCount; i++) {
+        if (!state.autoPlaying) return;
+
+        // 2 boys board and cross
+        await autoBoard('boy-1');
+        await sleep(250);
+        await autoBoard('boy-2');
+        await sleep(250);
+        await autoCross();
+        await sleep(1400);
+        if (!state.autoPlaying) return;
+
+        // 1 boy returns
+        await autoBoard('boy-1');
+        await sleep(250);
+        await autoCross();
+        await sleep(1400);
+        if (!state.autoPlaying) return;
+
+        // 1 adult crosses
+        var remainingAdults = state.leftBank.filter(function(p) { return p.type === 'adult'; });
+        if (remainingAdults.length > 0) {
+          await autoBoard(remainingAdults[0].id);
+          await sleep(250);
+          await autoCross();
+          await sleep(1400);
+          if (!state.autoPlaying) return;
+        }
+
+        // 1 boy returns
+        var rightBoys = state.rightBank.filter(function(p) { return p.type === 'boy'; });
+        if (rightBoys.length > 0) {
+          await autoBoard(rightBoys[0].id);
+          await sleep(250);
+          await autoCross();
+          await sleep(1400);
+          if (!state.autoPlaying) return;
+        }
+      }
+
+      // Phase 2: All remaining boys on left bank cross together
+      // After shuttling, all boys should be on left bank with the boat
+      var leftBoys = state.leftBank.filter(function(p) { return p.type === 'boy'; });
+      while (leftBoys.length > 0) {
+        if (!state.autoPlaying) return;
+
+        if (leftBoys.length >= 2) {
+          await autoBoard(leftBoys[0].id);
+          await sleep(250);
+          await autoBoard(leftBoys[1].id);
+          await sleep(250);
+        } else {
+          await autoBoard(leftBoys[0].id);
+          await sleep(250);
+        }
+
+        await autoCross();
+        await sleep(1400);
+        if (!state.autoPlaying) return;
+
+        // Check if all boys are on the right
+        leftBoys = state.leftBank.filter(function(p) { return p.type === 'boy'; });
+        if (leftBoys.length > 0) {
+          // Need a boy to return with the boat
+          var rb = state.rightBank.filter(function(p) { return p.type === 'boy'; });
+          if (rb.length > 0) {
+            await autoBoard(rb[0].id);
+            await sleep(250);
+            await autoCross();
+            await sleep(1400);
+            if (!state.autoPlaying) return;
+          }
+          leftBoys = state.leftBank.filter(function(p) { return p.type === 'boy'; });
+        }
+      }
+
+      state.autoPlaying = false;
+      updateInfo();
+    }
+
+    async function autoBoard(personId) {
+      if (!state.autoPlaying) return;
+      const bankPeople = state.boatSide === 'left' ? state.leftBank : state.rightBank;
+      const person = bankPeople.find(function(p) { return p.id === personId; });
+      if (person) {
+        board(person);
+      }
+    }
+
+    async function autoCross() {
+      if (!state.autoPlaying) return;
+      crossRiver();
+    }
+
+    function sleep(ms) {
+      return new Promise(function(resolve) { setTimeout(resolve, ms); });
+    }
+
+    // ===== Victory =====
+    function showVictory() {
+      const overlay = document.getElementById('victoryOverlay');
+      overlay.classList.add('show');
+      document.getElementById('victorySteps').textContent = state.steps;
+
+      const minSteps = calcMinSteps();
+      const msg = document.getElementById('victoryMsg');
+      if (minSteps > 0 && state.steps === minSteps) {
+        msg.textContent = '完美！你用了最少的步数完成了挑战！';
+        msg.style.color = '#27AE60';
+      } else if (minSteps > 0 && state.steps <= minSteps + 10) {
+        msg.textContent = '很棒！接近最优解了，最少只需' + minSteps + '步哦';
+        msg.style.color = '#F39C12';
+      } else if (minSteps > 0) {
+        msg.textContent = '完成挑战！试试能否用更少的步数（最少' + minSteps + '步）';
+        msg.style.color = '#7F8C8D';
+      } else {
+        msg.textContent = '恭喜完成挑战！';
+        msg.style.color = '#27AE60';
+      }
+
+      launchConfetti();
+    }
+
+    function closeVictory() {
+      document.getElementById('victoryOverlay').classList.remove('show');
+      resetGame();
+    }
+
+    function launchConfetti() {
+      const container = document.getElementById('confettiContainer');
+      container.innerHTML = '';
+      const colors = ['#E74C3C', '#3498DB', '#2ECC71', '#F39C12', '#9B59B6', '#1ABC9C', '#E67E22'];
+
+      for (let i = 0; i < 80; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = (Math.random() * 8 + 6) + 'px';
+        confetti.style.height = (Math.random() * 8 + 6) + 'px';
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        confetti.style.animationDelay = (Math.random() * 1.5) + 's';
+        container.appendChild(confetti);
+      }
+
+      setTimeout(function() {
+        container.innerHTML = '';
+      }, 5000);
+    }
+
+    // ===== Init =====
+    initGame();
+  </script>
+
+
+<div id="html-editor-renderer-root" style="position: fixed; top: 0px; left: 0px;"></div></body><div id="imt-webext"></div></html>
