@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>一笔画大师 | 正宗七桥问题（度数3,3,3,5）</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef5ea 0%, #d0e2cf 100%);
+            font-family: 'Segoe UI', 'Fredoka One', 'Comic Neue', 'Poppins', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #1e3c2c;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 245, 0.95);
+            backdrop-filter: blur(2px);
+            border-radius: 56px;
+            box-shadow: 0 20px 35px rgba(36, 54, 35, 0.2);
+            padding: 20px 28px;
+            margin-bottom: 28px;
+            border: 2px solid #f9f3d9;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            background: linear-gradient(135deg, #1f6e43, #2b9b5e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-top: 0;
+        }
+
+        h2 {
+            background-color: #f3b33d;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 60px;
+            color: #2d3e2b;
+            font-size: 1.6rem;
+            margin: 0 0 16px 0;
+            box-shadow: 0 4px 0 #bf7e1a;
+        }
+
+        .story {
+            background-color: #fef7e0;
+            border-radius: 48px;
+            padding: 16px 24px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .canvas-panel {
+            background: #fef9ef;
+            border-radius: 48px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        canvas {
+            background: #fffef7;
+            border-radius: 32px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            height: auto;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+            border: 3px solid #d4c2a5;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #ffcf6e;
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.1s linear;
+            color: #3b2a1e;
+            box-shadow: 0 3px 0 #b97f20;
+            font-family: inherit;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #b97f20;
+        }
+
+        .btn-success {
+            background: #57a777;
+            color: white;
+            box-shadow: 0 3px 0 #2a6b46;
+        }
+
+        .message {
+            background: #edf4e1;
+            border-radius: 28px;
+            padding: 12px 20px;
+            margin-top: 16px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #2b5a3b;
+        }
+
+        .theorem {
+            background: #e2f0e6;
+            border-radius: 40px;
+            padding: 12px 24px;
+            font-size: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        .legend span {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .degree-badge {
+            background: #f0e1b9;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        @media (max-width: 800px) {
+            .canvas-panel { min-width: 280px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 标题 + 七桥历史导入 -->
+    <div class="card">
+        <h1>🌉 哥尼斯堡七桥 · 严格欧拉定理实验室</h1>
+        <div class="story">
+            <div class="story-text">
+                <p>🏰 <strong>真实的七桥问题（经典度数分布）</strong>：四个区域 —— 左岸、右岸、岛A、岛B。</p>
+                <p>📐 <strong>严格度数验证</strong>：<strong>左岸(3)</strong> · <strong>右岸(3)</strong> · <strong>岛A(5)</strong> · <strong>岛B(3)</strong> → 四个顶点度数全部为奇数 → <strong>奇点数 = 4</strong> → 根据欧拉定理 <strong>绝对不可能一笔画</strong>！</p>
+                <p>🎯 下面的图形按照<strong>真实桥分布</strong>设计：<br>
+                🟢左岸 ⇄ 🟠岛A（2座桥）&nbsp;&nbsp;|&nbsp;&nbsp;🔵右岸 ⇄ 🟠岛A（2座桥）&nbsp;&nbsp;|&nbsp;&nbsp;🟠岛A ⇄ 🟣岛B（1座桥）&nbsp;&nbsp;|&nbsp;&nbsp;左岸⇄岛B（1座桥）&nbsp;&nbsp;|&nbsp;&nbsp;右岸⇄岛B（1座桥）<br>
+                ➕ 总桥数 = 7，度数完全符合 (3,3,5,3)。<strong>亲自拖拽连线挑战，你会发现永远无法走完所有桥！</strong></p>
+            </div>
+            <div class="legend">
+                <div><span style="background:#5fad56;"></span> 左岸 (3)</div>
+                <div><span style="background:#4299c1;"></span> 右岸 (3)</div>
+                <div><span style="background:#f6bd60;"></span> 岛A (5)</div>
+                <div><span style="background:#b5838d;"></span> 岛B (3)</div>
+                <div><span>〰️</span> 弯曲 = 平行桥</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 正宗七桥问题互动游戏（严格度数3,3,3,5） -->
+    <div class="card">
+        <h2>🧩 七桥实验室 · 挑战不可能（4个奇点）</h2>
+        <div class="canvas-panel">
+            <canvas id="sevenBridgesCanvas" width="650" height="450" style="width:100%; height:auto; max-width:650px; aspect-ratio:650/450"></canvas>
+            <div class="button-group">
+                <button class="btn" id="resetSevenBtn">🔄 重置尝试</button>
+                <button class="btn btn-success" id="whyImpossibleBtn">📐 欧拉定理分析（显示度数）</button>
+            </div>
+            <div id="sevenMsg" class="message">🐾 按住任意圆点拖拽到另一个圆点 → 画桥（边）。每条桥只能走一次，试试能否走完7座桥！注意四个顶点度数全是奇数，绝对不可能一笔画。</div>
+        </div>
+        <div class="theorem">
+            💡 <strong>度数详情</strong>：左岸(3) 、右岸(3) 、岛A(5) 、岛B(3)。四个奇点（奇数边顶点）→ 无法完成一笔画。欧拉早已证明：只有0或2个奇点的图形才能一笔画。
+        </div>
+    </div>
+
+    <!-- 欧拉定理讲解区 -->
+    <div class="card">
+        <h2>📖 欧拉一笔画定理</h2>
+        <div class="theorem">
+            <p>🔍 <strong>欧拉定理（无向图）</strong>：图形能否一笔画取决于<strong>奇点（连接奇数条边的点）</strong>个数：</p>
+            <ul style="margin: 8px 0;">
+                <li>✅ <strong>0个奇点</strong> → 任意点出发，最后回到起点 (欧拉回路)。</li>
+                <li>✅ <strong>2个奇点</strong> → 必须从一个奇点出发，另一个奇点结束，可一笔画 (欧拉路径)。</li>
+                <li>❌ 其他情况（奇点数≠0且≠2）→ <strong>不能一笔画</strong>，如七桥问题有4个奇点。</li>
+            </ul>
+            <p>🎯 后续闯关图形都是2个奇点，轻松一笔画！</p>
+        </div>
+    </div>
+
+    <!-- 趣味闯关（有解示范，节点无文字） -->
+    <div class="card">
+        <h2>🎯 趣味闯关 · 可一笔画图形（2个奇点）</h2>
+        <p>下面图形有2个奇点，可以一笔画。试试从奇点出发拖拽完成！<strong>节点上不显示文字，请根据位置判断连线。</strong></p>
+        <div class="canvas-panel">
+            <canvas id="challengeCanvas" width="550" height="400" style="width:100%; height:auto; max-width:550px; aspect-ratio:550/400"></canvas>
+            <div class="button-group">
+                <button class="btn" id="resetChallengeBtn">🔄 重置路径</button>
+                <button class="btn btn-success" id="showHintBtn">💡 提示解法</button>
+            </div>
+            <div id="challengeMsg" class="message">✨ 从任意节点开始，拖拽连线（起点→终点），连续走完所有边~</div>
+        </div>
+    </div>
+
+    <!-- 更多一笔画游戏区：小房子、五角星、蝴蝶结（节点无文字） -->
+    <div class="card">
+        <h2>✏️ 一笔画挑战家 · 自由练习</h2>
+        <p>🐣 三种有趣的图形，使用<strong>拖拽连线</strong>方法，找出完美一笔画路径！<strong>节点均不显示文字</strong>，考验你的观察力。</p>
+        <div class="button-group" id="gameSelector" style="margin-bottom: 16px;">
+            <button data-shape="house" class="btn selector-btn active">🏠 小房子</button>
+            <button data-shape="star" class="btn selector-btn">⭐ 五角星简图</button>
+            <button data-shape="bowknot" class="btn selector-btn">🎀 蝴蝶结</button>
+        </div>
+        <div class="canvas-panel">
+            <canvas id="freeGameCanvas" width="550" height="400" style="width:100%; height:auto; max-width:550px; aspect-ratio:550/400"></canvas>
+            <div class="button-group">
+                <button class="btn" id="resetFreeBtn">🔄 重置当前图形</button>
+                <button class="btn" id="checkAutoBtn">🔍 奇点检测（欧拉定理）</button>
+            </div>
+            <div id="freeGameMsg" class="message">🌟 选择图形，拖拽连线，完成一笔画！</div>
+        </div>
+    </div>
+    <footer>🎨 拖拽方法：按住圆点 → 拖动到另一个圆点 → 松开，即可画线。必须连续从当前末端开始哦！平行桥使用弯曲曲线，精准模拟真实七桥。</footer>
+</div>
+
+<script>
+    // ======================= 高级一笔画引擎（支持平行边弯曲）=======================
+    class OneStrokeEngine {
+        constructor(canvasId, nodes, edgesRaw, options = {}) {
+            this.canvas = document.getElementById(canvasId);
+            this.ctx = this.canvas.getContext('2d');
+            this.nodes = nodes;          // [{x, y}]
+            this.rawEdges = edgesRaw;    // [[u,v], ...] 允许重复
+            this.edges = [];             // 处理后 {u, v, curveOffset}
+            this.visited = [];
+            this.currentPath = [];       // 节点索引序列
+            this.completeCb = options.onComplete || (()=>{});
+            this.msgCb = options.onMessage || (()=>{});
+            this.showLabels = options.showLabels !== undefined ? options.showLabels : true; // 是否显示节点文字
+            
+            this.buildEdgesWithCurve();
+            this.dragging = false;
+            this.startNode = null;
+            this.radius = 22;
+            this._bindEvents();
+            this.draw();
+        }
+        
+        buildEdgesWithCurve() {
+            // 对平行边自动计算偏移量
+            const pairMap = new Map(); // key "u,v" 存储出现的次数
+            for(let [u,v] of this.rawEdges) {
+                let key = u < v ? `${u},${v}` : `${v},${u}`;
+                pairMap.set(key, (pairMap.get(key) || 0) + 1);
+            }
+            const counter = new Map();
+            this.edges = [];
+            for(let [u,v] of this.rawEdges) {
+                let key = u < v ? `${u},${v}` : `${v},${u}`;
+                let total = pairMap.get(key);
+                let idx = (counter.get(key) || 0);
+                counter.set(key, idx+1);
+                let offset = 0;
+                if(total > 1) {
+                    // 偏移范围 -14 ~ 14 像素，垂直方向弯曲
+                    let t = (idx / (total - 1)) * 2 - 1;
+                    offset = t * 16;
+                }
+                this.edges.push({ u, v, id: this.edges.length, curveOffset: offset });
+            }
+            this.visited = new Array(this.edges.length).fill(false);
+        }
+        
+        _bindEvents() {
+            this.canvas.addEventListener('mousedown', this._onMouseDown.bind(this));
+            window.addEventListener('mousemove', this._onMouseMove.bind(this));
+            window.addEventListener('mouseup', this._onMouseUp.bind(this));
+            this.canvas.addEventListener('touchstart', this._onTouchStart.bind(this));
+            window.addEventListener('touchmove', this._onTouchMove.bind(this));
+            window.addEventListener('touchend', this._onTouchEnd.bind(this));
+        }
+        
+        _getCoords(e, isTouch=false) {
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            let clientX, clientY;
+            if(isTouch && e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else if(e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            const canvasX = (clientX - rect.left) * scaleX;
+            const canvasY = (clientY - rect.top) * scaleY;
+            return { x: canvasX, y: canvasY };
+        }
+        
+        _getNodeAt(x,y) {
+            for(let i=0;i<this.nodes.length;i++) {
+                const n = this.nodes[i];
+                const dx = n.x - x, dy = n.y - y;
+                if(Math.hypot(dx,dy) < this.radius) return i;
+            }
+            return null;
+        }
+        
+        _onMouseDown(e) { this._startDrag(e, false); }
+        _onTouchStart(e) { e.preventDefault(); this._startDrag(e, true); }
+        _startDrag(e, isTouch) {
+            const pos = this._getCoords(e, isTouch);
+            const idx = this._getNodeAt(pos.x, pos.y);
+            if(idx !== null) {
+                this.dragging = true;
+                this.startNode = idx;
+                this.draw();
+            }
+        }
+        
+        _onMouseMove(e) { if(this.dragging) this.draw(); }
+        _onTouchMove(e) { if(this.dragging) { e.preventDefault(); this.draw(); } }
+        
+        _onMouseUp(e) { this._endDrag(e, false); }
+        _onTouchEnd(e) { e.preventDefault(); this._endDrag(e, true); }
+        
+        _endDrag(e, isTouch) {
+            if(!this.dragging || this.startNode === null) {
+                this.dragging = false;
+                this.startNode = null;
+                this.draw();
+                return;
+            }
+            const pos = this._getCoords(e, isTouch);
+            const target = this._getNodeAt(pos.x, pos.y);
+            if(target !== null && target !== this.startNode) {
+                this._tryAddEdge(this.startNode, target);
+            } else if(target === this.startNode) {
+                this._showMsg("🏁 起点和终点相同？拖拽到另一个圆点架桥！");
+            }
+            this.dragging = false;
+            this.startNode = null;
+            this.draw();
+        }
+        
+        _tryAddEdge(u, v) {
+            // 寻找未被使用且端点匹配的边
+            let edgeIdx = -1;
+            for(let i=0;i<this.edges.length;i++) {
+                if(this.visited[i]) continue;
+                const e = this.edges[i];
+                if((e.u === u && e.v === v) || (e.u === v && e.v === u)) {
+                    edgeIdx = i;
+                    break;
+                }
+            }
+            if(edgeIdx === -1) {
+                this._showMsg(`❌ 没有可走的桥连接 ${this._label(u)} 与 ${this._label(v)}，或桥已走过！`);
+                return false;
+            }
+            // 连续性验证
+            if(this.currentPath.length === 0) {
+                this.currentPath = [u, v];
+                this.visited[edgeIdx] = true;
+                this._showMsg(`✅ 从 ${this._label(u)} 走到 ${this._label(v)}，继续前进！`);
+                this.draw();
+                this._checkComplete();
+                return true;
+            } else {
+                const last = this.currentPath[this.currentPath.length-1];
+                if(last === u) {
+                    this.currentPath.push(v);
+                    this.visited[edgeIdx] = true;
+                    this._showMsg(`✨ 前进：${this._label(u)} → ${this._label(v)}`);
+                    this.draw();
+                    this._checkComplete();
+                    return true;
+                } else if(last === v) {
+                    this.currentPath.push(u);
+                    this.visited[edgeIdx] = true;
+                    this._showMsg(`✨ 前进：${this._label(v)} → ${this._label(u)}`);
+                    this.draw();
+                    this._checkComplete();
+                    return true;
+                } else {
+                    this._showMsg(`🚫 必须连续！当前末端在 ${this._label(last)}，请从末端拖拽连线。`);
+                    return false;
+                }
+            }
+        }
+        
+        _label(idx) {
+            // 对于七桥游戏使用中文名称，其他图形使用字母（仅在消息提示中使用，画布上是否显示由showLabels控制）
+            const names = ['左岸', '右岸', '岛A', '岛B'];
+            if(this.nodes.length === 4 && names[idx]) return names[idx];
+            return String.fromCharCode(65+idx);
+        }
+        
+        _showMsg(msg) { if(this.msgCb) this.msgCb(msg); }
+        
+        _checkComplete() {
+            const allDone = this.visited.every(v=>v===true);
+            if(allDone) {
+                this._showMsg("⚠️ 你竟然走完了7座桥？ 但根据欧拉定理，四个奇点的图形不可能一笔画！请再仔细检查：是否每座桥都恰好走了一次？程序严格模拟了七桥分布，理论上绝对无法完成。如果提示完成，可能是浏览器刷新问题，重置后再试，你会发现永远差一步。");
+                if(this.completeCb) this.completeCb();
+            } else {
+                let left = this.visited.filter(v=>!v).length;
+                this._showMsg(`📌 已完成 ${this.edges.length-left}/${this.edges.length} 条边，还差${left}条。由于奇点数为4，您永远无法走完所有桥！`);
+            }
+        }
+        
+        reset() {
+            this.visited.fill(false);
+            this.currentPath = [];
+            this.dragging = false;
+            this.startNode = null;
+            this.draw();
+            this._showMsg("🔄 已重置，重新挑战七桥经典难题！记住：四个奇点 => 无解。");
+        }
+        
+        draw() {
+            this.ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
+            // 画所有边
+            for(let i=0;i<this.edges.length;i++) {
+                const e = this.edges[i];
+                const p1 = this.nodes[e.u];
+                const p2 = this.nodes[e.v];
+                const visited = this.visited[i];
+                const color = visited ? '#3cb371' : '#b0b7a3';
+                this._drawCurve(p1, p2, e.curveOffset, color, visited ? 5 : 4);
+            }
+            // 高亮已走路径（金色虚线轮廓）
+            if(this.currentPath.length >= 2) {
+                this.ctx.save();
+                this.ctx.setLineDash([8,6]);
+                for(let i=0;i<this.currentPath.length-1;i++) {
+                    const n1 = this.nodes[this.currentPath[i]];
+                    const n2 = this.nodes[this.currentPath[i+1]];
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(n1.x, n1.y);
+                    this.ctx.lineTo(n2.x, n2.y);
+                    this.ctx.strokeStyle = '#f4a261';
+                    this.ctx.lineWidth = 4;
+                    this.ctx.stroke();
+                }
+                this.ctx.restore();
+            }
+            // 画节点
+            for(let i=0;i<this.nodes.length;i++) {
+                const n = this.nodes[i];
+                this.ctx.beginPath();
+                this.ctx.arc(n.x, n.y, this.radius-4, 0, 2*Math.PI);
+                this.ctx.fillStyle = '#FFF2cf';
+                this.ctx.fill();
+                this.ctx.strokeStyle = '#c77e2e';
+                this.ctx.lineWidth = 2.5;
+                this.ctx.stroke();
+                
+                // 根据showLabels决定是否绘制文字标签
+                if(this.showLabels) {
+                    const labels = ['左岸', '右岸', '岛A', '岛B'];
+                    let label = (this.nodes.length === 4 && labels[i]) ? labels[i] : String.fromCharCode(65+i);
+                    this.ctx.fillStyle = '#3b2a1e';
+                    this.ctx.font = `bold 16px "Segoe UI"`;
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(label, n.x, n.y);
+                }
+                
+                // 七桥游戏中额外显示度数（仅当showLabels为true，且是七桥节点）
+                if(this.showLabels && this.nodes.length === 4) {
+                    this.ctx.font = `12px "Segoe UI"`;
+                    this.ctx.fillStyle = '#8b5a2b';
+                    this.ctx.fillText(`(${this._getDegree(i)})`, n.x+20, n.y-12);
+                }
+                
+                if(this.dragging && this.startNode === i) {
+                    this.ctx.beginPath();
+                    this.ctx.arc(n.x, n.y, this.radius-2, 0, 2*Math.PI);
+                    this.ctx.strokeStyle = '#f0803c';
+                    this.ctx.lineWidth = 4;
+                    this.ctx.stroke();
+                }
+            }
+        }
+        
+        _getDegree(nodeIdx) {
+            let deg = 0;
+            for(let e of this.rawEdges) {
+                if(e[0]===nodeIdx || e[1]===nodeIdx) deg++;
+            }
+            return deg;
+        }
+        
+        _drawCurve(p1, p2, offset, color, width) {
+            if(offset === 0) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(p1.x, p1.y);
+                this.ctx.lineTo(p2.x, p2.y);
+                this.ctx.strokeStyle = color;
+                this.ctx.lineWidth = width;
+                this.ctx.stroke();
+                return;
+            }
+            // 二次贝塞尔曲线偏移
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const len = Math.hypot(dx,dy);
+            if(len < 0.01) return;
+            const normX = -dy / len;
+            const normY = dx / len;
+            const midX = (p1.x + p2.x)/2;
+            const midY = (p1.y + p2.y)/2;
+            const ctrlX = midX + normX * offset;
+            const ctrlY = midY + normY * offset;
+            this.ctx.beginPath();
+            this.ctx.moveTo(p1.x, p1.y);
+            this.ctx.quadraticCurveTo(ctrlX, ctrlY, p2.x, p2.y);
+            this.ctx.strokeStyle = color;
+            this.ctx.lineWidth = width;
+            this.ctx.stroke();
+        }
+        
+        getOddDegrees() {
+            let deg = new Array(this.nodes.length).fill(0);
+            for(let e of this.rawEdges) {
+                deg[e[0]]++; deg[e[1]]++;
+            }
+            let odd = [];
+            for(let i=0;i<deg.length;i++) if(deg[i]%2===1) odd.push(i);
+            return { odds: odd, degrees: deg };
+        }
+        
+        showTheorem() {
+            const { odds, degrees } = this.getOddDegrees();
+            let names = [];
+            if(this.nodes.length === 4 && this.showLabels) names = ['左岸', '右岸', '岛A', '岛B'];
+            else {
+                for(let i=0;i<this.nodes.length;i++) names.push(String.fromCharCode(65+i));
+            }
+            let degStr = degrees.map((d,i)=>`${names[i]}:${d}`).join(' · ');
+            let msg = `📊 当前度数分布: ${degStr} 。奇点个数 = ${odds.length} (${odds.map(i=>names[i]).join(',')})。`;
+            if(odds.length===0) msg+= " ✨ 0个奇点 → 可一笔画并回到起点。";
+            else if(odds.length===2) msg+= " ✨ 2个奇点 → 可一笔画(从一个奇点出发到另一个奇点结束)。";
+            else msg+= " ❌ 奇点数不是0或2 → 根据欧拉定理，<strong>绝对不能一笔画</strong>！七桥问题正是如此。";
+            this._showMsg(msg);
+        }
+    }
+    
+    // ======================= 定义所有图形数据 =======================
+    // 1. 正宗七桥图：严格度数 (3,3,5,3)  节点: 0左岸,1右岸,2岛A,3岛B
+    const sevenNodes = [
+        {x: 110, y: 230},  // 0 左岸
+        {x: 540, y: 230},  // 1 右岸
+        {x: 280, y: 110},  // 2 岛A (上方岛)
+        {x: 390, y: 340},  // 3 岛B (下方岛)
+    ];
+    const sevenEdgesRaw = [
+        [0,2], [0,2],   // 左岸↔岛A 双桥
+        [1,2], [1,2],   // 右岸↔岛A 双桥
+        [2,3],           // 岛A↔岛B 单桥
+        [0,3],           // 左岸↔岛B 单桥
+        [1,3]            // 右岸↔岛B 单桥
+    ];
+    
+    // 2. 趣味闯关图形 (四边形+对角线，有2奇点) — 节点不显示文字
+    const challengeNodes = [
+        {x: 150, y: 120},  // 0
+        {x: 400, y: 120},  // 1
+        {x: 400, y: 280},  // 2
+        {x: 150, y: 280}   // 3
+    ];
+    const challengeEdges = [[0,1],[1,2],[2,3],[3,0],[0,2]];
+    
+    // 3. 小房子 (5节点 6边)
+    const houseNodes = [
+        {x: 200, y: 280}, {x: 350, y: 280}, {x: 350, y: 180},
+        {x: 275, y: 100}, {x: 200, y: 180}
+    ];
+    const houseEdges = [[0,1],[1,2],[2,4],[4,0],[2,3],[3,4]];
+    
+    // 4. 五角星简图 (5节点 7边)
+    const starNodes = [
+        {x: 275, y: 80}, {x: 420, y: 180}, {x: 360, y: 320},
+        {x: 190, y: 320}, {x: 130, y: 180}
+    ];
+    const starEdges = [[0,1],[1,2],[2,3],[3,4],[4,0],[0,2],[1,3]];
+    
+    // 5. 蝴蝶结图形 (5节点 7边)
+    const bowknotNodes = [
+        {x: 275, y: 70},   // 顶
+        {x: 370, y: 190},  // 右上
+        {x: 275, y: 280},  // 中下
+        {x: 180, y: 190},  // 左下
+        {x: 275, y: 160}   // 中心结
+    ];
+    const bowknotEdges = [
+        [0,1], [1,2], [2,3], [3,4], [4,0], [1,4], [3,4]
+    ];
+    
+    // ---------- 初始化各个引擎 ----------
+    // 正宗七桥：显示标签（保留文字）
+    const sevenMsgDiv = document.getElementById('sevenMsg');
+    const sevenGame = new OneStrokeEngine('sevenBridgesCanvas', sevenNodes, sevenEdgesRaw, {
+        onMessage: (msg) => { sevenMsgDiv.innerHTML = msg; },
+        onComplete: () => { sevenMsgDiv.innerHTML += " ⚠️ 程序理论上不可能完成，如果你看到完成提示，请重置后再试，奇点数4永远差一步。"; },
+        showLabels: true
+    });
+    document.getElementById('resetSevenBtn').addEventListener('click', () => sevenGame.reset());
+    document.getElementById('whyImpossibleBtn').addEventListener('click', () => sevenGame.showTheorem());
+    
+    // 趣味闯关：不显示标签
+    const challengeMsg = document.getElementById('challengeMsg');
+    const challengeGame = new OneStrokeEngine('challengeCanvas', challengeNodes, challengeEdges, {
+        onMessage: (msg) => { challengeMsg.innerHTML = msg; },
+        onComplete: () => { challengeMsg.innerHTML += " 🎖️ 闯关成功！你掌握了一笔画！"; },
+        showLabels: false
+    });
+    document.getElementById('resetChallengeBtn').addEventListener('click', () => challengeGame.reset());
+    document.getElementById('showHintBtn').addEventListener('click', () => {
+        challengeGame._showMsg("💡 示范路径：左上 → 右上 → 右下 → 左下 → 左上 → 右下  (按拖拽顺序) 即可完成！");
+    });
+    
+    // 自由练习区：所有图形均不显示标签
+    let currentFree = null;
+    const freeCanvas = document.getElementById('freeGameCanvas');
+    const freeMsgDiv = document.getElementById('freeGameMsg');
+    const freeShapes = {
+        house: { nodes: houseNodes, edges: houseEdges, name: '小房子' },
+        star: { nodes: starNodes, edges: starEdges, name: '五角星' },
+        bowknot: { nodes: bowknotNodes, edges: bowknotEdges, name: '蝴蝶结' }
+    };
+    function initFree(shapeId) {
+        const data = freeShapes[shapeId];
+        if(!data) return;
+        if(currentFree) {
+            // 复用但完全重置图形数据
+            currentFree.nodes = data.nodes;
+            currentFree.rawEdges = data.edges;
+            currentFree.buildEdgesWithCurve();
+            currentFree.visited = new Array(currentFree.edges.length).fill(false);
+            currentFree.currentPath = [];
+            currentFree.dragging = false;
+            currentFree.startNode = null;
+            currentFree.showLabels = false;   // 确保不显示文字
+            currentFree.draw();
+            currentFree._showMsg(`✨ 切换到 ${data.name}，开始一笔画！`);
+        } else {
+            currentFree = new OneStrokeEngine('freeGameCanvas', data.nodes, data.edges, {
+                onMessage: (msg) => { freeMsgDiv.innerHTML = msg; },
+                onComplete: () => { freeMsgDiv.innerHTML += " 🎉 完美一笔画！"; },
+                showLabels: false
+            });
+        }
+    }
+    document.querySelectorAll('#gameSelector .selector-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('#gameSelector .selector-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const shape = btn.getAttribute('data-shape');
+            initFree(shape);
+        });
+    });
+    document.getElementById('resetFreeBtn').addEventListener('click', () => { if(currentFree) currentFree.reset(); });
+    document.getElementById('checkAutoBtn').addEventListener('click', () => { if(currentFree) currentFree.showTheorem(); });
+    initFree('house');
+</script>
+</body>
+</html>
