@@ -225,26 +225,26 @@
 
     <!-- 趣味闯关（有解示范，节点无文字） -->
     <div class="card">
-        <h2>🎯 趣味闯关 · 可一笔画图形（2个奇点）</h2>
-        <p>下面图形有2个奇点，可以一笔画。试试从奇点出发拖拽完成！<strong>节点上不显示文字，请根据位置判断连线。</strong></p>
+        <h2>🎯 趣味闯关 · 四边形一笔画挑战</h2>
+        <p>这是一个四边形加一条对角线的图形（共5条边），有<strong>2个奇点</strong>。快来试试从正确的起点出发，一笔画成吧！</p>
         <div class="canvas-panel">
             <canvas id="challengeCanvas" width="550" height="400" style="width:100%; height:auto; max-width:550px; aspect-ratio:550/400"></canvas>
             <div class="button-group">
                 <button class="btn" id="resetChallengeBtn">🔄 重置路径</button>
                 <button class="btn btn-success" id="showHintBtn">💡 提示解法</button>
             </div>
-            <div id="challengeMsg" class="message">✨ 从任意节点开始，拖拽连线（起点→终点），连续走完所有边~</div>
+            <div id="challengeMsg" class="message">✨ 从任意节点开始，拖拽连线（起点→终点），连续走完所有5条边，挑战成功！</div>
         </div>
     </div>
 
     <!-- 更多一笔画游戏区：小房子、五角星、蝴蝶结（节点无文字） -->
     <div class="card">
         <h2>✏️ 一笔画挑战家 · 自由练习</h2>
-        <p>🐣 三种有趣的图形，使用<strong>拖拽连线</strong>方法，找出完美一笔画路径！<strong>节点均不显示文字</strong>，考验你的观察力。</p>
+        <p>🐣 三种有趣的图形，每个都有独特的结构。使用<strong>拖拽连线</strong>方法，找出完美的一笔画路径！<strong>节点均不显示文字</strong>，考验你的观察力。</p>
         <div class="button-group" id="gameSelector" style="margin-bottom: 16px;">
-            <button data-shape="house" class="btn selector-btn active">🏠 小房子</button>
-            <button data-shape="star" class="btn selector-btn">⭐ 五角星简图</button>
-            <button data-shape="bowknot" class="btn selector-btn">🎀 蝴蝶结</button>
+            <button data-shape="house" class="btn selector-btn active">🏠 小房子图形</button>
+            <button data-shape="star" class="btn selector-btn">⭐ 五角星轮廓</button>
+            <button data-shape="bowknot" class="btn selector-btn">🎀 蝴蝶结图形</button>
         </div>
         <div class="canvas-panel">
             <canvas id="freeGameCanvas" width="550" height="400" style="width:100%; height:auto; max-width:550px; aspect-ratio:550/400"></canvas>
@@ -252,7 +252,7 @@
                 <button class="btn" id="resetFreeBtn">🔄 重置当前图形</button>
                 <button class="btn" id="checkAutoBtn">🔍 奇点检测（欧拉定理）</button>
             </div>
-            <div id="freeGameMsg" class="message">🌟 选择图形，拖拽连线，完成一笔画！</div>
+            <div id="freeGameMsg" class="message">🌟 选择左侧图形，拖拽连线，体验不同结构的一笔画乐趣！</div>
         </div>
     </div>
     <footer>🎨 拖拽方法：按住圆点 → 拖动到另一个圆点 → 松开，即可画线。必须连续从当前末端开始哦！平行桥使用弯曲曲线，精准模拟真实七桥。</footer>
@@ -393,7 +393,7 @@
                 }
             }
             if(edgeIdx === -1) {
-                this._showMsg(`❌ 没有可走的桥连接 ${this._label(u)} 与 ${this._label(v)}，或桥已走过！`);
+                this._showMsg(`❌ 没有可走的桥连接点 ${this._label(u)} 与 ${this._label(v)}，或这条边已经走过！`);
                 return false;
             }
             // 连续性验证
@@ -421,14 +421,14 @@
                     this._checkComplete();
                     return true;
                 } else {
-                    this._showMsg(`🚫 必须连续！当前末端在 ${this._label(last)}，请从末端拖拽连线。`);
+                    this._showMsg(`🚫 必须连续！当前末端在点 ${this._label(last)}，请从末端拖拽连线。`);
                     return false;
                 }
             }
         }
         
         _label(idx) {
-            // 对于七桥游戏使用中文名称，其他图形使用字母（仅在消息提示中使用，画布上是否显示由showLabels控制）
+            // 对于七桥游戏使用中文名称，其他图形使用字母（仅在消息提示中使用）
             const names = ['左岸', '右岸', '岛A', '岛B'];
             if(this.nodes.length === 4 && names[idx]) return names[idx];
             return String.fromCharCode(65+idx);
@@ -439,11 +439,35 @@
         _checkComplete() {
             const allDone = this.visited.every(v=>v===true);
             if(allDone) {
-                this._showMsg("⚠️ 你竟然走完了7座桥？ 但根据欧拉定理，四个奇点的图形不可能一笔画！请再仔细检查：是否每座桥都恰好走了一次？程序严格模拟了七桥分布，理论上绝对无法完成。如果提示完成，可能是浏览器刷新问题，重置后再试，你会发现永远差一步。");
-                if(this.completeCb) this.completeCb();
+                // 根据图形类型给出不同的完成评价
+                let completeMsg = "";
+                if(this.nodes.length === 4 && this.edges.length === 7) {
+                    completeMsg = "⚠️ 理论上不可能走完七桥！若出现完成提示可能是程序异常，请刷新重置，七桥图奇点数为4，永远无法一笔画。";
+                } else if(this.nodes.length === 4 && this.edges.length === 5) {
+                    completeMsg = "🎉 太棒了！你成功一笔画完成了四边形对角线图形！这就是欧拉定理中「2个奇点」的完美示范！";
+                } else if(this.nodes.length === 5 && this.edges.length === 6) {
+                    completeMsg = "🏠 恭喜！小房子一笔画完成！屋顶和墙壁连成一条优美的路径，你找到了正确的欧拉路径！";
+                } else if(this.nodes.length === 5 && this.edges.length === 7 && this.rawEdges.length === 7) {
+                    // 五角星轮廓或蝴蝶结
+                    if(this.rawEdges.some(e => (e[0]===0 && e[1]===2) || (e[0]===1 && e[1]===3))) {
+                        completeMsg = "⭐ 完美！五角星轮廓一笔画成功！星形的奇妙路径被你找到了，数学之美就在指尖！";
+                    } else {
+                        completeMsg = "🎀 哇！蝴蝶结一笔画挑战成功！优雅的曲线一气呵成，你真是个一笔画高手！";
+                    }
+                } else {
+                    completeMsg = "🎉 完美一笔画！你成功连完了所有线条，太厉害了！";
+                }
+                this._showMsg(completeMsg);
+                if(this.completeCb) this.completeCb(completeMsg);
             } else {
                 let left = this.visited.filter(v=>!v).length;
-                this._showMsg(`📌 已完成 ${this.edges.length-left}/${this.edges.length} 条边，还差${left}条。由于奇点数为4，您永远无法走完所有桥！`);
+                let progressMsg = `📌 已完成 ${this.edges.length-left}/${this.edges.length} 条边，还剩 ${left} 条边。`;
+                if(this.nodes.length === 4 && this.edges.length === 7) {
+                    progressMsg += " 七桥奇点数为4，你可能会发现最后几条边无论如何都无法连续接上～ 这就是欧拉定理的奥妙！";
+                } else {
+                    progressMsg += " 保持节奏，注意从当前末端继续拖拽！";
+                }
+                this._showMsg(progressMsg);
             }
         }
         
@@ -453,7 +477,17 @@
             this.dragging = false;
             this.startNode = null;
             this.draw();
-            this._showMsg("🔄 已重置，重新挑战七桥经典难题！记住：四个奇点 => 无解。");
+            let resetMsg = "🔄 已重置，重新挑战！";
+            if(this.nodes.length === 4 && this.edges.length === 7) {
+                resetMsg = "🔄 七桥已重置。记住：四个奇点无法一笔画，你可以反复尝试体会欧拉定理。";
+            } else if(this.nodes.length === 4 && this.edges.length === 5) {
+                resetMsg = "🔄 四边形闯关已重置。试试从两个奇点之一出发吧！";
+            } else if(this.nodes.length === 5 && this.edges.length === 6) {
+                resetMsg = "🔄 小房子重置啦！试试先画屋顶还是先画墙壁？";
+            } else if(this.nodes.length === 5 && this.edges.length === 7) {
+                resetMsg = "🔄 图形已重置，新一轮挑战开始！";
+            }
+            this._showMsg(resetMsg);
         }
         
         draw() {
@@ -494,7 +528,7 @@
                 this.ctx.lineWidth = 2.5;
                 this.ctx.stroke();
                 
-                // 根据showLabels决定是否绘制文字标签
+                // 根据showLabels决定是否绘制文字标签 (仅七桥游戏显示文字)
                 if(this.showLabels) {
                     const labels = ['左岸', '右岸', '岛A', '岛B'];
                     let label = (this.nodes.length === 4 && labels[i]) ? labels[i] : String.fromCharCode(65+i);
@@ -505,7 +539,7 @@
                     this.ctx.fillText(label, n.x, n.y);
                 }
                 
-                // 七桥游戏中额外显示度数（仅当showLabels为true，且是七桥节点）
+                // 七桥游戏中额外显示度数（仅当showLabels为true）
                 if(this.showLabels && this.nodes.length === 4) {
                     this.ctx.font = `12px "Segoe UI"`;
                     this.ctx.fillStyle = '#8b5a2b';
@@ -577,31 +611,31 @@
                 for(let i=0;i<this.nodes.length;i++) names.push(String.fromCharCode(65+i));
             }
             let degStr = degrees.map((d,i)=>`${names[i]}:${d}`).join(' · ');
-            let msg = `📊 当前度数分布: ${degStr} 。奇点个数 = ${odds.length} (${odds.map(i=>names[i]).join(',')})。`;
-            if(odds.length===0) msg+= " ✨ 0个奇点 → 可一笔画并回到起点。";
-            else if(odds.length===2) msg+= " ✨ 2个奇点 → 可一笔画(从一个奇点出发到另一个奇点结束)。";
-            else msg+= " ❌ 奇点数不是0或2 → 根据欧拉定理，<strong>绝对不能一笔画</strong>！七桥问题正是如此。";
+            let msg = `📊 当前图形度数分布: ${degStr} 。奇点个数 = ${odds.length} (${odds.map(i=>names[i]).join(',')})。`;
+            if(odds.length===0) msg+= " ✨ 0个奇点 → 可以从任意点出发一笔画并回到起点！";
+            else if(odds.length===2) msg+= " ✨ 2个奇点 → 可以一笔画！从一个奇点出发，到另一个奇点结束。";
+            else msg+= " ❌ 奇点数不是0或2 → 根据欧拉定理，<strong>绝对不能一笔画</strong>！";
             this._showMsg(msg);
         }
     }
     
     // ======================= 定义所有图形数据 =======================
-    // 1. 正宗七桥图：严格度数 (3,3,5,3)  节点: 0左岸,1右岸,2岛A,3岛B
+    // 1. 正宗七桥图：严格度数 (3,3,5,3)
     const sevenNodes = [
         {x: 110, y: 230},  // 0 左岸
         {x: 540, y: 230},  // 1 右岸
-        {x: 280, y: 110},  // 2 岛A (上方岛)
-        {x: 390, y: 340},  // 3 岛B (下方岛)
+        {x: 280, y: 110},  // 2 岛A
+        {x: 390, y: 340},  // 3 岛B
     ];
     const sevenEdgesRaw = [
         [0,2], [0,2],   // 左岸↔岛A 双桥
         [1,2], [1,2],   // 右岸↔岛A 双桥
-        [2,3],           // 岛A↔岛B 单桥
-        [0,3],           // 左岸↔岛B 单桥
-        [1,3]            // 右岸↔岛B 单桥
+        [2,3],           // 岛A↔岛B
+        [0,3],           // 左岸↔岛B
+        [1,3]            // 右岸↔岛B
     ];
     
-    // 2. 趣味闯关图形 (四边形+对角线，有2奇点) — 节点不显示文字
+    // 2. 趣味闯关图形 (四边形+对角线，5条边)
     const challengeNodes = [
         {x: 150, y: 120},  // 0
         {x: 400, y: 120},  // 1
@@ -637,11 +671,11 @@
     ];
     
     // ---------- 初始化各个引擎 ----------
-    // 正宗七桥：显示标签（保留文字）
+    // 七桥游戏：显示标签
     const sevenMsgDiv = document.getElementById('sevenMsg');
     const sevenGame = new OneStrokeEngine('sevenBridgesCanvas', sevenNodes, sevenEdgesRaw, {
         onMessage: (msg) => { sevenMsgDiv.innerHTML = msg; },
-        onComplete: () => { sevenMsgDiv.innerHTML += " ⚠️ 程序理论上不可能完成，如果你看到完成提示，请重置后再试，奇点数4永远差一步。"; },
+        onComplete: (msg) => { if(msg) sevenMsgDiv.innerHTML = msg; },
         showLabels: true
     });
     document.getElementById('resetSevenBtn').addEventListener('click', () => sevenGame.reset());
@@ -651,15 +685,15 @@
     const challengeMsg = document.getElementById('challengeMsg');
     const challengeGame = new OneStrokeEngine('challengeCanvas', challengeNodes, challengeEdges, {
         onMessage: (msg) => { challengeMsg.innerHTML = msg; },
-        onComplete: () => { challengeMsg.innerHTML += " 🎖️ 闯关成功！你掌握了一笔画！"; },
+        onComplete: (msg) => { if(msg) challengeMsg.innerHTML = msg; },
         showLabels: false
     });
     document.getElementById('resetChallengeBtn').addEventListener('click', () => challengeGame.reset());
     document.getElementById('showHintBtn').addEventListener('click', () => {
-        challengeGame._showMsg("💡 示范路径：左上 → 右上 → 右下 → 左下 → 左上 → 右下  (按拖拽顺序) 即可完成！");
+        challengeGame._showMsg("💡 提示：两个奇点位于左上角和右下角（或左下和右上），尝试从一个奇点出发，最后到达另一个奇点。示范路径：左上→右上→右下→左下→左上→右下。");
     });
     
-    // 自由练习区：所有图形均不显示标签
+    // 自由练习区
     let currentFree = null;
     const freeCanvas = document.getElementById('freeGameCanvas');
     const freeMsgDiv = document.getElementById('freeGameMsg');
@@ -672,7 +706,6 @@
         const data = freeShapes[shapeId];
         if(!data) return;
         if(currentFree) {
-            // 复用但完全重置图形数据
             currentFree.nodes = data.nodes;
             currentFree.rawEdges = data.edges;
             currentFree.buildEdgesWithCurve();
@@ -680,13 +713,13 @@
             currentFree.currentPath = [];
             currentFree.dragging = false;
             currentFree.startNode = null;
-            currentFree.showLabels = false;   // 确保不显示文字
+            currentFree.showLabels = false;
             currentFree.draw();
-            currentFree._showMsg(`✨ 切换到 ${data.name}，开始一笔画！`);
+            currentFree._showMsg(`✨ 切换到 ${data.name}，开始一笔画挑战！`);
         } else {
             currentFree = new OneStrokeEngine('freeGameCanvas', data.nodes, data.edges, {
                 onMessage: (msg) => { freeMsgDiv.innerHTML = msg; },
-                onComplete: () => { freeMsgDiv.innerHTML += " 🎉 完美一笔画！"; },
+                onComplete: (msg) => { if(msg) freeMsgDiv.innerHTML = msg; },
                 showLabels: false
             });
         }
