@@ -1,338 +1,417 @@
 <!DOCTYPE html>
-<!-- saved from url=(0042)https://zhanyuhb.github.io/html/index.html -->
-<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>人工智能生成教学网页小工具</title>
-<style>
-/* 全局样式 */
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    color: #ffffff;
-    line-height: 1.6;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.header {
-    text-align: center;
-    font-size: 28px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 20px; /* 减小了边距，为更新时间留空间 */
-    color: #ffeb3b;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    grid-column: 1 / -1;
-}
-
-.update-time {
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 20px;
-    color: #a8d8ea;
-    grid-column: 1 / -1;
-}
-
-.card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-
-.card h3 {
-    font-size: 20px;
-    margin-bottom: 15px;
-    color: #ffffff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.card a {
-    display: block;
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #ffffff;
-    background: linear-gradient(135deg, #00bcd4, #2979ff);
-    border-radius: 5px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.card a:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
-}
-
-@media (max-width: 768px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
-<style type="text/css">.qa-sdk-wrapper {
-  position: fixed;
-  width: 400px;
-  right: -600px;
-  max-height: 530px;
-  overflow: hidden;
-  border-radius: 4px;
-  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
-  transition: all 0.5s ease-in-out;
-  background: #fff;
-}
-
-.qa-sdk-close-btn {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  position: absolute;
-  top: 16px;
-  right: 16px;
-}
-
-.qa-sdk-close-btn:hover {
-  border-radius: 50%;
-  background-color: #d5d9df;
-}
-
-#qa-sdk-iframe {
-  width: 400px;
-}
-
-@media (min-width: 1024px) and (max-width: 1366px) {
-  .qa-sdk-wrapper{
-    width: 356px;
-  }
-  #qa-sdk-iframe {
-    width: 356px;
-  }
-}
-</style><style id="imt-injected-styles">
-      /* 翻译加载器样式 */
-      .imt-loading-indicator {
-        vertical-align: middle !important;
-        width: 10px !important;
-        height: 10px !important;
-        display: inline-block !important;
-        margin: 0 4px !important;
-        border: 2px rgba(221, 244, 255, 0.6) solid !important;
-        border-top: 2px rgba(0, 0, 0, 0.375) solid !important;
-        border-left: 2px rgba(0, 0, 0, 0.375) solid !important;
-        border-radius: 50% !important;
-        padding: 0 !important;
-        -webkit-animation: imt-loading-animation 0.6s infinite linear !important;
-        animation: imt-loading-animation 0.6s infinite linear !important;
-      }
-
-      @-webkit-keyframes imt-loading-animation {
-        from {
-          -webkit-transform: rotate(0deg);
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AI教学工具集 | 智能教辅平台 · 益智游戏专区</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        to {
-          -webkit-transform: rotate(359deg);
-        }
-      }
-
-      @keyframes imt-loading-animation {
-        from {
-          transform: rotate(0deg);
+        body {
+            background: #f5f7fc;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', Roboto, Helvetica, Arial, sans-serif;
+            color: #1e2a3e;
+            line-height: 1.45;
+            padding: 2rem 1.5rem;
         }
 
-        to {
-          transform: rotate(359deg);
+        /* 极简商务风格容器 */
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
         }
-      }
-      .se_imt_html {
-        height: 100%;
-      }
-      .se_imt_html body {
-        position: relative;
-        min-height: 100%;
-        top: 40px;
-      }
-      @media print {
-        #imt-webext {
-          display: none !important;
-        }
-      }
-    </style><style id="ai-assist-webType-style">
-    .ai-assist-highlight {
-      background: yellow;
-    }
-    @media print {
-      #ai-assist-root-bangs,
-      #ai-assist-root-bilibili,
-      #ai-assist-root-new {
-        display: none !important;
-      }
-    }
-  </style></head>
 
+        /* 头部区: 干净 · 留白 · 微动态 */
+        .hero-section {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .main-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1f2b3c, #2c3e4e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.65rem;
+            display: inline-block;
+        }
+
+        .subhead {
+            font-size: 0.95rem;
+            color: #5b6e8c;
+            border-top: 1px solid #e2e8f0;
+            display: inline-block;
+            padding-top: 0.5rem;
+            font-weight: 450;
+        }
+
+        .update-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffffcc;
+            backdrop-filter: blur(2px);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #3e5a7c;
+            border: 1px solid #eef2f8;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            margin-top: 0.8rem;
+        }
+
+        .update-badge::before {
+            content: "⚡";
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* 网格卡片系统: 规整商务屏占比 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* 卡片式极简设计：低饱和背景，微投影，圆角优雅 */
+        .card-module {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid #edf2f7;
+            overflow: hidden;
+            backdrop-filter: blur(0px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-module:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.02);
+            border-color: #e2edf7;
+        }
+
+        /* 卡片头部: 清爽标识 */
+        .card-header {
+            padding: 1.3rem 1.6rem 0.6rem 1.6rem;
+            border-bottom: 1px solid #f0f4fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f3a4b;
+            letter-spacing: -0.2px;
+            margin: 0;
+        }
+
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            background: #eff3f9;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        /* 链接列表: 规整排版，间距舒适 */
+        .links-list {
+            padding: 1rem 1.4rem 1.6rem 1.4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .tool-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.6rem 0.8rem;
+            background: #fafcff;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #2c4b6e;
+            font-size: 0.9rem;
+            font-weight: 470;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .tool-link:hover {
+            background: #ffffff;
+            border-color: #dce5f0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            color: #0f2b3b;
+            transform: translateX(3px);
+        }
+
+        /* 链接前置装饰点，极简科技感 */
+        .tool-link::before {
+            content: "▹";
+            font-size: 0.75rem;
+            color: #7c9bc0;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .tool-link:hover::before {
+            opacity: 1;
+            color: #2c7cb6;
+        }
+
+        /* 游戏卡片特有微标，增加趣味点缀 */
+        .game-tag {
+            display: inline-block;
+            background: #ecf5ed;
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 30px;
+            margin-left: 8px;
+            color: #2f6b47;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* 响应式，移动端两列变成单列舒适 */
+        @media (max-width: 740px) {
+            body {
+                padding: 1.2rem;
+            }
+            .tools-grid {
+                gap: 1.2rem;
+            }
+            .card-header {
+                padding: 1rem 1.2rem 0.4rem 1.2rem;
+            }
+            .links-list {
+                padding: 0.8rem 1rem 1.2rem 1rem;
+            }
+            .main-title {
+                font-size: 1.7rem;
+            }
+        }
+
+        /* 工具数量较多，保持滚动舒适 */
+        .links-list {
+            max-height: 380px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        .links-list::-webkit-scrollbar {
+            width: 4px;
+            background: #eef2f8;
+        }
+        .links-list::-webkit-scrollbar-thumb {
+            background: #cbdae9;
+            border-radius: 20px;
+        }
+
+        /* 脚注小字 + 极简分割 */
+        .footer-note {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8aa0b5;
+            border-top: 1px solid #e9edf4;
+            padding-top: 2rem;
+            letter-spacing: 0.3px;
+        }
+    </style>
+</head>
 <body>
-<div class="container">
-    <div class="header">人工智能生成教学网页小工具</div>
-    <div class="update-time">最后更新: <span id="lastUpdate">2025-12-16 12:02:32</span></div>
-    
-    <!-- 课堂互动管理系统 -->
-    <div class="card">
-        <h3>教学管理工具</h3>
-        <a href="https://zhanyuhb.github.io/html/dm.html" target="-blank">课堂互动管理系统</a>
-        <a href="https://zhanyuhb.github.io/html/weiwanchengrenwu.html" target="-blank">未完成任务名单</a>
-        <a href="https://zhanyuhb.github.io/html/md2docx.html" target="-blank">将Markdown文件转换为Word文档</a>
-        <a href="https://zhanyuhb.github.io/html/htmldown.html" target="-blank">HTML代码转文件工具</a>
-        <a href="https://zhanyuhb.github.io/html/zhuanqan.html" target="-blank">大转盘</a>
-        <a href="https://bouncyballs.org/" target="-blank">声浪弹力球</a>
-        <a href="https://zhanyuhb.github.io/html/jk.html" target="-blank">监考</a>
-        <a href="https://zhanyuhb.github.io/html/jk2.html" target="-blank">小学生考试监场系统</a>
-        <a href="https://zhanyuhb.github.io/html/zrwap.html" target="-blank">周任务安排管理系统</a>
-        <a href="https://zhanyuhb.github.io/html/nameball.html" target="-blank">姓名3D立体球</a>
-        <a href="https://zhanyuhb.github.io/html/chouqian251203.html" target="-blank">随机抽签工具(20以内）</a>
-
+<div class="app-container">
+    <!-- 头部极简商务风格 -->
+    <div class="hero-section">
+        <div class="main-title">AI 教学辅助工作台</div>
+        <div class="subhead">智能工具 · 轻量高效 · 课堂数字化 + 益智游戏专区</div>
+        <div class="update-badge">
+            <span>数据同步</span>
+            <span id="lastUpdate">2025-12-16 12:02:32</span>
+        </div>
     </div>
 
-    <!-- 语文 -->
-    <div class="card">
-        <h3>语文</h3>
-        <a href="https://zhanyuhb.github.io/html/pinyin_3down.html" target="-blank">三年级下册看拼音写汉字</a>
-        <a href="https://zhanyuhb.github.io/html/pinyin_4down.html" target="-blank">四年级下册看拼音写汉字</a>
-        <a href="https://zhanyuhb.github.io/html/yw3dtingxie.html" target="-blank">三年级下册生字听写</a>
-        <a href="https://zhanyuhb.github.io/html/yw3bscq.html" target="-blank">三年级背诵抽签小助手</a>
-        <a href="https://zhanyuhb.github.io/html/rjxxcy.html" target="-blank">人教版小学语文词语听写助手</a>
+    <!-- 卡片网格：包含原有所有教学工具 + 新增「在线益智游戏」版块 -->
+    <div class="tools-grid">
+        
+        <!-- 教学管理工具 卡片 -->
+        <div class="card-module">
+            <div class="card-header">
+                <span class="category-icon">📋</span>
+                <h3>教学管理</h3>
+            </div>
+            <div class="links-list">
+                <a href="https://zhanyuhb.github.io/html/dm.html" target="_blank" class="tool-link">课堂互动管理系统</a>
+                <a href="https://zhanyuhb.github.io/html/weiwanchengrenwu.html" target="_blank" class="tool-link">未完成任务名单</a>
+                <a href="https://zhanyuhb.github.io/html/md2docx.html" target="_blank" class="tool-link">Markdown 转 Word 文档</a>
+                <a href="https://zhanyuhb.github.io/html/htmldown.html" target="_blank" class="tool-link">HTML 代码转文件工具</a>
+                <a href="https://zhanyuhb.github.io/html/zhuanqan.html" target="_blank" class="tool-link">大转盘 · 课堂互动</a>
+                <a href="https://bouncyballs.org/" target="_blank" class="tool-link">声浪弹力球 · 趣味反馈</a>
+                <a href="https://zhanyuhb.github.io/html/jk.html" target="_blank" class="tool-link">监考辅助工具</a>
+                <a href="https://zhanyuhb.github.io/html/jk2.html" target="_blank" class="tool-link">小学生考试监场系统</a>
+                <a href="https://zhanyuhb.github.io/html/zrwap.html" target="_blank" class="tool-link">周任务安排管理系统</a>
+                <a href="https://zhanyuhb.github.io/html/nameball.html" target="_blank" class="tool-link">姓名 3D 立体球</a>
+                <a href="https://zhanyuhb.github.io/html/chouqian251203.html" target="_blank" class="tool-link">随机抽签工具 (20以内)</a>
+            </div>
+        </div>
+
+        <!-- 语文 卡片 -->
+        <div class="card-module">
+            <div class="card-header">
+                <span class="category-icon">📖</span>
+                <h3>语文 · 汉字素养</h3>
+            </div>
+            <div class="links-list">
+                <a href="https://zhanyuhb.github.io/html/pinyin_3down.html" target="_blank" class="tool-link">三年级下册 看拼音写汉字</a>
+                <a href="https://zhanyuhb.github.io/html/pinyin_4down.html" target="_blank" class="tool-link">四年级下册 看拼音写汉字</a>
+                <a href="https://zhanyuhb.github.io/html/yw3dtingxie.html" target="_blank" class="tool-link">三年级下册 生字听写</a>
+                <a href="https://zhanyuhb.github.io/html/yw3bscq.html" target="_blank" class="tool-link">三年级背诵抽签小助手</a>
+                <a href="https://zhanyuhb.github.io/html/rjxxcy.html" target="_blank" class="tool-link">人教版词语听写助手</a>
+            </div>
+        </div>
+
+        <!-- 数学 卡片 -->
+        <div class="card-module">
+            <div class="card-header">
+                <span class="category-icon">📐</span>
+                <h3>数学 · 思维探索</h3>
+            </div>
+            <div class="links-list">
+                <a href="https://zhanyuhb.github.io/html/kousuan_judge.html" target="_blank" class="tool-link">在线口算练习</a>
+                <a href="https://zhanyuhb.github.io/html/kousuan_print.html" target="_blank" class="tool-link">自动出口算题 (可打印/含答案)</a>
+                <a href="https://zhanyuhb.github.io/html/1yuan2ci.html" target="_blank" class="tool-link">一元二次函数曲线</a>
+                <a href="https://zhanyuhb.github.io/html/shuang2cihanshu.html" target="_blank" class="tool-link">双二次函数曲线</a>
+                <a href="https://zhanyuhb.github.io/html/xuanzhuan2ciquxian.html" target="_blank" class="tool-link">旋转双二次函数曲线</a>
+                <a href="https://zhanyuhb.github.io/html/heibaiball.html" target="_blank" class="tool-link">黑白小球概率模拟实验</a>
+            </div>
+        </div>
+
+        <!-- 英语 卡片 (保留全部链接) -->
+        <div class="card-module">
+            <div class="card-header">
+                <span class="category-icon">🇬🇧</span>
+                <h3>英语 · 词汇闯关</h3>
+            </div>
+            <div class="links-list">
+                <a href="https://zhanyuhb.github.io/html/e3dclx.html" target="_blank" class="tool-link">全册单词连连看 (复习)</a>
+                <a href="https://zhanyuhb.github.io/html/e3ddcllk.html" target="_blank" class="tool-link">单词连连看 (单元练习)</a>
+                <a href="https://zhanyuhb.github.io/html/jienglishtiankong3down.html" target="_blank" class="tool-link">冀教版三年级下册单词填空</a>
+                <a href="https://zhanyuhb.github.io/html/je3uffk.html" target="_blank" class="tool-link">冀教版三年级上册单词记忆卡</a>
+                <a href="https://zhanyuhb.github.io/html/je3dffk.html" target="_blank" class="tool-link">冀教版三年级下册单词记忆卡</a>
+                <a href="https://zhanyuhb.github.io/html/3downgame.html" target="_blank" class="tool-link">部编版三年级下册单元复习游戏</a>
+                <a href="https://zhanyuhb.github.io/html/4downgame.html" target="_blank" class="tool-link">部编版四年级下册单元复习游戏</a>
+                <a href="https://zhanyuhb.github.io/html/englishtiankong3up.html" target="_blank" class="tool-link">部编版三年级上册单词填空</a>
+                <a href="https://zhanyuhb.github.io/html/englishtiankong3down.html" target="_blank" class="tool-link">部编版三年级下册单词填空</a>
+                <a href="https://zhanyuhb.github.io/html/englishtiankong4up.html" target="_blank" class="tool-link">部编版四年级上册单词填空</a>
+                <a href="https://zhanyuhb.github.io/html/englishtiankong4down.html" target="_blank" class="tool-link">部编版四年级下册单词填空</a>
+                <a href="https://zhanyuhb.github.io/html/jjxxdc.html" target="_blank" class="tool-link">冀教版单词听写助手 (三起点)</a>
+            </div>
+        </div>
+
+        <!-- 信息科技 卡片 (完整保留) -->
+        <div class="card-module">
+            <div class="card-header">
+                <span class="category-icon">💻</span>
+                <h3>信息科技 · 计算思维</h3>
+            </div>
+            <div class="links-list">
+                <a href="https://zhanyuhb.github.io/html/tento2.html" target="_blank" class="tool-link">十进制与二进制转换</a>
+                <a href="https://zhanyuhb.github.io/html/HanoiTower.html" target="_blank" class="tool-link">汉诺塔交互式教具</a>
+                <a href="https://zhanyuhb.github.io/html/FtoC.html" target="_blank" class="tool-link">华氏度 ⇄ 摄氏度转换</a>
+                <a href="https://zhanyuhb.github.io/html/yanzhengma.html" target="_blank" class="tool-link">魔术卡片 (校验码原理)</a>
+                <a href="https://zhanyuhb.github.io/html/shenfenzheng.html" target="_blank" class="tool-link">身份证校验码计算器</a>
+                <a href="https://zhanyuhb.github.io/html/caishuzi.html" target="_blank" class="tool-link">猜数字 · 二分法思维</a>
+                <a href="https://zhanyuhb.github.io/html/xiaoqiucaimi.html" target="_blank" class="tool-link">小球猜谜 · 逻辑推理</a>
+                <a href="https://zhanyuhb.github.io/html/bianmashejiqi.html" target="_blank" class="tool-link">编码设计器</a>
+                <a href="https://zhanyuhb.github.io/html/runnianjisuanqi.html" target="_blank" class="tool-link">闰年计算器</a>
+                <a href="https://zhanyuhb.github.io/html/caisefangkuai.html" target="_blank" class="tool-link">彩色方格游戏</a>
+                <a href="https://zhanyuhb.github.io/html/dianzhenhuituban.html" target="_blank" class="tool-link">点阵绘图板</a>
+                <a href="https://space.coze.cn/coding-expert-runtime/299458923266?task_id=7583907540799340834" target="_blank" class="tool-link">推箱子游戏 · 经典逻辑</a>
+                <a href="https://space.coze.cn/coding-expert-runtime/285064050690?task_id=7582141701095948559" target="_blank" class="tool-link">3x3 推箱子 极简版</a>
+                <a href="https://space.coze.cn/web?task_id=7586809185506066751&amp;is_shared=1&amp;uri=7586809185506066751%2F%E6%8E%A8%E7%AE%B1%E5%AD%907-8%E5%85%B3%E4%BC%98%E5%8C%96-9ec6df9015.html&amp;share_id=7586872281818923264&amp;secret=VjR4vYdP&amp;from=file" target="_blank" class="tool-link">可编程推箱子 (7-8关)</a>
+                <a href="https://www.coze.cn/coding-expert-runtime/347200227330?task_id=7618411652476092687&amp;share_id=7618464846518157574" target="_blank" class="tool-link">莫尔斯电码探险</a>
+                <a href="https://zhanyuhb.github.io/html/txdgh.html" target="_blank" class="tool-link">探险队过河 · 决策模拟</a>
+                <a href="https://zhanyuhb.github.io/html/qqybh.html" target="_blank" class="tool-link">七桥问题 (一笔画挑战)</a>
+            </div>
+        </div>
+
+        <!-- AI 导航集合 卡片 -->
+        <div class="card-module">
+            <div class="card-header">
+                <span class="category-icon">🤖</span>
+                <h3>AI 工具导航</h3>
+            </div>
+            <div class="links-list">
+                <a href="https://zhanyuhb.github.io/html/soft.html" target="_blank" class="tool-link">开发工具集 · 效率必备</a>
+                <a href="https://www.aigc.cn/" target="_blank" class="tool-link">生成式人工智能工具导航</a>
+                <a href="https://ai-bot.cn/" target="_blank" class="tool-link">AI工具集 · 前沿聚合</a>
+                <a href="https://www.ai001.com/" target="_blank" class="tool-link">AI100 · 模型应用</a>
+                <a href="https://www.idaohang.cn/tools/" target="_blank" class="tool-link">AI工具箱 · 创意工坊</a>
+            </div>
+        </div>
+
+        <!-- 其他小工具 卡片 -->
+        <div class="card-module">
+            <div class="card-header">
+                <span class="category-icon">🛠️</span>
+                <h3>实用工具箱</h3>
+            </div>
+            <div class="links-list">
+                <a href="https://zhanyuhb.github.io/html/freeVIP.html" target="_blank" class="tool-link">免VIP视频网址解析</a>
+                <a href="https://www.pic.net/" target="_blank" class="tool-link">在线图片处理工具</a>
+                <a href="https://zhanyuhb.github.io/html/mlsjsq.html" target="_blank" class="tool-link">马拉松配速计算器</a>
+                <a href="https://zhanyuhb.github.io/html/name.html" target="_blank" class="tool-link">随机姓名生成器</a>
+            </div>
+        </div>
+
+        <!-- ========= 新增在线益智游戏版块 (极简商务风格，独立卡片) ========= -->
+        <div class="card-module">
+            <div class="card-header">
+                <span class="category-icon">🎮</span>
+                <h3>在线益智游戏 · 轻思维训练</h3>
+            </div>
+            <div class="links-list">
+                <a href="https://zhanyuhb.github.io/html/wuziqi.html" target="_blank" class="tool-link">在线五子棋 <span class="game-tag">脑力激活</span></a>
+                <a href="https://zhanyuhb.github.io/html/gjxq.html" target="_blank" class="tool-link">在线国际象棋 <span class="game-tag">脑力激活</span></a>
+            </div>
+        </div>
+        <!-- 益智游戏版块结束 -->
     </div>
 
-    <!-- 数学 -->
-    <div class="card">
-        <h3>数学</h3>
-        <a href="https://zhanyuhb.github.io/html/kousuan_judge.html" target="-blank">在线口算练习</a>
-        <a href="https://zhanyuhb.github.io/html/kousuan_print.html" target="-blank">自动出口算题（答案）可打印</a>
-        <a href="https://zhanyuhb.github.io/html/1yuan2ci.html" target="-blank">一元二次函数曲线</a>
-        <a href="https://zhanyuhb.github.io/html/shuang2cihanshu.html" target="-blank">双二次函数曲线</a>
-        <a href="https://zhanyuhb.github.io/html/xuanzhuan2ciquxian.html" target="-blank">旋转双二次函数曲线</a>
-        <a href="https://zhanyuhb.github.io/html/heibaiball.html" target="-blank">黑白小球概率模拟实验</a>        
+    <div class="footer-note">
+        ✦ 极简教学工具集 · 所有原始链接均完整保留 ✦ 新增益智游戏专区，劳逸结合 ✦ 课堂数字化助手 ✦
     </div>
-
-    <!-- 英语 -->
-    <div class="card">
-        <h3>英语</h3>
-        <a href="https://zhanyuhb.github.io/html/e3dclx.html" target="-blank">全册书单词连连看（复习）</a>
-        <a href="https://zhanyuhb.github.io/html/e3ddcllk.html" target="-blank">单词连连看（单元练习）</a>
-        <a href="https://zhanyuhb.github.io/html/jienglishtiankong3down.html" target="-blank">冀教版小学英语三年级下册单词填空练习</a>
-        <a href="https://zhanyuhb.github.io/html/je3uffk.html" target="-blank">冀教版英语三年级上册快乐单词记忆卡</a>
-        <a href="https://zhanyuhb.github.io/html/je3dffk.html" target="-blank">冀教版英语三年级下册快乐单词记忆卡</a>
-        <a href="https://zhanyuhb.github.io/html/3downgame.html" target="-blank">部编版小学三年级英语下册单元复习小游戏</a>
-        <a href="https://zhanyuhb.github.io/html/4downgame.html" target="-blank">部编版小学四年级英语下册单元复习小游戏</a>
-        <a href="https://zhanyuhb.github.io/html/englishtiankong3up.html" target="-blank">部编版小学英语三年级上册单词填空练习</a>
-        <a href="https://zhanyuhb.github.io/html/englishtiankong3down.html" target="-blank">部编版小学英语三年级下册单词填空练习</a>
-        <a href="https://zhanyuhb.github.io/html/englishtiankong4up.html" target="-blank">部编版小学英语四年级上册单词填空练习</a>
-        <a href="https://zhanyuhb.github.io/html/englishtiankong4down.html" target="-blank">部编版小学英语四年级下册单词填空练习</a>
-        <a href="https://zhanyuhb.github.io/html/jjxxdc.html" target="-blank">冀教版小学（三年级起点）单词听写助手</a>
-    </div>
-    <!-- 信息科技 -->
-    <div class="card">
-        <h3>信息科技</h3>
-        <a href="https://zhanyuhb.github.io/html/tento2.html" target="-blank">十进制与二进制数相互转换</a>
-        <a href="https://zhanyuhb.github.io/html/HanoiTower.html" target="-blank">汉诺塔交互式教具</a>
-        <a href="https://zhanyuhb.github.io/html/FtoC.html" target="-blank">华氏度与摄氏度相互转换</a>
-        <a href="https://zhanyuhb.github.io/html/yanzhengma.html" target="-blank">魔术的卡片（校验码）</a>
-        <a href="https://zhanyuhb.github.io/html/shenfenzheng.html" target="-blank">身份证校验码计算器</a>
-        <a href="https://zhanyuhb.github.io/html/caishuzi.html" target="-blank">猜数字</a>
-        <a href="https://zhanyuhb.github.io/html/xiaoqiucaimi.html" target="-blank">小球猜谜</a>
-        <a href="https://zhanyuhb.github.io/html/bianmashejiqi.html" target="-blank">编码设计器</a>
-        <a href="https://zhanyuhb.github.io/html/runnianjisuanqi.html" target="-blank">闰年计算器</a>
-        <a href="https://zhanyuhb.github.io/html/caisefangkuai.html" target="-blank">彩色方格游戏</a>
-        <a href="https://zhanyuhb.github.io/html/dianzhenhuituban.html" target="-blank">点阵绘图板</a>
-        <a href="https://space.coze.cn/coding-expert-runtime/299458923266?task_id=7583907540799340834" target="-blank">推箱子游戏</a>
-        <a href="https://space.coze.cn/coding-expert-runtime/285064050690?task_id=7582141701095948559" target="-blank">3*3推箱子</a>
-        <a href="https://space.coze.cn/web?task_id=7586809185506066751&amp;is_shared=1&amp;uri=7586809185506066751%2F%E6%8E%A8%E7%AE%B1%E5%AD%907-8%E5%85%B3%E4%BC%98%E5%8C%96-9ec6df9015.html&amp;share_id=7586872281818923264&amp;secret=VjR4vYdP&amp;from=file" target="-blank">可编程推箱子</a>
-        <a href="https://www.coze.cn/coding-expert-runtime/347200227330?task_id=7618411652476092687&amp;share_id=7618464846518157574" target="-blank">莫尔斯电码探险</a>
-        <a href="https://zhanyuhb.github.io/html/txdgh.html" target="-blank">探险队过河</a>
-        <a href="https://zhanyuhb.github.io/html/qqybh.html" target="-blank">七桥问题（一笔画）</a>
-
-    </div>
-    <!-- AI导航集合 -->
-    <div class="card">
-        <h3>AI导航集合</h3>
-        <a href="https://zhanyuhb.github.io/html/soft.html" target="-blank">开发工具</a>
-        <a href="https://www.aigc.cn/" target="-blank">生成式人工智能工具导航</a>
-        <a href="https://ai-bot.cn/" target="-blank">AI工具集</a>
-        <a href="https://www.ai001.com/" target="-blank">AI100</a>
-        <a href="https://www.idaohang.cn/tools/" target="-blank">AI工具箱</a>
-    </div>
-
-    <!-- 其它小工具 -->
-    <div class="card">
-        <h3>其它小工具</h3>
-        <a href="https://zhanyuhb.github.io/html/freeVIP.html" target="-blank">免VIP视频网址解析</a>
-        <a href="https://www.pic.net/" target="-blank">在线图片工具</a>
-        <a href="https://zhanyuhb.github.io/html/mlsjsq.html" target="-blank">马拉松配速计算器</a>
-        <a href="https://zhanyuhb.github.io/html/name.html" target="-blank">姓名生成器</a>
-
-    </div>
-
 </div>
 
 <script>
-// 获取最后修改时间并显示
-document.addEventListener('DOMContentLoaded', function() {
-    // 获取当前文件的最后修改时间
-    var lastModified = new Date(document.lastModified);
-    
-    // 格式化日期为 YYYY-MM-DD HH:MM:SS
-    var formattedDate = lastModified.getFullYear() + '-' + 
-                       (lastModified.getMonth() + 1).toString().padStart(2, '0') + '-' + 
-                       lastModified.getDate().toString().padStart(2, '0') + ' ' + 
-                       lastModified.getHours().toString().padStart(2, '0') + ':' + 
-                       lastModified.getMinutes().toString().padStart(2, '0') + ':' + 
-                       lastModified.getSeconds().toString().padStart(2, '0');
-    
-    // 显示在页面上
-    document.getElementById('lastUpdate').textContent = formattedDate;
-});
+    // 最后更新时间优雅显示
+    (function() {
+        const updateSpan = document.getElementById('lastUpdate');
+        if (updateSpan) {
+            let lastMod = new Date(document.lastModified);
+            if (!isNaN(lastMod.getTime())) {
+                const formatted = `${lastMod.getFullYear()}-${String(lastMod.getMonth() + 1).padStart(2, '0')}-${String(lastMod.getDate()).padStart(2, '0')} ${String(lastMod.getHours()).padStart(2, '0')}:${String(lastMod.getMinutes()).padStart(2, '0')}:${String(lastMod.getSeconds()).padStart(2, '0')}`;
+                updateSpan.textContent = formatted;
+            } else {
+                const now = new Date();
+                const fallback = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                updateSpan.textContent = fallback;
+            }
+        }
+    })();
 </script>
-
-
-
-
-
-
-
-
-
-<div id="fatkun-drop-panel">
-    <a id="fatkun-drop-panel-close-btn">×</a>
-        <div id="fatkun-drop-panel-inner">
-            <div class="fatkun-content">
-                <svg class="fatkun-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5892"><path d="M494.933333 782.933333c2.133333 2.133333 4.266667 4.266667 8.533334 6.4h8.533333c6.4 0 10.666667-2.133333 14.933333-6.4l2.133334-2.133333 275.2-275.2c8.533333-8.533333 8.533333-21.333333 0-29.866667-8.533333-8.533333-21.333333-8.533333-29.866667 0L533.333333 716.8V128c0-12.8-8.533333-21.333333-21.333333-21.333333s-21.333333 8.533333-21.333333 21.333333v588.8L249.6 475.733333c-8.533333-8.533333-21.333333-8.533333-29.866667 0-8.533333 8.533333-8.533333 21.333333 0 29.866667l275.2 277.333333zM853.333333 874.666667H172.8c-12.8 0-21.333333 8.533333-21.333333 21.333333s8.533333 21.333333 21.333333 21.333333H853.333333c12.8 0 21.333333-8.533333 21.333334-21.333333s-10.666667-21.333333-21.333334-21.333333z" p-id="5893"></path></svg>
-                <div class="fatkun-title">拖拽到此处</div>
-                <div class="fatkun-desc">图片将完成下载</div>
-            </div>
-            <div id="fatkun-supported-by">由Web雷达提供</div>
-        </div>
-    </div><div id="qihooai-assistant-root"><template shadowrootmode="open"><div id="qihooai-shadow-root"><div class="z-[2147483647] absolute left-0 top-0 right-0"><div class="fixed hidden react-draggable" style="z-index: 1; right: 0px; bottom: 211px; transform: translate(0px, 0px);"><div class="aiso-float-btn  w-auto h-[40px] transform translate-x-[calc(100%-46px)] hidden"><div class="rounded-l-full flex items-center justify-center cursor-pointer bg-white px-[10px] w-auto h-[40px] transform translate-x-[0px]" style="box-shadow: rgba(0, 0, 0, 0.1) -2px 0px 8px 0px; background-image: linear-gradient(220deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%); transition: transform 300ms ease-in-out;"><div class="aiso-float-btn-handle flex h-full items-center justify-center"><img class="w-[24px] h-[24px] mx-[2px] block pointer-events-none select-none" src="https://p2.ssl.qhimg.com/t110b9a9301b795f6cf45894018.png"><div class="ml-[8px] text-[14px] text-black select-none">Alt + K</div></div><div class="aiso-float-btn-close absolute w-[18px] h-[18px] -top-[6px] -left-[6px] cursor-pointer group hidden"><div class="w-full h-full opacity-60 group-hover:opacity-100" style="background: url(&quot;https://p2.ssl.qhimg.com/t110b9a9301fbc0753a35a3a729.png&quot;) center center / cover no-repeat;"></div></div></div><div class="aiso-float-btn-tools absolute left-[4px] transition duration-300 hidden bottom-full pb-[12px]  "><div class="flex  items-center bg-white rounded-full w-[40px] border border-[rgba(0,0,0,.04)] flex-col" style="box-shadow: rgba(0, 0, 0, 0.06) 0px 0px 8px 0px;"><div id="float-tool-setting" class="aiso-float-btn-tool w-[40px] h-[40px] flex items-center justify-center cursor-pointer "><div class="aiso-float-btn-tool-handle w-[32px] h-[32px] rounded-full flex items-center justify-center hover:bg-[#F0F2F5] hoverxxx:bg-gradient-to-bl from-[#1465FF33] to-[#9A14FF33]"><img class="w-[20px] h-[20px]" src="https://p5.ssl.qhimg.com/t11098f6bcd073a279e0173995f.png"></div></div><div id="float-tool-translate" class="aiso-float-btn-tool w-[40px] h-[40px] flex items-center justify-center cursor-pointer "><div class="aiso-float-btn-tool-handle w-[32px] h-[32px] rounded-full flex items-center justify-center hover:bg-[#F0F2F5]  from-[#1465FF33] to-[#9A14FF33]"><img class="w-[20px] h-[20px]" src="https://p2.ssl.qhimg.com/t11098f6bcd1c9cee0fdd8a6226.png"></div></div></div></div><div class="aiso-float-btn-tools absolute left-[4px] transition duration-300 bottom-full pb-[8px]"><div class="flex items-center rounded-full w-[40px] gap-[6px] flex-col"><div class="aiso-float-btn-tool w-[40px] h-[40px] flex items-center justify-center cursor-pointer rounded-full border-[1px] border-solid border-[rgba(0,0,0,.04)] bg-white" style="box-shadow: rgba(0, 0, 0, 0.06) 0px 0px 8px 0px;"><div class="aiso-float-btn-tool-handle w-[32px] h-[32px] rounded-full flex items-center justify-center hover:bg-[#F0F2F5] from-[#1465FF33] to-[#9A14FF33]"><img class="w-[20px] h-[20px]" src="https://p2.ssl.qhimg.com/t11098f6bcd1c9cee0fdd8a6226.png"></div></div></div></div></div></div><div class=""></div><div class="absolute left-0 top-0 right-0" id="qihooai-modal-container"></div></div></div><style type="text/css">#qihooai-shadow-root{--red-1:255,236,232;--red-2:253,205,197;--red-3:251,172,163;--red-4:249,137,129;--red-5:247,101,96;--red-6:245,63,63;--red-7:203,39,45;--red-8:161,21,30;--red-9:119,8,19;--red-10:77,0,10;--orangered-1:255,243,232;--orangered-2:253,221,195;--orangered-3:252,197,159;--orangered-4:250,172,123;--orangered-5:249,144,87;--orangered-6:247,114,52;--orangered-7:204,81,32;--orangered-8:162,53,17;--orangered-9:119,31,6;--orangered-10:77,14,0;--orange-1:255,247,232;--orange-2:255,228,186;--orange-3:255,207,139;--orange-4:255,182,93;--orange-5:255,154,46;--orange-6:255,125,0;--orange-7:210,95,0;--orange-8:166,69,0;--orange-9:121,46,0;--orange-10:77,27,0;--gold-1:255,252,232;--gold-2:253,244,191;--gold-3:252,233,150;--gold-4:250,220,109;--gold-5:249,204,69;--gold-6:247,186,30;--gold-7:204,146,19;--gold-8:162,109,10;--gold-9:119,75,4;--gold-10:77,45,0;--yellow-1:254,255,232;--yellow-2:254,254,190;--yellow-3:253,250,148;--yellow-4:252,242,107;--yellow-5:251,232,66;--yellow-6:250,220,25;--yellow-7:207,175,15;--yellow-8:163,132,8;--yellow-9:120,93,3;--yellow-10:77,56,0;--lime-1:252,255,232;--lime-2:237,248,187;--lime-3:220,241,144;--lime-4:201,233,104;--lime-5:181,226,65;--lime-6:159,219,29;--lime-7:126,183,18;--lime-8:95,148,10;--lime-9:67,112,4;--lime-10:42,77,0;--green-1:232,255,234;--green-2:175,240,181;--green-3:123,225,136;--green-4:76,210,99;--green-5:35,195,67;--green-6:0,180,42;--green-7:0,154,41;--green-8:0,128,38;--green-9:0,102,34;--green-10:0,77,28;--cyan-1:232,255,251;--cyan-2:183,244,236;--cyan-3:137,233,224;--cyan-4:94,223,214;--cyan-5:55,212,207;--cyan-6:20,201,201;--cyan-7:13,165,170;--cyan-8:7,130,139;--cyan-9:3,97,108;--cyan-10:0,66,77;--blue-1:232,247,255;--blue-2:195,231,254;--blue-3:159,212,253;--blue-4:123,192,252;--blue-5:87,169,251;--blue-6:52,145,250;--blue-7:32,108,207;--blue-8:17,75,163;--blue-9:6,48,120;--blue-10:0,26,77;--arcoblue-1:232,243,255;--arcoblue-2:190,218,255;--arcoblue-3:148,191,255;--arcoblue-4:106,161,255;--arcoblue-5:64,128,255;--arcoblue-6:22,93,255;--arcoblue-7:14,66,210;--arcoblue-8:7,44,166;--arcoblue-9:3,26,121;--arcoblue-10:0,13,77;--purple-1:245,232,255;--purple-2:221,190,246;--purple-3:195,150,237;--purple-4:168,113,227;--purple-5:141,78,218;--purple-6:114,46,209;--purple-7:85,29,176;--purple-8:60,16,143;--purple-9:39,6,110;--purple-10:22,0,77;--pinkpurple-1:255,232,251;--pinkpurple-2:247,186,239;--pinkpurple-3:240,142,230;--pinkpurple-4:232,101,223;--pinkpurple-5:225,62,219;--pinkpurple-6:217,26,217;--pinkpurple-7:176,16,182;--pinkpurple-8:138,9,147;--pinkpurple-9:101,3,112;--pinkpurple-10:66,0,77;--magenta-1:255,232,241;--magenta-2:253,194,219;--magenta-3:251,157,199;--magenta-4:249,121,183;--magenta-5:247,84,168;--magenta-6:245,49,157;--magenta-7:203,30,131;--magenta-8:161,16,105;--magenta-9:119,6,79;--magenta-10:77,0,52;--gray-1:247,248,250;--gray-2:242,243,245;--gray-3:229,230,235;--gray-4:201,205,212;--gray-5:169,174,184;--gray-6:134,144,156;--gray-7:107,119,133;--gray-8:78,89,105;--gray-9:39,46,59;--gray-10:29,33,41;--success-1:var(--green-1);--success-2:var(--green-2);--success-3:var(--green-3);--success-4:var(--green-4);--success-5:var(--green-5);--success-6:var(--green-6);--success-7:var(--green-7);--success-8:var(--green-8);--success-9:var(--green-9);--success-10:var(--green-10);--primary-1:var(--arcoblue-1);--primary-2:var(--arcoblue-2);--primary-3:var(--arcoblue-3);--primary-4:var(--arcoblue-4);--primary-5:var(--arcoblue-5);--primary-6:var(--arcoblue-6);--primary-7:var(--arcoblue-7);--primary-8:var(--arcoblue-8);--primary-9:var(--arcoblue-9);--primary-10:var(--arcoblue-10);--danger-1:var(--red-1);--danger-2:var(--red-2);--danger-3:var(--red-3);--danger-4:var(--red-4);--danger-5:var(--red-5);--danger-6:var(--red-6);--danger-7:var(--red-7);--danger-8:var(--red-8);--danger-9:var(--red-9);--danger-10:var(--red-10);--warning-1:var(--orange-1);--warning-2:var(--orange-2);--warning-3:var(--orange-3);--warning-4:var(--orange-4);--warning-5:var(--orange-5);--warning-6:var(--orange-6);--warning-7:var(--orange-7);--warning-8:var(--orange-8);--warning-9:var(--orange-9);--warning-10:var(--orange-10);--link-1:var(--arcoblue-1);--link-2:var(--arcoblue-2);--link-3:var(--arcoblue-3);--link-4:var(--arcoblue-4);--link-5:var(--arcoblue-5);--link-6:var(--arcoblue-6);--link-7:var(--arcoblue-7);--link-8:var(--arcoblue-8);--link-9:var(--arcoblue-9);--link-10:var(--arcoblue-10);--data-1:var(--arcoblue-5);--data-2:var(--arcoblue-2);--data-3:85,197,253;--data-4:156,220,252;--data-5:var(--orange-6);--data-6:var(--orange-3);--data-7:var(--green-4);--data-8:var(--green-2);--data-9:var(--purple-4);--data-10:var(--purple-2);--data-11:var(--gold-6);--data-12:var(--gold-4);--data-13:var(--lime-6);--data-14:var(--lime-4);--data-15:var(--magenta-4);--data-16:var(--magenta-3);--data-17:var(--cyan-6);--data-18:var(--cyan-3);--data-19:var(--pinkpurple-4);--data-20:var(--pinkpurple-2)}#qihooai-shadow-root[arco-theme=dark]{--red-1:77,0,10;--red-2:119,6,17;--red-3:161,22,31;--red-4:203,46,52;--red-5:245,78,78;--red-6:247,105,101;--red-7:249,141,134;--red-8:251,176,167;--red-9:253,209,202;--red-10:255,240,236;--orangered-1:77,14,0;--orangered-2:119,30,5;--orangered-3:162,55,20;--orangered-4:204,87,41;--orangered-5:247,126,69;--orangered-6:249,146,90;--orangered-7:250,173,125;--orangered-8:252,198,161;--orangered-9:253,222,197;--orangered-10:255,244,235;--orange-1:77,27,0;--orange-2:121,48,4;--orange-3:166,75,10;--orange-4:210,105,19;--orange-5:255,141,31;--orange-6:255,150,38;--orange-7:255,179,87;--orange-8:255,205,135;--orange-9:255,227,184;--orange-10:255,247,232;--gold-1:77,45,0;--gold-2:119,75,4;--gold-3:162,111,15;--gold-4:204,150,31;--gold-5:247,192,52;--gold-6:249,204,68;--gold-7:250,220,108;--gold-8:252,233,149;--gold-9:253,244,190;--gold-10:255,252,232;--yellow-1:77,56,0;--yellow-2:120,94,7;--yellow-3:163,134,20;--yellow-4:207,179,37;--yellow-5:250,225,60;--yellow-6:251,233,75;--yellow-7:252,243,116;--yellow-8:253,250,157;--yellow-9:254,254,198;--yellow-10:254,255,240;--lime-1:42,77,0;--lime-2:68,112,6;--lime-3:98,148,18;--lime-4:132,183,35;--lime-5:168,219,57;--lime-6:184,226,75;--lime-7:203,233,112;--lime-8:222,241,152;--lime-9:238,248,194;--lime-10:253,255,238;--green-1:0,77,28;--green-2:4,102,37;--green-3:10,128,45;--green-4:18,154,55;--green-5:29,180,64;--green-6:39,195,70;--green-7:80,210,102;--green-8:126,225,139;--green-9:178,240,183;--green-10:235,255,236;--cyan-1:0,66,77;--cyan-2:6,97,108;--cyan-3:17,131,139;--cyan-4:31,166,170;--cyan-5:48,201,201;--cyan-6:63,212,207;--cyan-7:102,223,215;--cyan-8:144,233,225;--cyan-9:190,244,237;--cyan-10:240,255,252;--blue-1:0,26,77;--blue-2:5,47,120;--blue-3:19,76,163;--blue-4:41,113,207;--blue-5:70,154,250;--blue-6:90,170,251;--blue-7:125,193,252;--blue-8:161,213,253;--blue-9:198,232,254;--blue-10:234,248,255;--arcoblue-1:0,13,77;--arcoblue-2:4,27,121;--arcoblue-3:14,50,166;--arcoblue-4:29,77,210;--arcoblue-5:48,111,255;--arcoblue-6:60,126,255;--arcoblue-7:104,159,255;--arcoblue-8:147,190,255;--arcoblue-9:190,218,255;--arcoblue-10:234,244,255;--purple-1:22,0,77;--purple-2:39,6,110;--purple-3:62,19,143;--purple-4:90,37,176;--purple-5:123,61,209;--purple-6:142,81,218;--purple-7:169,116,227;--purple-8:197,154,237;--purple-9:223,194,246;--purple-10:247,237,255;--pinkpurple-1:66,0,77;--pinkpurple-2:101,3,112;--pinkpurple-3:138,13,147;--pinkpurple-4:176,27,182;--pinkpurple-5:217,46,217;--pinkpurple-6:225,61,219;--pinkpurple-7:232,102,223;--pinkpurple-8:240,146,230;--pinkpurple-9:247,193,240;--pinkpurple-10:255,242,253;--magenta-1:77,0,52;--magenta-2:119,8,80;--magenta-3:161,23,108;--magenta-4:203,43,136;--magenta-5:245,69,166;--magenta-6:247,86,169;--magenta-7:249,122,184;--magenta-8:251,158,200;--magenta-9:253,195,219;--magenta-10:255,232,241;--gray-1:23,23,26;--gray-2:46,46,48;--gray-3:72,72,73;--gray-4:95,95,96;--gray-5:120,120,122;--gray-6:146,146,147;--gray-7:171,171,172;--gray-8:197,197,197;--gray-9:223,223,223;--gray-10:246,246,246;--primary-1:var(--arcoblue-1);--primary-2:var(--arcoblue-2);--primary-3:var(--arcoblue-3);--primary-4:var(--arcoblue-4);--primary-5:var(--arcoblue-5);--primary-6:var(--arcoblue-6);--primary-7:var(--arcoblue-7);--primary-8:var(--arcoblue-8);--primary-9:var(--arcoblue-9);--primary-10:var(--arcoblue-10);--success-1:var(--green-1);--success-2:var(--green-2);--success-3:var(--green-3);--success-4:var(--green-4);--success-5:var(--green-5);--success-6:var(--green-6);--success-7:var(--green-7);--success-8:var(--green-8);--success-9:var(--green-9);--success-10:var(--green-10);--danger-1:var(--red-1);--danger-2:var(--red-2);--danger-3:var(--red-3);--danger-4:var(--red-4);--danger-5:var(--red-5);--danger-6:var(--red-6);--danger-7:var(--red-7);--danger-8:var(--red-8);--danger-9:var(--red-9);--danger-10:var(--red-10);--warning-1:var(--orange-1);--warning-2:var(--orange-2);--warning-3:var(--orange-3);--warning-4:var(--orange-4);--warning-5:var(--orange-5);--warning-6:var(--orange-6);--warning-7:var(--orange-7);--warning-8:var(--orange-8);--warning-9:var(--orange-9);--warning-10:var(--orange-10);--link-1:var(--arcoblue-1);--link-2:var(--arcoblue-2);--link-3:var(--arcoblue-3);--link-4:var(--arcoblue-4);--link-5:var(--arcoblue-5);--link-6:var(--arcoblue-6);--link-7:var(--arcoblue-7);--link-8:var(--arcoblue-8);--link-9:var(--arcoblue-9);--link-10:var(--arcoblue-10);--data-1:var(--arcoblue-5);--data-2:var(--arcoblue-3);--data-3:var(--blue-5);--data-4:var(--blue-3);--data-5:var(--orange-6);--data-6:var(--orange-3);--data-7:var(--green-4);--data-8:var(--green-3);--data-9:var(--purple-4);--data-10:var(--purple-3);--data-11:var(--gold-6);--data-12:var(--gold-4);--data-13:var(--lime-6);--data-14:var(--lime-4);--data-15:var(--magenta-4);--data-16:var(--magenta-3);--data-17:var(--cyan-6);--data-18:var(--cyan-3);--data-19:var(--pinkpurple-4);--data-20:var(--pinkpurple-2)}#qihooai-shadow-root{--color-white:#ffffff;--color-black:#000000;--color-border:rgb(var(--gray-3));--color-bg-popup:var(--color-bg-5);--color-bg-1:#fff;--color-bg-2:#fff;--color-bg-3:#fff;--color-bg-4:#fff;--color-bg-5:#fff;--color-bg-white:#fff;--color-neutral-1:rgb(var(--gray-1));--color-neutral-2:rgb(var(--gray-2));--color-neutral-3:rgb(var(--gray-3));--color-neutral-4:rgb(var(--gray-4));--color-neutral-5:rgb(var(--gray-5));--color-neutral-6:rgb(var(--gray-6));--color-neutral-7:rgb(var(--gray-7));--color-neutral-8:rgb(var(--gray-8));--color-neutral-9:rgb(var(--gray-9));--color-neutral-10:rgb(var(--gray-10));--color-text-1:var(--color-neutral-10);--color-text-2:var(--color-neutral-8);--color-text-3:var(--color-neutral-6);--color-text-4:var(--color-neutral-4);--color-border-1:var(--color-neutral-2);--color-border-2:var(--color-neutral-3);--color-border-3:var(--color-neutral-4);--color-border-4:var(--color-neutral-6);--color-fill-1:var(--color-neutral-1);--color-fill-2:var(--color-neutral-2);--color-fill-3:var(--color-neutral-3);--color-fill-4:var(--color-neutral-4);--color-primary-light-1:rgb(var(--primary-1));--color-primary-light-2:rgb(var(--primary-2));--color-primary-light-3:rgb(var(--primary-3));--color-primary-light-4:rgb(var(--primary-4));--color-secondary:var(--color-neutral-2);--color-secondary-hover:var(--color-neutral-3);--color-secondary-active:var(--color-neutral-4);--color-secondary-disabled:var(--color-neutral-1);--color-danger-light-1:rgb(var(--danger-1));--color-danger-light-2:rgb(var(--danger-2));--color-danger-light-3:rgb(var(--danger-3));--color-danger-light-4:rgb(var(--danger-4));--color-success-light-1:rgb(var(--success-1));--color-success-light-2:rgb(var(--success-2));--color-success-light-3:rgb(var(--success-3));--color-success-light-4:rgb(var(--success-4));--color-warning-light-1:rgb(var(--warning-1));--color-warning-light-2:rgb(var(--warning-2));--color-warning-light-3:rgb(var(--warning-3));--color-warning-light-4:rgb(var(--warning-4));--color-link-light-1:rgb(var(--link-1));--color-link-light-2:rgb(var(--link-2));--color-link-light-3:rgb(var(--link-3));--color-link-light-4:rgb(var(--link-4));--color-data-1:rgb(var(--arcoblue-5));--color-data-2:rgb(var(--arcoblue-3));--color-data-3:rgb(var(--blue-5));--color-data-4:rgb(var(--blue-3));--color-data-5:rgb(var(--orange-6));--color-data-6:rgb(var(--orange-3));--color-data-7:rgb(var(--green-4));--color-data-8:rgb(var(--green-3));--color-data-9:rgb(var(--purple-4));--color-data-10:rgb(var(--purple-3));--color-data-11:rgb(var(--gold-6));--color-data-12:rgb(var(--gold-4));--color-data-13:rgb(var(--lime-6));--color-data-14:rgb(var(--lime-4));--color-data-15:rgb(var(--magenta-4));--color-data-16:rgb(var(--magenta-3));--color-data-17:rgb(var(--cyan-6));--color-data-18:rgb(var(--cyan-3));--color-data-19:rgb(var(--pinkpurple-4));--color-data-20:rgb(var(--pinkpurple-2));--border-radius-none:0;--border-radius-small:2px;--border-radius-medium:4px;--border-radius-large:8px;--border-radius-circle:50%;--color-tooltip-bg:rgb(var(--gray-10));--color-spin-layer-bg:rgba(255, 255, 255, .6);--color-menu-dark-bg:#232324;--color-menu-light-bg:#ffffff;--color-menu-dark-hover:rgba(255, 255, 255, .04);--color-mask-bg:rgba(29, 33, 41, .6);--font-weight-100:100;--font-weight-200:200;--font-weight-300:300;--font-weight-400:400;--font-weight-500:500;--font-weight-600:600;--font-weight-700:700;--font-weight-800:800;--font-weight-900:900}#qihooai-shadow-root[arco-theme=dark]{--color-white:rgba(255, 255, 255, .9);--color-black:#000000;--color-border:#333335;--color-bg-1:#17171a;--color-bg-2:#232324;--color-bg-3:#2a2a2b;--color-bg-4:#313132;--color-bg-5:#373739;--color-bg-white:#f6f6f6;--color-text-1:rgba(255, 255, 255, .9);--color-text-2:rgba(255, 255, 255, .7);--color-text-3:rgba(255, 255, 255, .5);--color-text-4:rgba(255, 255, 255, .3);--color-fill-1:rgba(255, 255, 255, .04);--color-fill-2:rgba(255, 255, 255, .08);--color-fill-3:rgba(255, 255, 255, .12);--color-fill-4:rgba(255, 255, 255, .16);--color-primary-light-1:rgba(var(--primary-6), .2);--color-primary-light-2:rgba(var(--primary-6), .35);--color-primary-light-3:rgba(var(--primary-6), .5);--color-primary-light-4:rgba(var(--primary-6), .65);--color-secondary:rgba(var(--gray-9), .08);--color-secondary-hover:rgba(var(--gray-8), .16);--color-secondary-active:rgba(var(--gray-7), .24);--color-secondary-disabled:rgba(var(--gray-9), .08);--color-danger-light-1:rgba(var(--danger-6), .2);--color-danger-light-2:rgba(var(--danger-6), .35);--color-danger-light-3:rgba(var(--danger-6), .5);--color-danger-light-4:rgba(var(--danger-6), .65);--color-success-light-1:rgba(var(--success-6), .2);--color-success-light-2:rgba(var(--success-6), .35);--color-success-light-3:rgba(var(--success-6), .5);--color-success-light-4:rgba(var(--success-6), .65);--color-warning-light-1:rgba(var(--warning-6), .2);--color-warning-light-2:rgba(var(--warning-6), .35);--color-warning-light-3:rgba(var(--warning-6), .5);--color-warning-light-4:rgba(var(--warning-6), .65);--color-link-light-1:rgba(var(--link-6), .2);--color-link-light-2:rgba(var(--link-6), .35);--color-link-light-3:rgba(var(--link-6), .5);--color-link-light-4:rgba(var(--link-6), .65);--color-tooltip-bg:#373739;--color-spin-layer-bg:rgba(51, 51, 51, .6);--color-menu-dark-bg:#232324;--color-menu-light-bg:#232324;--color-menu-dark-hover:var(--color-fill-2);--color-mask-bg:rgba(23, 23, 26, .6)}/*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */body,html{line-height:1.5;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:Inter,-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,noto sans,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif}body{margin:0;padding:0}main{display:block}h1{font-size:2em;margin:.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}th,tr{margin:0;padding:0}pre{font-family:monospace,monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;-moz-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}template{display:none}[hidden]{display:none}*{outline:0}input::-ms-clear,input::-ms-reveal{display:none}.arco-icon{display:inline-block;color:inherit;font-style:normal;width:1em;height:1em;vertical-align:-2px;stroke:currentColor}.arco-icon[fill=currentColor]{fill:currentColor;stroke:none}.arco-icon[stroke=currentColor]{stroke:currentColor;fill:none}.arco-icon[fill=currentColor][stroke=currentColor]{fill:currentColor;stroke:currentColor}.arco-icon-loading{animation:arco-loading-circle 1s infinite cubic-bezier(0,0,1,1)}@keyframes arco-loading-circle{to{transform:rotate(360deg)}}.arco-icon-hover{position:relative;display:inline-block;cursor:pointer;line-height:0}.arco-icon-hover .arco-icon{position:relative;vertical-align:-.09em}.arco-icon-hover:before{content:"";position:absolute;display:block;border-radius:var(--border-radius-circle);background-color:transparent;box-sizing:border-box;transition:background-color .1s cubic-bezier(0,0,1,1)}.arco-icon-hover:hover:before{background-color:var(--color-fill-2)}.arco-icon-hover.arco-icon-hover-disabled:before{opacity:0}.arco-icon-hover:before{top:50%;left:50%;height:20px;width:20px;transform:translate(-50%,-50%)}.arco-icon-hover-size-mini:before{top:50%;left:50%;height:20px;width:20px;transform:translate(-50%,-50%)}.arco-icon-hover-size-small:before{top:50%;left:50%;height:20px;width:20px;transform:translate(-50%,-50%)}.arco-icon-hover-size-large:before{top:50%;left:50%;height:24px;width:24px;transform:translate(-50%,-50%)}.arco-icon-hover-size-huge:before{top:50%;left:50%;height:24px;width:24px;transform:translate(-50%,-50%)}.fadeInStandard-appear,.fadeInStandard-enter{opacity:0}.fadeInStandard-appear-active,.fadeInStandard-enter-active{opacity:1;transition:opacity .3s cubic-bezier(.34,.69,.1,1)}.fadeInStandard-exit{opacity:1}.fadeInStandard-exit-active{opacity:0;transition:opacity .3s cubic-bezier(.34,.69,.1,1)}.fadeIn-appear,.fadeIn-enter{opacity:0}.fadeIn-appear-active,.fadeIn-enter-active{opacity:1;transition:opacity .1s cubic-bezier(0,0,1,1)}.fadeIn-exit{opacity:1}.fadeIn-exit-active{opacity:0;transition:opacity .1s cubic-bezier(0,0,1,1)}.slideDynamicOrigin-appear,.slideDynamicOrigin-enter{opacity:0;transform-origin:0 0;transform:scaleY(.9) translateZ(0)}.slideDynamicOrigin-appear-active,.slideDynamicOrigin-enter-active,.slideDynamicOrigin-exit{opacity:1;transform-origin:0 0;transform:scaleY(1) translateZ(0);transition:transform .2s cubic-bezier(.34,.69,.1,1),opacity .2s cubic-bezier(.34,.69,.1,1)}.slideDynamicOrigin-exit-active{opacity:0;transform-origin:0 0;transform:scaleY(.9) translateZ(0);transition:transform .2s cubic-bezier(.34,.69,.1,1),opacity .2s cubic-bezier(.34,.69,.1,1)}.slideLeft-appear,.slideLeft-enter{transform:translate(-100%)}.slideLeft-appear-active,.slideLeft-enter-active{transform:translate(0);transition:transform .3s cubic-bezier(.34,.69,.1,1)}.slideLeft-exit{transform:translate(0)}.slideLeft-exit-active{transform:translate(-100%);transition:transform .3s cubic-bezier(.34,.69,.1,1)}.slideRight-appear,.slideRight-enter{transform:translate(100%)}.slideRight-appear-active,.slideRight-enter-active{transform:translate(0);transition:transform .3s cubic-bezier(.34,.69,.1,1)}.slideRight-exit{transform:translate(0)}.slideRight-exit-active{transform:translate(100%);transition:transform .3s cubic-bezier(.34,.69,.1,1)}.slideTop-appear,.slideTop-enter{transform:translateY(-100%)}.slideTop-appear-active,.slideTop-enter-active{transform:translateY(0);transition:transform .3s cubic-bezier(.34,.69,.1,1)}.slideTop-exit{transform:translateY(0)}.slideTop-exit-active{transform:translateY(-100%);transition:transform .3s cubic-bezier(.34,.69,.1,1)}.slideBottom-appear,.slideBottom-enter{transform:translateY(100%)}.slideBottom-appear-active,.slideBottom-enter-active{transform:translateY(0);transition:transform .3s cubic-bezier(.34,.69,.1,1)}.slideBottom-exit{transform:translateY(0)}.slideBottom-exit-active{transform:translateY(100%);transition:transform .3s cubic-bezier(.34,.69,.1,1)}.zoomIn-appear,.zoomIn-enter{opacity:0;transform:scale(.5)}.zoomIn-appear-active,.zoomIn-enter-active{opacity:1;transform:scale(1);transition:opacity .3s cubic-bezier(.34,.69,.1,1),transform .3s cubic-bezier(.34,.69,.1,1)}.zoomIn-exit{opacity:1;transform:scale(1)}.zoomIn-exit-active{opacity:0;transform:scale(.5);transition:opacity .3s cubic-bezier(.3,1.3,.3,1),transform .3s cubic-bezier(.3,1.3,.3,1)}.zoomInFadeOut-appear,.zoomInFadeOut-enter{opacity:0;transform:scale(.5)}.zoomInFadeOut-appear-active,.zoomInFadeOut-enter-active{opacity:1;transform:scale(1);transition:opacity .2s cubic-bezier(.34,.69,.1,1),</style></template></div></body></html>
+</body>
+</html>
