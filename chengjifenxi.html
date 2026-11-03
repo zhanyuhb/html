@@ -421,6 +421,13 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 
 /* ---------- 分学科图表矩阵 ---------- */
 .cmp-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:12px;}
+.deep-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.deep-grid .span2{grid-column:1 / -1;}
+.deep-grid .cmp-panel{overflow:hidden;}
+.deep-grid .cmp-panel .chart-wrap{margin-top:2px;}
+.corr-tbl td, .corr-tbl th{text-align:center;}
+.corr-tbl td:first-child, .corr-tbl th:first-child{text-align:left;}
+.corr-tbl td.diag{color:var(--ink-3);}
 .cmp-panel{background:var(--panel-2); border:1px solid var(--line-2); border-radius:12px; padding:10px 12px 6px;}
 .cmp-head{display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:2px;}
 .cmp-head b{font-size:13px; font-weight:700; color:var(--ink);}
@@ -428,6 +435,35 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 .cmp-meta i{font-style:normal; color:var(--brand); font-weight:700;}
 .cmp-body{position:relative; width:100%;}
 .cmp-body canvas{cursor:zoom-in;}
+
+/* ---------- 位次矩阵（热力） ---------- */
+.rank-matrix-wrap{overflow:auto; max-height:560px; border:1px solid var(--line); border-radius:11px; background:#fff; padding:8px 10px;}
+.rank-matrix{width:100%; border-collapse:separate; border-spacing:3px; font-size:12.4px;}
+.rank-matrix th{
+  position:sticky; top:0; z-index:2; background:#fff; padding:6px 8px; text-align:center;
+  font-size:11.6px; font-weight:700; color:var(--ink-2); white-space:nowrap;
+  border-bottom:1px solid var(--line);
+}
+.rank-matrix th:first-child{text-align:left; left:0; z-index:3;}
+.rank-matrix td{padding:0; text-align:center;}
+.rank-matrix td.rm-school{
+  padding:6px 10px; text-align:left; font-weight:600; color:var(--ink); white-space:nowrap;
+  background:#fff; border:1px solid var(--line-2); border-radius:8px;
+}
+.rank-matrix td.rm-rank{
+  padding:7px 6px; min-width:44px; font-weight:700; font-size:12.6px; border-radius:8px;
+  font-variant-numeric:tabular-nums; font-feature-settings:"tnum";
+}
+.rank-matrix td.rm-rank.rm-best{box-shadow:inset 0 0 0 2px rgba(30,64,175,.55);}
+.rank-matrix td.rm-avg{
+  padding:7px 8px; font-weight:700; border-radius:8px; background:#f5f8fd;
+  border:1px solid var(--line-2); color:var(--ink); font-variant-numeric:tabular-nums;
+}
+.rank-matrix td.rm-miss{
+  padding:7px 6px; color:#c1c9d6; background:#fafbfe; border:1px solid var(--line-2); border-radius:8px;
+}
+.rank-scale{display:flex; align-items:center; gap:7px; justify-content:flex-end; margin-top:6px; font-size:11px; color:var(--ink-3);}
+.rank-scale i{display:block; width:88px; height:8px; border-radius:4px; background:linear-gradient(90deg,rgba(37,99,235,.12),rgba(37,99,235,.74));}
 
 /* ---------- 导出说明列表 ---------- */
 .doc-list{margin:0 0 16px; padding:0 0 0 18px; list-style:disc;}
@@ -451,6 +487,51 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 .report .meta-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:16px 0;}
 .report .meta-grid .kpi{margin:0;}
 .report table{margin:10px 0 6px;}
+
+/* ---------- 学校专项报告 ---------- */
+.sr-bar{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin:2px 0 12px; padding-bottom:12px; border-bottom:1px dashed var(--line);}
+.sr-bar .spacer{flex:1;}
+.sr-bar .sr-count{font-size:12px; color:var(--ink-3); font-weight:600;}
+.sr-index{margin:6px 0 18px;}
+.sr-index table{font-size:12.4px;}
+.sr-index a{color:var(--brand); text-decoration:none; font-weight:600;}
+.sr-index a:hover{text-decoration:underline;}
+.sr-docs{display:flex; flex-direction:column; gap:18px;}
+.sr-doc{box-shadow:none; border:1px solid var(--line); padding:26px 30px 32px;}
+.sr-doc .sr-doc-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:6px;}
+.sr-doc .sr-doc-head .hint{font-size:11.5px;}
+.sr-doc .meta-grid{grid-template-columns:repeat(auto-fit,minmax(118px,1fr));}
+.sr-doc .meta-grid .kpi{padding:10px 12px;}
+.sr-doc .meta-grid .k-value{font-size:17px;}
+.sr-issues{list-style:none; margin:10px 0 6px; padding:0;}
+.sr-issues li{
+  display:flex; gap:9px; align-items:flex-start; padding:10px 13px; margin-bottom:8px;
+  border:1px solid var(--line-2); border-left-width:3px; border-radius:10px; background:var(--panel-2);
+  font-size:13px; line-height:1.85; color:#333c4a;
+}
+.sr-issues li.bad{border-left-color:#d64545; background:#fffafa;}
+.sr-issues li.warn{border-left-color:#e08a1e; background:#fffcf5;}
+.sr-issues li.good{border-left-color:#12855c; background:#f8fdfa;}
+.sr-tag{
+  flex:0 0 auto; font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px;
+  background:#eef2f8; color:var(--ink-2); white-space:nowrap; margin-top:2px;
+}
+.sr-issues li.bad .sr-tag{background:#fdeaea; color:#b42318;}
+.sr-issues li.warn .sr-tag{background:#fdf1de; color:#9a5b00;}
+.sr-issues li.good .sr-tag{background:#e2f6ec; color:#0f6b48;}
+.sr-advice{margin:8px 0 8px 0; padding:0; list-style:none; counter-reset:adv;}
+.sr-advice li{
+  position:relative; padding:8px 12px 8px 34px; margin-bottom:7px; border-radius:9px;
+  background:#f7faff; border:1px solid #e3ecfb; font-size:13px; line-height:1.88; color:#333c4a;
+  counter-increment:adv;
+}
+.sr-advice li::before{
+  content:counter(adv); position:absolute; left:10px; top:9px; width:17px; height:17px; border-radius:50%;
+  background:var(--brand); color:#fff; font-size:11px; font-weight:700; line-height:17px; text-align:center;
+}
+.sr-empty{padding:26px 18px; text-align:center; border:1px dashed var(--line); border-radius:12px; background:var(--panel-2);}
+.sr-empty p{font-size:12.8px; color:var(--ink-3); line-height:1.9; margin:0;}
+.sr-progress{font-size:12px; color:var(--brand); font-weight:600;}
 
 /* ---------- 提示 ---------- */
 #toastContainer{position:fixed; top:76px; right:20px; z-index:400; display:flex; flex-direction:column; gap:9px;}
@@ -498,6 +579,16 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
   .nm-body{max-height:70vh; padding:12px 12px 4px;}
   .nm-use{display:none;}
   .cmp-grid{grid-template-columns:1fr;}
+  .deep-grid{grid-template-columns:1fr;}
+  /* 学校专项报告：工具栏在窄屏内换行，避免下拉框把页面撑宽 */
+  #schoolReportCard .toolbar{flex-wrap:wrap;}
+  #schoolReportCard .field-inline{flex:1 1 100%; min-width:0; max-width:100%;}
+  #schoolReportCard .field-inline>span{flex:0 0 auto;}
+  #schoolReportCard #srSchool{flex:1 1 auto; min-width:0; width:100%; max-width:100%;}
+  #schoolReportCard .sr-bar{gap:8px;}
+  #schoolReportCard .sr-bar .btn{flex:0 1 auto;}
+  #schoolReportCard .sr-doc{padding:18px 16px 22px;}
+  #schoolReportCard .sr-index table{font-size:11.6px;}
   .cmp-panel{padding:9px 10px 4px;}
   .cm-body{height:64vh; padding:8px 10px 2px;}
   .cm-note{font-size:11px; padding:0 12px 10px;}
@@ -507,6 +598,9 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 @media print{
   .topbar,.sidebar,#toastContainer,.toolbar{display:none !important;}
   .chart-modal,.pick-panel,#pptCard{display:none !important;}
+  .sr-bar,.sr-index,#schoolReportCard>.card-head,.sr-doc-head,.sr-empty,.sr-progress{display:none !important;}
+  .sr-doc{border:0; padding:0; page-break-after:always;}
+  .sr-docs{gap:0;}
   .layout{grid-template-columns:1fr;}
   .report{box-shadow:none; border:0; padding:0;}
 }
@@ -668,7 +762,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     <section class="view" id="view-charts">
       <div class="view-head">
         <h2>图表分析</h2>
-        <p>各学校平均分由高到低对比，可勾选学校单独对比；统计口径支持总分或指定学科，每个学科各生成一幅所选学校得分率对比图（学校全部显示），并提供各校总分与分学科的离均差（本校均值 − 全区均值）对比；点击图表可放大查看。</p>
+        <p>各学校平均分由高到低对比，可勾选学校单独对比；统计口径支持总分或指定学科，每个学科各生成一幅所选学校得分率对比图（学校全部显示），并提供各校总分与分学科的离均差（本校均值 − 全区均值）对比，以及各校各学科的排名位次矩阵与位次走势；下方另有分布与结构分析（分数段结构、总分分布、学科雷达、学科相关矩阵）；点击图表可放大查看。</p>
       </div>
 
       <div class="card">
@@ -740,6 +834,65 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
         <div id="devTable"></div>
       </div>
 
+      <div class="card" id="rankCard" style="display:none;">
+        <div class="card-head"><h3>各校各学科排名位次</h3><span class="hint" id="rankHint"></span></div>
+        <div class="toolbar">
+          <div class="field-inline">
+            <span>矩阵排序</span>
+            <select id="rankSort">
+              <option value="total">按总分位次</option>
+              <option value="avg">按各科平均位次</option>
+              <option value="range">按位次极差（波动大→小）</option>
+            </select>
+          </div>
+          <div class="field-inline">
+            <span>走势图学校数</span>
+            <select id="rankTop">
+              <option value="6">总分位次前 6 所</option>
+              <option value="10">总分位次前 10 所</option>
+              <option value="all">全部学校</option>
+            </select>
+          </div>
+          <div class="spacer"></div>
+          <span class="hint">位次 = 该科平均分在全区学校中的名次，1 为最高，同分并列</span>
+        </div>
+        <div class="deep-grid">
+          <div class="cmp-panel span2">
+            <div class="cmp-head"><b>位次矩阵</b><span class="cmp-meta" id="rankMatrixMeta"></span></div>
+            <div id="rankMatrix" style="margin-top:8px;"></div>
+          </div>
+          <div class="cmp-panel span2">
+            <div class="cmp-head"><b>位次走势</b><span class="cmp-meta" id="rankBumpMeta"></span></div>
+            <div class="chart-wrap small" id="rankBumpWrap"><canvas id="rankBumpChart"></canvas></div>
+          </div>
+        </div>
+        <p class="legend-note" id="rankNote">矩阵底色越深表示位次越靠前；纵轴为位次（数值越小越靠上），折线由总分与各学科依次连线，
+          可看出一所学校在不同统计口径上的相对位置变化；点击走势图可放大查看。</p>
+      </div>
+
+      <div class="card" id="deepCard" style="display:none;">
+        <div class="card-head"><h3>分布与结构分析</h3><span class="hint" id="deepHint"></span></div>
+        <div class="deep-grid">
+          <div class="cmp-panel span2">
+            <div class="cmp-head"><b>图 A　各校总分分数段结构</b><span class="cmp-meta" id="bandMeta"></span></div>
+            <div class="chart-wrap small" id="bandWrap"><canvas id="bandChart"></canvas></div>
+          </div>
+          <div class="cmp-panel">
+            <div class="cmp-head"><b>图 B　全区总分分布</b><span class="cmp-meta" id="histMeta"></span></div>
+            <div class="chart-wrap small" style="height:280px;"><canvas id="histChart"></canvas></div>
+          </div>
+          <div class="cmp-panel">
+            <div class="cmp-head"><b>图 C　学科得分率雷达</b><span class="cmp-meta" id="radarMeta"></span></div>
+            <div class="chart-wrap small" style="height:280px;"><canvas id="radarChart"></canvas></div>
+          </div>
+        </div>
+        <div class="card-head sub"><h3>学科相关矩阵</h3><span class="hint">Pearson r · 学生个体 · 成对完整记录</span></div>
+        <div id="corrTable"></div>
+        <p class="legend-note">分数段按总分满分的 80% / 60% / 30% 划分；直方图每档为总分满分的 10 个百分点，
+          红色虚线为及格线（60%）、灰色虚线为优秀线（80%）；雷达图取所选学校中总分前 6 所，最外圈为 100% 得分率，
+          红色虚线为全区平均；相关系数 |r| ≥ 0.7 为强、0.4–0.7 为中等、&lt; 0.4 为弱，仅反映本次考试中分数的同步变动，不代表因果。</p>
+      </div>
+
       <div class="card">
         <div class="card-head"><h3>数据表格</h3><span class="hint">点击表头可排序</span></div>
         <div id="chartTable"></div>
@@ -761,10 +914,36 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 
       <div id="reportBody"></div>
 
+      <div class="card" id="schoolReportCard">
+        <div class="card-head">
+          <h3>学校专项分析报告</h3>
+          <span class="hint" id="srHint">按需生成 · 不预先计算</span>
+        </div>
+        <p class="hint" style="line-height:1.9; margin-bottom:12px;">
+          以单个学校为主体生成专项报告：一方面分析本校在全区的位置（总分位次与分差、各科得分率与区均的差距、各科区内位次），
+          另一方面分析校内自身问题（达标规模、学科结构、分数分布与分化、学科与总分的一致性、数据完整性），并给出针对性的改进建议。
+          报告在点击生成时才临时计算，不会在打开页面时预先生成；可选择一所学校单独生成，也可一键生成全部学校并批量下载 Word。
+        </p>
+        <div class="toolbar">
+          <div class="field-inline">
+            <span>选择学校</span>
+            <select id="srSchool"></select>
+          </div>
+          <button class="btn" id="btnSrSingle" type="button">生成该校报告</button>
+          <button class="btn ghost" id="btnSrAll" type="button">一键生成全部学校</button>
+          <span class="spacer"></span>
+          <label class="hint" style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="checkbox" id="srWithChart" checked style="accent-color:var(--brand);"> 含图表
+          </label>
+          <span class="sr-progress" id="srProgress"></span>
+        </div>
+        <div id="srOutput"></div>
+      </div>
+
       <div class="card" id="pptCard" style="display:none;">
-        <div class="card-head"><h3>PPT 演示文稿</h3><span class="hint">16:9 · 9 页 · 与上方图文报告同源数据</span></div>
+        <div class="card-head"><h3>PPT 演示文稿</h3><span class="hint">16:9 · 11 页 · 与上方图文报告同源数据</span></div>
         <p class="hint" style="margin-bottom:12px; line-height:1.85;">
-          按当前统计数据实时生成，包含封面、数据概览、全区学科表、学校总体对比、校际差异与评价、学科得分率对比、主要发现、教学建议与方法局限，可直接用于汇报；调整学校、学科或满分设置后重新下载即为最新内容。
+          按当前统计数据实时生成，包含封面、数据概览、全区学科表、学校总体对比、校际差异与评价、学科得分率对比、分数分布与结构、学科关联与均衡、主要发现、教学建议与方法局限，可直接用于汇报；调整学校、学科或满分设置后重新下载即为最新内容。
         </p>
         <div class="slide-grid" id="slideList"></div>
         <button class="btn teal" id="btnPptx">下载 PPT 演示文稿（.pptx）</button>
@@ -813,6 +992,11 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 
 <canvas id="rptChart1" width="900" height="460" style="position:absolute;left:-9999px;top:0;width:900px;height:460px;"></canvas>
 <canvas id="rptChart2" width="900" height="460" style="position:absolute;left:-9999px;top:0;width:900px;height:460px;"></canvas>
+<canvas id="rptChart3" width="900" height="460" style="position:absolute;left:-9999px;top:0;width:900px;height:460px;"></canvas>
+<canvas id="rptChart4" width="900" height="420" style="position:absolute;left:-9999px;top:0;width:900px;height:420px;"></canvas>
+<canvas id="rptChart5" width="900" height="520" style="position:absolute;left:-9999px;top:0;width:900px;height:520px;"></canvas>
+<canvas id="srChart1" width="900" height="420" style="position:absolute;left:-9999px;top:0;width:900px;height:420px;"></canvas>
+<canvas id="srChart2" width="900" height="400" style="position:absolute;left:-9999px;top:0;width:900px;height:400px;"></canvas>
 
 <div class="chart-modal" id="chartModal" hidden>
   <div class="cm-panel" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
@@ -935,6 +1119,10 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     devUnit: 'raw',
     devChart: null,
     lastDev: null,
+    rankSort: 'total',
+    rankTop: '6',
+    rankBumpChart: null,
+    lastRank: null,
     tblSort: { key: 'value', dir: 'desc' },
     chart: null,
     compareCharts: [],
@@ -943,7 +1131,12 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     lastCompare: null,
     reportDirty: true,
     fmSignature: null,
-    reportImages: null
+    reportImages: null,
+    rev: 0,
+    schoolReports: [],
+    srRev: -1,
+    srMode: '',
+    srBusy: false
   };
 
   const LIB = {
@@ -1499,7 +1692,10 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       n: rows.length,
       completeN: totals.length,
       subjects: subjStats,
-      total: descStats(totals, totalFull)
+      total: descStats(totals, totalFull),
+      totalFull: totalFull,
+      // 总分序列（升序），供分位数、分数段结构与分布形态分析使用
+      totals: totals.slice().sort(function (a, b) { return a - b; })
     };
   }
 
@@ -1544,6 +1740,335 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       totalStudents: rows.length,
       generatedAt: nowStamp()
     };
+  }
+
+  /* ------------------------------------------------------------------
+   * 5.1 深化分析：分数段结构 / 分位数 / 分布形态 / 学科相关
+   * ------------------------------------------------------------------ */
+  const BAND_DEFS = [
+    { key: 'ex', label: '优秀', range: '≥80% 满分', min: 0.8, color: '#2563eb' },
+    { key: 'pa', label: '及格', range: '60%–80%', min: 0.6, color: '#38bdf8' },
+    { key: 'mid', label: '待提升', range: '30%–60%', min: 0.3, color: '#f59e0b' },
+    { key: 'low', label: '学困', range: '<30%', min: -1, color: '#ef4444' }
+  ];
+
+  // 线性插值分位数（与 Excel PERCENTILE.INC 一致）
+  function quantileOf(sorted, p) {
+    const n = sorted.length;
+    if (!n) return null;
+    if (n === 1) return sorted[0];
+    const idx = (n - 1) * p;
+    const lo = Math.floor(idx), hi = Math.ceil(idx);
+    if (lo === hi) return sorted[lo];
+    return sorted[lo] + (sorted[hi] - sorted[lo]) * (idx - lo);
+  }
+
+  // 偏度（矩估计 g1）与超额峰度（g2 − 3）
+  function momentStats(arr) {
+    const n = arr.length;
+    if (n < 3) return { skew: null, kurt: null };
+    const mean = arr.reduce(function (a, b) { return a + b; }, 0) / n;
+    let m2 = 0, m3 = 0, m4 = 0;
+    arr.forEach(function (v) {
+      const d = v - mean;
+      m2 += d * d; m3 += d * d * d; m4 += d * d * d * d;
+    });
+    m2 /= n; m3 /= n; m4 /= n;
+    if (m2 <= 1e-12) return { skew: null, kurt: null };
+    return { skew: m3 / Math.pow(m2, 1.5), kurt: m4 / (m2 * m2) - 3 };
+  }
+
+  function bandCounts(totals, full) {
+    const out = { ex: 0, pa: 0, mid: 0, low: 0, n: totals.length };
+    totals.forEach(function (v) {
+      const r = full > 0 ? v / full : 0;
+      if (r >= 0.8) out.ex++;
+      else if (r >= 0.6) out.pa++;
+      else if (r >= 0.3) out.mid++;
+      else out.low++;
+    });
+    return out;
+  }
+
+  // Pearson 相关系数；样本不足或方差为 0 时返回 null
+  function pearsonR(pairs) {
+    const n = pairs.length;
+    if (n < 3) return null;
+    let sx = 0, sy = 0;
+    pairs.forEach(function (p) { sx += p[0]; sy += p[1]; });
+    const mx = sx / n, my = sy / n;
+    let sxy = 0, sxx = 0, syy = 0;
+    pairs.forEach(function (p) {
+      const dx = p[0] - mx, dy = p[1] - my;
+      sxy += dx * dy; sxx += dx * dx; syy += dy * dy;
+    });
+    if (sxx <= 1e-12 || syy <= 1e-12) return null;
+    return sxy / Math.sqrt(sxx * syy);
+  }
+
+  function buildDeep(A, rows) {
+    if (!A || !A.district || !A.district.totals || !A.district.totals.length) return { ok: false };
+    const src = rows || state.validRows || [];
+    const full = A.district.totalFull || 1;
+    const d = A.district;
+    const q = {
+      p10: quantileOf(d.totals, 0.1), p25: quantileOf(d.totals, 0.25), p50: quantileOf(d.totals, 0.5),
+      p75: quantileOf(d.totals, 0.75), p90: quantileOf(d.totals, 0.9)
+    };
+    const iqr = (isNum(q.p25) && isNum(q.p75)) ? q.p75 - q.p25 : null;
+    const loFence = isNum(iqr) ? q.p25 - 1.5 * iqr : null;
+    const hiFence = isNum(iqr) ? q.p75 + 1.5 * iqr : null;
+    const outliers = (isNum(loFence) && isNum(hiFence))
+      ? d.totals.filter(function (v) { return v < loFence || v > hiFence; }).length
+      : 0;
+    const ms = momentStats(d.totals);
+
+    const out = {
+      ok: true,
+      totalFull: full,
+      bandDefs: BAND_DEFS,
+      district: {
+        n: d.completeN, mean: d.total.mean, sd: d.total.sd, q: q, iqr: iqr,
+        fenceLow: loFence, fenceHigh: hiFence, outliers: outliers,
+        skew: ms.skew, kurt: ms.kurt, bands: bandCounts(d.totals, full)
+      },
+      schools: [],
+      hist: null,
+      corr: null
+    };
+
+    out.schools = A.schools.filter(function (s) { return s.totals && s.totals.length; }).map(function (s) {
+      const qq = {
+        p25: quantileOf(s.totals, 0.25), p50: quantileOf(s.totals, 0.5), p75: quantileOf(s.totals, 0.75)
+      };
+      const mss = momentStats(s.totals);
+      return {
+        name: s.name, n: s.completeN, mean: s.total.mean, sd: s.total.sd, q: qq,
+        iqr: (isNum(qq.p25) && isNum(qq.p75)) ? qq.p75 - qq.p25 : null,
+        bands: bandCounts(s.totals, full), skew: mss.skew, kurt: mss.kurt
+      };
+    }).sort(function (a, b) { return (isNum(b.mean) ? b.mean : -1) - (isNum(a.mean) ? a.mean : -1); });
+
+    // 全区总分分布：按得分率 10 个百分点一档，共 10 档
+    const bins = [];
+    for (let i = 0; i < 10; i++) bins.push({ from: i * 10, to: (i + 1) * 10, count: 0 });
+    d.totals.forEach(function (v) {
+      let i = Math.floor((full > 0 ? v / full * 100 : 0) / 10);
+      if (!(i >= 0 && i <= 9)) i = i < 0 ? 0 : 9;
+      bins[i].count++;
+    });
+    out.hist = { bins: bins, labels: bins.map(function (b) { return b.from + '–' + b.to + '%'; }) };
+
+    // 学科相关（学生个体，成对完整记录）
+    const subs = A.subjects;
+    const cache = Object.create(null);
+    function pairOf(a, b) {
+      const key = a + '||' + b;
+      if (cache[key]) return cache[key];
+      const arr = [];
+      src.forEach(function (r) {
+        const x = r.scores[a], y = r.scores[b];
+        if (isNum(x) && isNum(y)) arr.push([x, y]);
+      });
+      cache[key] = arr;
+      return arr;
+    }
+    const matrix = subs.map(function () { return subs.map(function () { return null; }); });
+    subs.forEach(function (a, i) {
+      matrix[i][i] = 1;
+      for (let j = i + 1; j < subs.length; j++) {
+        const r = pearsonR(pairOf(a, subs[j]));
+        matrix[i][j] = r; matrix[j][i] = r;
+      }
+    });
+    const withTotal = subs.map(function (s) {
+      const arr = [];
+      src.forEach(function (r) {
+        const t = totalOf(r, subs);
+        if (isNum(t) && isNum(r.scores[s])) arr.push([r.scores[s], t]);
+      });
+      return { s: s, r: pearsonR(arr), n: arr.length };
+    }).sort(function (a, b) {
+      return (isNum(b.r) ? b.r : -9) - (isNum(a.r) ? a.r : -9);
+    });
+    out.corr = { labels: subs, matrix: matrix, withTotal: withTotal };
+    return out;
+  }
+
+  function buildDeepTexts(A, D) {
+    const out = { dist: '', struct: '', spread: '', corr: '', finds: [], advices: [] };
+    if (!D || !D.ok) return out;
+    const d = D.district, q = d.q, full = D.totalFull;
+    const pctOf = function (k) { return d.n ? d.bands[k] / d.n : null; };
+
+    /* ---------- 1. 分布形态 ---------- */
+    let shape = '基本对称';
+    if (isNum(d.skew)) {
+      if (d.skew >= 1) shape = '明显右偏（正偏）';
+      else if (d.skew >= 0.5) shape = '中度右偏';
+      else if (d.skew <= -1) shape = '明显左偏（负偏）';
+      else if (d.skew <= -0.5) shape = '中度左偏';
+    }
+    let peak = '接近正态峰度';
+    if (isNum(d.kurt)) {
+      if (d.kurt > 0.5) peak = '尖峰形态，成绩高度集中在中等区间';
+      else if (d.kurt < -0.5) peak = '平峰形态，分数分布较为分散';
+    }
+    const meanMedian = (isNum(d.mean) && isNum(q.p50)) ? d.mean - q.p50 : null;
+
+    let s1 = '全区 ' + d.n + ' 名全科完整学生的总分分布' + shape + '：平均 ' + fmt(d.mean) + ' 分、中位数 ' +
+      fmt(q.p50) + ' 分、标准差 ' + fmt(d.sd) + ' 分，偏度 ' + fmt(d.skew, 2) + '、超额峰度 ' + fmt(d.kurt, 2) +
+      '（' + peak + '）；四分位距 ' + fmt(d.iqr) + ' 分（P25 ' + fmt(q.p25) + ' — P75 ' + fmt(q.p75) +
+      '），P10 ' + fmt(q.p10) + ' 分、P90 ' + fmt(q.p90) + ' 分。';
+    if (isNum(d.skew) && d.skew >= 0.5) {
+      s1 += '右偏说明多数学生集中在中等及以下分段，少数高分学生拉长了高分段尾部，提升空间主要在「大面积达标」而非「拔尖」。';
+    } else if (isNum(d.skew) && d.skew <= -0.5) {
+      s1 += '左偏说明分数集中在高分段、低分尾部较短，可能命题相对偏易或整体掌握较好，需同时关注高分段内部的区分度是否足够。';
+    } else {
+      s1 += '分布接近对称，各分段人数比例较为均衡，两端学生均占一定比例。';
+    }
+    if (isNum(meanMedian)) {
+      s1 += '平均分' + (meanMedian >= 0 ? '高于' : '低于') + '中位数 ' + fmt(Math.abs(meanMedian), 1) + ' 分，' +
+        (meanMedian < -1 ? '存在低分拖尾，个别极低分对均值有明显拉低作用。'
+          : meanMedian > 1 ? '高分学生的拉动作用更强，尾部有少数拔尖学生。'
+            : '均值与中位数基本重合，极端分数影响较小。');
+    }
+    out.dist = s1;
+
+    /* ---------- 2. 分数段结构 ---------- */
+    const bp = { ex: pctOf('ex'), pa: pctOf('pa'), mid: pctOf('mid'), low: pctOf('low') };
+    let s2 = '按总分满分的 80% / 60% / 30% 划分四段（本次总分满分 ' + fmt(full, 0) + ' 分，即 ' +
+      fmt(full * 0.8, 0) + ' / ' + fmt(full * 0.6, 0) + ' / ' + fmt(full * 0.3, 0) + ' 分）：优秀 ' +
+      fmtPct(bp.ex) + '（' + d.bands.ex + ' 人）、及格段 ' + fmtPct(bp.pa) + '（' + d.bands.pa + ' 人）、待提升段 ' +
+      fmtPct(bp.mid) + '（' + d.bands.mid + ' 人）、学困段 ' + fmtPct(bp.low) + '（' + d.bands.low + ' 人），' +
+      '「优秀 + 及格」合计 ' + fmtPct(isNum(bp.ex) && isNum(bp.pa) ? bp.ex + bp.pa : null) + '。';
+
+    const withN = D.schools.filter(function (s) { return s.n > 0; });
+    if (withN.length >= 2) {
+      const byEx = withN.slice().sort(function (a, b) { return b.bands.ex - a.bands.ex; });
+      const byLow = withN.slice().sort(function (a, b) { return b.bands.low - a.bands.low; });
+      const hiEx = byEx[0], loEx = byEx[byEx.length - 1];
+      const hiLow = byLow[0];
+      if (hiEx && loEx && hiEx !== loEx) {
+        const exA = hiEx.bands.ex / hiEx.n, exB = loEx.bands.ex / loEx.n;
+        s2 += '校际结构差异明显：' + hiEx.name + '优秀段占比最高（' + fmtPct(exA) + '），' + loEx.name +
+          '最低（' + fmtPct(exB) + '），相差 ' + fmt((exA - exB) * 100, 1) + ' 个百分点；' +
+          (hiLow.bands.low > 0
+            ? '学困段占比最高的是 ' + hiLow.name + '（' + fmtPct(hiLow.bands.low / hiLow.n) + '）。'
+            : '各校均无学困段学生（低于总分满分 30%）。') +
+          '这说明校际差距不仅体现在平均分高低，也体现在分数分布的整体形状上。';
+      }
+    }
+    out.struct = s2;
+
+    /* ---------- 3. 校内分化 ---------- */
+    const iqrList = withN.filter(function (s) { return isNum(s.iqr); })
+      .sort(function (a, b) { return b.iqr - a.iqr; });
+    if (iqrList.length) {
+      const widest = iqrList[0], narrow = iqrList[iqrList.length - 1];
+      let s3 = '以四分位距（P75 − P25）衡量校内分化：' + widest.name + ' 的 IQR 为 ' + fmt(widest.iqr, 1) +
+        ' 分（P25 ' + fmt(widest.q.p25) + ' — P75 ' + fmt(widest.q.p75) + '），' + narrow.name + ' 为 ' +
+        fmt(narrow.iqr, 1) + ' 分（P25 ' + fmt(narrow.q.p25) + ' — P75 ' + fmt(narrow.q.p75) + '）。';
+      if (isNum(d.iqr) && d.iqr > 0) {
+        s3 += '与全区 IQR（' + fmt(d.iqr, 1) + ' 分）相比，' +
+          (widest.iqr > d.iqr * 1.15 ? widest.name + ' 的中间 50% 学生跨度更大，校内层次差异更突出，分层教学需求更迫切；' : '') +
+          (narrow.iqr < d.iqr * 0.85 ? narrow.name + ' 的学生水平相对整齐，可在统一进度下适度加深难度。' : '');
+      }
+      // 中位数与均值差：判断低分拖尾
+      const tail = withN.filter(function (s) { return isNum(s.mean) && isNum(s.q.p50) && s.mean - s.q.p50 <= -0.05 * Math.abs(s.mean || 1); });
+      if (tail.length) {
+        s3 += '其中 ' + tail.slice(0, 2).map(function (s) {
+          return s.name + '（平均 ' + fmt(s.mean) + ' 分，中位数 ' + fmt(s.q.p50) + ' 分）';
+        }).join('、') + ' 的平均分明显低于中位数，提示存在少量低分学生拉低整体，宜优先做学困干预而非全班加压。';
+      }
+      out.spread = s3;
+    }
+
+    /* ---------- 4. 学科相关 ---------- */
+    const labels = D.corr.labels;
+    const pairsList = [];
+    for (let i = 0; i < labels.length; i++) {
+      for (let j = i + 1; j < labels.length; j++) {
+        const r = D.corr.matrix[i][j];
+        if (isNum(r)) pairsList.push({ a: labels[i], b: labels[j], r: r });
+      }
+    }
+    pairsList.sort(function (x, y) { return y.r - x.r; });
+    const avgRAll = pairsList.length
+      ? pairsList.reduce(function (a, p) { return a + p.r; }, 0) / pairsList.length
+      : null;
+    const totalR = D.corr.withTotal.filter(function (x) { return isNum(x.r); });
+
+    if (pairsList.length) {
+      const hiP = pairsList[0], loP = pairsList[pairsList.length - 1];
+      let s4 = '以学生个体为单位（仅计入两科均有成绩的记录）计算学科间 Pearson 相关系数：' +
+        hiP.a + '与' + hiP.b + '相关最高（r = ' + fmt(hiP.r, 2) + '），' + loP.a + '与' + loP.b +
+        '最低（r = ' + fmt(loP.r, 2) + '），' + pairsList.length + ' 对学科的平均相关为 r = ' + fmt(avgRAll, 2) + '。';
+      if (avgRAll >= 0.7) {
+        s4 += '学科间高度同步，说明各科成绩主要受共同的学业基础与学习习惯影响，学科短板往往伴随其他学科同样偏弱，宜整体补基础、跨科协同备课；' +
+          '同时也提示各科命题与教学的同质性较强，需防止「整体都不差」掩盖个别学科的真实问题。';
+      } else if (avgRAll >= 0.4) {
+        s4 += '学科间呈中等相关，既有共同学业基础的作用，也保留了学科特长的差异，宜在补基础的同时针对薄弱学科单独施策。';
+      } else {
+        s4 += '学科间相关偏弱，学生学科分化明显，单科短板较为独立，宜按学科分别诊断，不宜仅凭总分判断学科教学质量。';
+      }
+      if (totalR.length) {
+        s4 += '从学科与总分的相关看，' + totalR[0].s + '最高（r = ' + fmt(totalR[0].r, 2) +
+          '），对总分排序的区分贡献最大；';
+        const lastT = totalR[totalR.length - 1];
+        if (lastT !== totalR[0]) {
+          s4 += lastT.s + '最低（r = ' + fmt(lastT.r, 2) + '）' +
+            (lastT.r < 0.4
+              ? '，该科与总分关联较弱，可能受命题难度、题型结构或课时安排影响，解读时不宜简单归因为教学质量。'
+              : '。');
+        }
+      }
+      s4 += '需注意：相关系数只反映本次考试中分数的同步变动程度，不表示因果关系，也不等同于学科难度差异。';
+      out.corr = s4;
+    }
+
+    /* ---------- 5. 主要发现（引用图表） ---------- */
+    const exPct = d.n ? d.bands.ex / d.n : null;
+    const lowPct = d.n ? d.bands.low / d.n : null;
+
+    out.finds.push('分数分布呈' + shape + '，平均 ' + fmt(d.mean) + ' 分、中位数 ' + fmt(q.p50) +
+      ' 分，优秀段 ' + fmtPct(exPct) + '、学困段 ' + fmtPct(lowPct) + '；' +
+      (isNum(meanMedian) && meanMedian <= -1
+        ? '均值低于中位数，低分拖尾拉低了整体水平（见图 3、图 4）。'
+        : '各分数段比例相对均衡，未出现明显的单端堆积（见图 3、图 4）。'));
+
+    if (iqrList.length >= 2) {
+      const w2 = iqrList[0], n2 = iqrList[iqrList.length - 1];
+      out.finds.push('校内分化程度差异明显：' + w2.name + ' 的中间 50% 学生跨度达 ' + fmt(w2.iqr, 1) +
+        ' 分，' + n2.name + ' 仅 ' + fmt(n2.iqr, 1) + ' 分，分层教学的必要性与着力点在校际间并不相同（见表 5）。');
+    }
+
+    if (pairsList.length) {
+      const hiP2 = pairsList[0], loP2 = pairsList[pairsList.length - 1];
+      out.finds.push('学科间平均相关 r = ' + fmt(avgRAll, 2) + '，' + hiP2.a + '与' + hiP2.b + '最强（r = ' +
+        fmt(hiP2.r, 2) + '），' + loP2.a + '与' + loP2.b + '最弱（r = ' + fmt(loP2.r, 2) + '）' +
+        (totalR.length ? '；' + totalR[0].s + '与总分相关最高（r = ' + fmt(totalR[0].r, 2) + '），对总分区分贡献最大' : '') +
+        '（见图 5、表 6）。');
+    }
+
+    /* ---------- 6. 针对分布结构的建议 ---------- */
+    if (isNum(lowPct) && lowPct >= 0.15) {
+      out.advices.push('学困段（低于总分满分 30%）占 ' + fmtPct(lowPct) + '，建议按学科建立学困生名单，' +
+        '以「基础题得分率」为周跟踪指标，先保住及格线附近的增量，再谈拔高。');
+    }
+    if (iqrList.length && isNum(d.iqr) && iqrList[0].iqr > d.iqr * 1.15) {
+      out.advices.push(iqrList[0].name + ' 的分数跨度（IQR ' + fmt(iqrList[0].iqr, 1) +
+        ' 分）明显大于全区，建议在备课组内做 A/B 层任务单，同一课时设置基础巩固与拓展提升两条作业线。');
+    }
+    if (isNum(avgRAll) && avgRAll < 0.4) {
+      out.advices.push('学科间相关偏弱（平均 r = ' + fmt(avgRAll, 2) + '），建议以「学科诊断会」替代单看总分的质量分析，' +
+        '逐科核对命题难度与教学进度，避免用总分平均掩盖单科问题。');
+    } else if (isNum(avgRAll) && avgRAll >= 0.7 && isNum(exPct) && exPct < 0.15) {
+      out.advices.push('学科间高度同步但优秀段仅占 ' + fmtPct(exPct) + '，说明短板是整体性的，' +
+        '建议优先抓基础题型与作业订正闭环，暂不铺开高难度拓展。');
+    }
+    out.advices = out.advices.slice(0, 3);
+    return out;
   }
 
   function collectRangeIssues() {
@@ -1599,6 +2124,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       : null;
     state.rangeIssues = collectRangeIssues();
     state.reportDirty = true;
+    state.rev++;
     renderAll();
   }
 
@@ -2580,6 +3106,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 
     if (state.analysisTab === 'total') {
       const dir = state.rankDir;
+      const totalFull = state.subjects.reduce(function (a, s) { return a + (state.fullMarks[s] || 100); }, 0);
       const list = A.schools.slice();
       list.sort(function (a, b) {
         const av = isNum(a.total.mean) ? a.total.mean : null;
@@ -2593,11 +3120,13 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       let html = '<div class="toolbar"><div class="field-inline"><span>排序方式</span>' +
         '<select id="rankDirSel"><option value="desc"' + (dir === 'desc' ? ' selected' : '') + '>总分由高到低</option>' +
         '<option value="asc"' + (dir === 'asc' ? ' selected' : '') + '>总分由低到高</option></select></div>' +
-        '<span class="hint">排名统一按总分由高到低编排，序号 1 为最高</span></div>';
+        '<span class="hint">排名按总分由高到低编排，序号 1 为最高 · 优秀率 / 及格率 / 学困率以总分满分 ' +
+        totalFull + ' 分的 80% / 60% / 30% 为界</span></div>';
 
       html += '<div class="tbl-wrap tall"><table class="tbl"><thead><tr>' +
         '<th>总分排名</th><th>学校</th><th>参评人数</th><th>完整记录</th><th>总分平均</th>' +
-        '<th>标准差</th><th>最高</th><th>最低</th><th>优秀率</th><th>学困率</th></tr></thead><tbody>';
+        '<th>标准差</th><th>最高</th><th>最低</th><th>优秀率</th><th>及格率</th><th>学困率</th>' +
+        '</tr></thead><tbody>';
 
       list.forEach(function (s) {
         const t = s.total;
@@ -2610,9 +3139,11 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
           '<td class="num">' + (isNum(t.max) ? t.max : '—') + '</td>' +
           '<td class="num">' + (isNum(t.min) ? t.min : '—') + '</td>' +
           '<td>' + rateChip(t.excellent) + '</td>' +
+          '<td>' + rateChip(t.pass, 'pass') + '</td>' +
           '<td>' + rateChip(t.low, 'low') + '</td></tr>';
       });
       html += '</tbody></table></div>';
+      html += '<p class="hint" style="margin-top:10px;">总分优秀率、及格率、学困率的计算基数为「完整记录」（各科成绩齐全的人数），缺考或缺项的学生不计入总分统计；按单科查看及格率请切换「学科指标」。</p>';
       pane.innerHTML = html;
 
       const sel = $('#rankDirSel');
@@ -2753,6 +3284,272 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     hint.textContent = '已选 ' + on + ' / ' + A.schools.length + ' 所，图表与下表按所选学校展示';
   }
 
+  /* ---- 分布与结构：分数段 / 直方 / 雷达 / 相关矩阵 ---- */
+  function deepSchoolList(names) {
+    const A = state.analysis;
+    const D = state.deep;
+    if (!A || !D || !D.ok) return [];
+    if (!names || !names.length) return D.schools;
+    const set = Object.create(null);
+    names.forEach(function (n) { set[n] = true; });
+    const picked = D.schools.filter(function (s) { return set[s.name]; });
+    return picked.length ? picked : D.schools;
+  }
+
+  function renderDeep(names) {
+    const card = $('#deepCard');
+    if (!card) return;
+    if (state.deepCharts) {
+      state.deepCharts.forEach(function (c) { try { c.destroy(); } catch (e) { } });
+    }
+    state.deepCharts = [];
+
+    const A = state.analysis;
+    const D = A ? buildDeep(A) : null;
+    state.deep = (D && D.ok) ? D : null;
+    if (!state.deep) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+
+    const Chart = LIB.chart;
+    const d = D.district;
+    $('#deepHint').textContent = '偏度 ' + fmt(d.skew, 2) + ' · 峰度 ' + fmt(d.kurt, 2) +
+      ' · IQR ' + fmt(d.iqr, 1) + ' 分 · 学困段 ' + fmtPct(d.n ? d.bands.low / d.n : null);
+
+    const schools = deepSchoolList(names);
+
+    /* ---------- 图 A：分数段结构（100% 堆叠） ---------- */
+    const bandWrap = $('#bandWrap');
+    const bandH = clamp(22 * schools.length + 70, 190, 620);
+    if (bandWrap) bandWrap.style.height = bandH + 'px';
+    $('#bandMeta').textContent = '共 ' + schools.length + ' 所 · 每校按 100% 归一';
+    if (Chart && $('#bandChart')) {
+      const datasets = BAND_DEFS.map(function (b) {
+        return {
+          label: b.label + '（' + b.range + '）',
+          data: schools.map(function (s) { return s.n ? s.bands[b.key] / s.n * 100 : null; }),
+          backgroundColor: b.color,
+          borderWidth: 0,
+          stack: 'band',
+          datalabels: {
+            color: '#ffffff', font: { size: 10, weight: '600' },
+            display: function (ctx) {
+              const v = ctx.dataset.data[ctx.dataIndex];
+              return isNum(v) && v >= 7;
+            },
+            formatter: function (v) { return fmt(v, 0) + '%'; }
+          }
+        };
+      });
+      state.deepCharts.push(new Chart($('#bandChart').getContext('2d'), {
+        type: 'bar',
+        data: { labels: schools.map(function (s) { return s.name; }), datasets: datasets },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 200 },
+          layout: { padding: { top: 4, right: 8, left: 0, bottom: 0 } },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, padding: 12, font: { size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (c2) { return c2.dataset.label + '：' + fmt(c2.parsed.x, 1) + '%'; }
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true, max: 100,
+              grid: { color: '#eef2f8' },
+              ticks: { color: '#7b8798', font: { size: 10.5 }, callback: function (v) { return v + '%'; } },
+              title: { display: true, text: '人数占比', color: '#64748b', font: { size: 11 } }
+            },
+            y: {
+              stacked: true,
+              grid: { display: false },
+              ticks: { color: '#475569', autoSkip: false, font: { size: 10.5 } }
+            }
+          }
+        }
+      }));
+    }
+
+    /* ---------- 图 B：全区总分分布 ---------- */
+    $('#histMeta').textContent = 'N=' + d.n + ' 人 · 每档 ' + fmt(D.totalFull / 10, 0) + ' 分';
+    if (Chart && $('#histChart')) {
+      const colors = D.hist.bins.map(function (b) {
+        const mid = (b.from + b.to) / 2;
+        return mid >= 80 ? '#2563eb' : mid >= 60 ? '#38bdf8' : mid >= 30 ? '#f59e0b' : '#ef4444';
+      });
+      const markPlugin = {
+        id: 'histMarks',
+        afterDatasetsDraw: function (chart) {
+          [60, 80].forEach(function (p) {
+            const x = chart.chartArea.left + (p / 100) * chart.chartArea.width;
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.setLineDash([6, 4]);
+            ctx.lineWidth = 1.4;
+            ctx.strokeStyle = p === 60 ? '#d64545' : '#94a3b8';
+            ctx.beginPath();
+            ctx.moveTo(x, chart.chartArea.top);
+            ctx.lineTo(x, chart.chartArea.bottom);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = p === 60 ? '#d64545' : '#94a3b8';
+            ctx.font = '600 10.5px "Microsoft YaHei","PingFang SC",sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(p + '%', x + 3, chart.chartArea.top + 2);
+            ctx.restore();
+          });
+        }
+      };
+      state.deepCharts.push(new Chart($('#histChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: D.hist.labels,
+          datasets: [{
+            label: '人数',
+            data: D.hist.bins.map(function (b) { return b.count; }),
+            backgroundColor: colors,
+            borderRadius: 4,
+            maxBarThickness: 34,
+            datalabels: {
+              anchor: 'end', align: 'top', offset: 2, color: '#334155',
+              font: { size: 10.5, weight: '600' },
+              formatter: function (v) { return v ? v : ''; }
+            }
+          }]
+        },
+        plugins: [markPlugin],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 200 },
+          layout: { padding: { top: 16, right: 8, left: 0, bottom: 0 } },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: function (items) { return '得分率 ' + items[0].label; },
+                label: function (c2) { return c2.parsed.y + ' 人（' + fmt(c2.parsed.y / d.n * 100, 1) + '%）'; }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#eef2f8' },
+              ticks: { color: '#7b8798', precision: 0, font: { size: 10.5 } },
+              title: { display: true, text: '人数', color: '#64748b', font: { size: 11 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#475569', font: { size: 9.5 }, maxRotation: 45, minRotation: 45 }
+            }
+          }
+        }
+      }));
+    }
+
+    /* ---------- 图 C：学科得分率雷达 ---------- */
+    const radarSchools = schools.slice(0, 6);
+    $('#radarMeta').textContent = radarSchools.length + ' 所 · ' + A.subjects.length + ' 科';
+    if (Chart && $('#radarChart') && A.subjects.length >= 3) {
+      const byName = Object.create(null);
+      A.schools.forEach(function (s) { byName[s.name] = s; });
+      const rateOf = function (sc, sub) {
+        if (!sc || !sc.subjects[sub] || !isNum(sc.subjects[sub].mean)) return null;
+        const full = state.fullMarks[sub] || 100;
+        return full > 0 ? sc.subjects[sub].mean / full * 100 : null;
+      };
+      const datasets = radarSchools.map(function (s, i) {
+        const col = COMPARE_COLORS[i % COMPARE_COLORS.length];
+        return {
+          label: s.name,
+          data: A.subjects.map(function (sub) { return rateOf(byName[s.name], sub); }),
+          borderColor: col,
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          pointRadius: 2.5,
+          pointBackgroundColor: col
+        };
+      });
+      datasets.push({
+        label: '全区平均',
+        data: A.subjects.map(function (sub) { return rateOf(A.district, sub); }),
+        borderColor: '#d64545',
+        backgroundColor: 'transparent',
+        borderWidth: 1.6,
+        borderDash: [5, 4],
+        pointRadius: 0
+      });
+      state.deepCharts.push(new Chart($('#radarChart').getContext('2d'), {
+        type: 'radar',
+        data: { labels: A.subjects, datasets: datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 200 },
+          layout: { padding: { top: 2, right: 6, left: 2, bottom: 0 } },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 9, boxHeight: 9, usePointStyle: true, padding: 9, font: { size: 10 } }
+            },
+            datalabels: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (c2) {
+                  return c2.dataset.label + '：' + (isNum(c2.parsed.r) ? fmt(c2.parsed.r, 1) + '%' : '—');
+                }
+              }
+            }
+          },
+          scales: {
+            r: {
+              min: 0, max: 100,
+              ticks: {
+                stepSize: 20, color: '#9aa7ba', backdropColor: 'transparent',
+                font: { size: 9 }, callback: function (v) { return v + '%'; }
+              },
+              grid: { color: '#e6edf7' },
+              angleLines: { color: '#e6edf7' },
+              pointLabels: { color: '#475569', font: { size: 11 } }
+            }
+          }
+        }
+      }));
+    }
+
+    /* ---------- 相关矩阵 ---------- */
+    const M = D.corr;
+    const shade = function (r) {
+      if (!isNum(r)) return '';
+      const t = clamp((r - 0.2) / 0.8, 0, 1);
+      return 'background:rgba(37,99,235,' + (0.04 + 0.22 * t).toFixed(3) + ');';
+    };
+    let h = '<div class="tbl-wrap"><table class="tbl corr-tbl"><thead><tr><th>学科</th>' +
+      M.labels.map(function (s) { return '<th>' + esc(s) + '</th>'; }).join('') +
+      '<th>与总分 r</th></tr></thead><tbody>';
+    M.labels.forEach(function (row, i) {
+      const wt = M.withTotal.filter(function (x) { return x.s === row; })[0];
+      h += '<tr><td class="txt">' + esc(row) + '</td>';
+      M.labels.forEach(function (col, j) {
+        const r = M.matrix[i][j];
+        h += '<td class="num' + (i === j ? ' diag' : '') + '" style="' + (i === j ? '' : shade(r)) + '">' +
+          (isNum(r) ? fmt(r, 2) : '—') + '</td>';
+      });
+      h += '<td class="num" style="' + shade(wt && wt.r) + '">' + (wt && isNum(wt.r) ? fmt(wt.r, 2) : '—') + '</td>';
+    });
+    h += '</tbody></table></div>';
+    $('#corrTable').innerHTML = h;
+  }
+
   function renderCharts() {
     const A = state.analysis;
     const emptyBox = $('#chartEmpty');
@@ -2785,6 +3582,8 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       state.lastMain = null;
       renderCompareChart(null);
       renderDevCard(null);
+      renderRankCard(null);
+      renderDeep(null);
       return;
     }
 
@@ -2822,6 +3621,8 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     renderChartTable(list, filtered, metric);
     renderCompareChart(filtered.map(x => x.school));
     renderDevCard(filtered.map(x => x.school));
+    renderRankCard(filtered.map(x => x.school));
+    renderDeep(filtered.map(x => x.school));
   }
 
   function drawMainChart(labels, values, label) {
@@ -3327,15 +4128,249 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       (mode === 'total' ? '总分离均差' : '学科离均差') + ' · ' + unitTxt;
   }
 
+  /* ---- 各校各学科排名位次 ---- */
+  function rankOf(sc, subject) {
+    if (!sc) return null;
+    if (subject === 'total') return isNum(sc.totalRank) ? sc.totalRank : null;
+    return sc.ranks && isNum(sc.ranks[subject]) ? sc.ranks[subject] : null;
+  }
+
+  // 位次色阶：1 名最深，末位最浅（浅底配深字，深底配白字）
+  function rankCellStyle(rank, total) {
+    if (!isNum(rank)) return null;
+    const n = Math.max(2, total || 2);
+    const t = Math.max(0, Math.min(1, 1 - (rank - 1) / (n - 1)));
+    const a = 0.10 + 0.62 * Math.pow(t, 1.1);
+    return {
+      bg: 'rgba(37,99,235,' + a.toFixed(3) + ')',
+      fg: a > 0.42 ? '#ffffff' : '#1e293b'
+    };
+  }
+
+  function rankCellHtml(rank, total) {
+    if (!isNum(rank)) return '<td class="rm-miss">—</td>';
+    const st = rankCellStyle(rank, total);
+    return '<td class="rm-rank' + (rank === 1 ? ' rm-best' : '') +
+      '" style="background:' + st.bg + ';color:' + st.fg + ';">' + rank + '</td>';
+  }
+
+  // 位次走势配色：≤8 所用统一色板，更多时按黄金角生成互不重复的色相
+  function rankSeriesColor(i, n) {
+    if (n <= COMPARE_COLORS.length) {
+      const c = COMPARE_COLORS[i % COMPARE_COLORS.length];
+      return { line: c[1], soft: c[0] };
+    }
+    const hue = Math.round((i * 137.508 + 210) % 360);
+    return { line: 'hsl(' + hue + ',62%,44%)', soft: 'hsla(' + hue + ',62%,44%,.8)' };
+  }
+
+  function renderRankCard(names) {
+    const card = $('#rankCard');
+    if (!card) return;
+    const A = state.analysis;
+    if (state.rankBumpChart) { try { state.rankBumpChart.destroy(); } catch (e) { } state.rankBumpChart = null; }
+
+    const picked = A && names && names.length
+      ? names.map(n => A.schools.filter(s => s.name === n)[0]).filter(Boolean)
+      : [];
+
+    if (!A || !picked.length || !A.subjects.length) {
+      card.style.display = 'none';
+      state.lastRank = null;
+      $('#rankMatrix').innerHTML = '';
+      $('#rankMatrixMeta').textContent = '';
+      $('#rankBumpMeta').textContent = '';
+      $('#rankHint').textContent = '';
+      return;
+    }
+    card.style.display = 'block';
+
+    const subjCols = A.subjects.slice();
+    const totalSchools = A.schools.length;
+
+    const items = picked.map(function (sc) {
+      const ranks = subjCols.map(sj => rankOf(sc, sj));
+      const valid = ranks.filter(isNum);
+      const avg = valid.length ? valid.reduce((a, b) => a + b, 0) / valid.length : null;
+      const range = valid.length > 1
+        ? Math.max.apply(null, valid) - Math.min.apply(null, valid)
+        : (valid.length === 1 ? 0 : null);
+      return { sc: sc, total: rankOf(sc, 'total'), ranks: ranks, avg: avg, range: range };
+    });
+
+    // 矩阵排序
+    const sortKey = state.rankSort;
+    items.sort(function (a, b) {
+      function k(o) {
+        if (sortKey === 'avg') return isNum(o.avg) ? o.avg : 9999;
+        if (sortKey === 'range') return isNum(o.range) ? -o.range : 9999;
+        return isNum(o.total) ? o.total : 9999;
+      }
+      const d = k(a) - k(b);
+      if (d !== 0) return d;
+      const ta = isNum(a.total) ? a.total : 9999, tb = isNum(b.total) ? b.total : 9999;
+      if (ta !== tb) return ta - tb;
+      return a.sc.name.localeCompare(b.sc.name, 'zh-Hans-CN');
+    });
+
+    // 矩阵表
+    let html = '<div class="rank-matrix-wrap"><table class="rank-matrix"><thead><tr>' +
+      '<th>学校</th><th>总分</th>';
+    subjCols.forEach(function (sj) { html += '<th>' + esc(sj) + '</th>'; });
+    html += '<th>平均位次</th><th>位次极差</th><th>最好 / 最弱</th></tr></thead><tbody>';
+
+    items.forEach(function (it) {
+      html += '<tr><td class="rm-school">' + esc(it.sc.name) + '</td>';
+      html += rankCellHtml(it.total, totalSchools);
+      it.ranks.forEach(function (r) { html += rankCellHtml(r, totalSchools); });
+      html += '<td class="rm-avg">' + (isNum(it.avg) ? fmt(it.avg, 1) : '—') + '</td>';
+      html += '<td class="rm-avg">' + (isNum(it.range) ? it.range : '—') + '</td>';
+
+      // 最好 / 最弱学科（位次最小 / 最大；并列时取第一个）
+      let bestSj = null, worstSj = null, bestR = null, worstR = null;
+      it.ranks.forEach(function (r, i2) {
+        if (!isNum(r)) return;
+        if (bestR === null || r < bestR) { bestR = r; bestSj = subjCols[i2]; }
+        if (worstR === null || r > worstR) { worstR = r; worstSj = subjCols[i2]; }
+      });
+      html += '<td class="rm-avg" style="font-weight:600;font-size:11.8px;white-space:nowrap;">' +
+        (bestSj ? '<span style="color:#12855c;">' + esc(bestSj) + ' ' + bestR + '</span>' : '—') +
+        (worstSj && worstSj !== bestSj ? ' <span style="color:#c1c9d6;">/</span> <span style="color:#d64545;">' +
+          esc(worstSj) + ' ' + worstR + '</span>' : '') + '</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>' +
+      '<div class="rank-scale">位次色阶　第 1 名<i></i>第 ' + totalSchools + ' 名</div>';
+    $('#rankMatrix').innerHTML = html;
+
+    $('#rankMatrixMeta').textContent = items.length + ' 所学校 × ' + (subjCols.length + 1) +
+      ' 个统计口径 · 全区共 ' + totalSchools + ' 所参与排名 · ' +
+      (sortKey === 'avg' ? '按各科平均位次' : (sortKey === 'range' ? '按位次极差（波动大→小）' : '按总分位次'));
+    $('#rankHint').textContent = items.length + ' 所学校 · ' + subjCols.length +
+      ' 个学科 · 全区 ' + totalSchools + ' 所参与排名';
+
+    // 位次走势（bump chart）：按总分位次取前 N 所
+    const byTotal = items.slice().sort(function (a, b) {
+      const ta = isNum(a.total) ? a.total : 9999, tb = isNum(b.total) ? b.total : 9999;
+      if (ta !== tb) return ta - tb;
+      return a.sc.name.localeCompare(b.sc.name, 'zh-Hans-CN');
+    });
+    const topN = state.rankTop === 'all'
+      ? byTotal.length
+      : Math.min(parseInt(state.rankTop, 10) || 6, byTotal.length);
+    const trend = byTotal.slice(0, topN);
+
+    const labels = ['总分'].concat(subjCols);
+    const many = trend.length > COMPARE_COLORS.length;
+    const datasets = trend.map(function (it, i) {
+      const c = rankSeriesColor(i, trend.length);
+      return {
+        label: it.sc.name,
+        data: [it.total].concat(it.ranks),
+        borderColor: c.line,
+        backgroundColor: c.line,
+        pointBackgroundColor: '#ffffff',
+        pointBorderColor: c.line,
+        pointBorderWidth: many ? 1.6 : 2,
+        pointRadius: many ? 3 : 4,
+        pointHoverRadius: many ? 5 : 6.5,
+        borderWidth: many ? 1.8 : 2.2,
+        tension: 0.32,
+        spanGaps: true,
+        fill: false
+      };
+    });
+
+    let maxRank = 1;
+    datasets.forEach(function (d) {
+      d.data.forEach(function (v) { if (isNum(v) && v > maxRank) maxRank = v; });
+    });
+
+    $('#rankBumpMeta').textContent = '共 ' + labels.length + ' 个口径 · 显示 ' + trend.length +
+      ' 所' + (state.rankTop !== 'all' && byTotal.length > trend.length ? '（按总分位次取前 ' + trend.length + '）' : '') +
+      (trend.length > 8 ? ' · 学校较多，建议点击放大' : '');
+
+    state.lastRank = {
+      labels: labels.slice(),
+      datasets: datasets.map(function (d) {
+        return { label: d.label, data: d.data.slice(), borderColor: d.borderColor, backgroundColor: d.backgroundColor };
+      }),
+      maxRank: maxRank,
+      note: '位次 = 各统计口径下该学校在全区 ' + totalSchools + ' 所学校中的名次（1 为最高，同分并列）　·　' +
+        '纵轴数值越小越靠上　·　按 Esc 或点击空白处关闭'
+    };
+
+    const Chart = LIB.chart;
+    if (Chart) {
+      state.rankBumpChart = new Chart($('#rankBumpChart').getContext('2d'), {
+        type: 'line',
+        data: { labels: labels, datasets: datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 240 },
+          layout: { padding: { top: 16, right: 18, left: 14, bottom: 0 } },
+          interaction: { mode: 'nearest', intersect: false },
+          plugins: {
+            legend: {
+              display: datasets.length > 1,
+              position: 'bottom',
+              labels: { boxWidth: 9, boxHeight: 9, usePointStyle: true, padding: 12, font: { size: 10.5 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (c) {
+                  return c.dataset.label + '：第 ' + c.parsed.y + ' 名';
+                }
+              }
+            },
+            datalabels: {
+              display: datasets.length <= 8 ? 'auto' : false,
+              anchor: 'bottom',
+              align: 'top',
+              offset: 1,
+              color: '#475569',
+              font: { size: 9, weight: '600' },
+              formatter: function (v) { return isNum(v) ? v : ''; }
+            }
+          },
+          scales: {
+            y: {
+              reverse: true,
+              min: 1,
+              max: maxRank + 0.6,
+              grid: { color: '#eef2f8' },
+              title: { display: true, text: '位次（1 = 最高）', color: '#64748b', font: { size: 10.5 } },
+              ticks: {
+                color: '#7b8798', font: { size: 10 }, stepSize: 1, precision: 0,
+                autoSkip: true, maxTicksLimit: 14,
+                callback: function (v) { return Number.isInteger(v) ? v : ''; }
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#475569', font: { size: 10.5 }, autoSkip: false, maxRotation: 30 }
+            }
+          }
+        }
+      });
+    }
+
+    $('#rankNote').textContent = '位次按各统计口径的平均分在全区 ' + totalSchools +
+      ' 所学校间由高到低排列，同分并列（并列后跳位）；矩阵底色越深表示位次越靠前，绿色为该校位次最好的学科、红色为最弱学科；' +
+      '走势图纵轴为位次（数值越小越靠上），跨学科连线仅表示相对位置变化，不含学科难度可比性；点击走势图可放大查看，窄屏可左右滑动矩阵查看全部学科。';
+  }
+
   /* ---- 图表放大 ---- */
   function openChartModal(kind, idx) {
     const Chart = LIB.chart;
     if (!Chart) { toast('图表组件未加载，请联网后刷新页面重试', 'warn'); return; }
     const isDev = kind === 'dev';
     const isCompare = kind === 'compare';
+    const isRank = kind === 'rank';
     const cmpItem = isCompare && state.lastCompare && state.lastCompare.items
       ? state.lastCompare.items[idx || 0] : null;
-    const src = isDev ? state.lastDev : (isCompare ? cmpItem : state.lastMain);
+    const src = isRank ? state.lastRank : (isDev ? state.lastDev : (isCompare ? cmpItem : state.lastMain));
     if (!src || !(src.labels && src.labels.length)) {
       toast('当前没有可放大的图表数据', 'warn');
       return;
@@ -3343,25 +4378,99 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     if (state.modalChart) { try { state.modalChart.destroy(); } catch (e) { } state.modalChart = null; }
 
     const devUnitTxt = src && src.unit === 'rate' ? '百分点' : '分';
-    $('#cmTitle').textContent = isDev
-      ? (src.mode === 'total' ? '各学校总分离均差对比（' + src.labels.length + ' 所）' : '各学科离均差对比')
-      : (isCompare
-        ? '「' + cmpItem.subject + '」得分率对比（' + cmpItem.labels.length + ' 所）'
-        : '各学校' + src.label + '对比（' + src.labels.length + ' 所）');
-    $('#cmNote').textContent = isDev
+    $('#cmTitle').textContent = isRank
+      ? '各校各学科位次走势（' + src.datasets.length + ' 所 × ' + src.labels.length + ' 个口径）'
+      : (isDev
+        ? (src.mode === 'total' ? '各学校总分离均差对比（' + src.labels.length + ' 所）' : '各学科离均差对比')
+        : (isCompare
+          ? '「' + cmpItem.subject + '」得分率对比（' + cmpItem.labels.length + ' 所）'
+          : '各学校' + src.label + '对比（' + src.labels.length + ' 所）'));
+    $('#cmNote').textContent = isRank
       ? src.note
-      : (isCompare
-        ? '满分 ' + fmt(cmpItem.full, 0) + ' 分 · 区均得分率 ' +
-        (isNum(cmpItem.districtRate) ? fmt(cmpItem.districtRate, 1) + '%' : '—') +
-        ' · 得分率 = 平均分 ÷ 满分 × 100　·　按 Esc 或点击空白处关闭'
-        : '统计口径：' + src.label + '　·　横轴为分数（分），纵轴为学校　·　按 Esc 或点击空白处关闭');
+      : (isDev
+        ? src.note
+        : (isCompare
+          ? '满分 ' + fmt(cmpItem.full, 0) + ' 分 · 区均得分率 ' +
+          (isNum(cmpItem.districtRate) ? fmt(cmpItem.districtRate, 1) + '%' : '—') +
+          ' · 得分率 = 平均分 ÷ 满分 × 100　·　按 Esc 或点击空白处关闭'
+          : '统计口径：' + src.label + '　·　横轴为分数（分），纵轴为学校　·　按 Esc 或点击空白处关闭'));
 
     const modal = $('#chartModal');
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
 
     const canvas = $('#cmCanvas');
-    if (isDev) {
+    if (isRank) {
+      const maxRank = isNum(src.maxRank) ? src.maxRank : 10;
+      state.modalChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: src.labels,
+          datasets: src.datasets.map(function (d, i) {
+            const c = rankSeriesColor(i, src.datasets.length);
+            const line = d.borderColor || c.line;
+            return {
+              label: d.label,
+              data: d.data,
+              borderColor: line,
+              backgroundColor: line,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: line,
+              pointBorderWidth: 2.2,
+              pointRadius: src.datasets.length > 10 ? 4 : 5,
+              pointHoverRadius: 8,
+              borderWidth: 2.6,
+              tension: 0.32,
+              spanGaps: true,
+              fill: false
+            };
+          })
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 200 },
+          layout: { padding: { top: 20, right: 30, left: 6, bottom: 0 } },
+          interaction: { mode: 'nearest', intersect: false },
+          plugins: {
+            legend: {
+              display: src.datasets.length > 1, position: 'bottom',
+              labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, padding: 14, font: { size: 11.5 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (c) { return c.dataset.label + '：第 ' + c.parsed.y + ' 名'; }
+              }
+            },
+            datalabels: {
+              display: 'auto',
+              anchor: 'bottom', align: 'top', offset: 2,
+              color: '#475569',
+              font: { size: 10.5, weight: '600' },
+              formatter: function (v) { return isNum(v) ? v : ''; }
+            }
+          },
+          scales: {
+            y: {
+              reverse: true,
+              min: 1,
+              max: maxRank + 0.6,
+              grid: { color: '#eef2f8' },
+              title: { display: true, text: '位次（1 = 最高）', color: '#64748b', font: { size: 11.5 } },
+              ticks: {
+                color: '#7b8798', font: { size: 11 }, stepSize: 1, precision: 0,
+                autoSkip: true, maxTicksLimit: 18,
+                callback: function (v) { return Number.isInteger(v) ? v : ''; }
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#475569', font: { size: 11.5 }, autoSkip: false, maxRotation: 30 }
+            }
+          }
+        }
+      });
+    } else if (isDev) {
       const single = src.datasets.length === 1;
       const zeroX = {
         id: 'devZeroX',
@@ -4116,6 +5225,206 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     return { chart: chart, height: 460 };
   }
 
+  /* 分数段结构（100% 堆叠横向条） */
+  function staticBandChart(canvasId, schools) {
+    const Chart = LIB.chart;
+    const n = schools.length;
+    const W = 900, H = clamp(26 * n + 96, 260, 820);
+    if (!Chart) return { chart: null, height: H };
+    prepCanvas(canvasId, W, H);
+    const datasets = BAND_DEFS.map(function (b) {
+      return {
+        label: b.label + '（' + b.range + '）',
+        data: schools.map(function (s) { return s.n ? s.bands[b.key] / s.n * 100 : null; }),
+        backgroundColor: b.color,
+        borderWidth: 0,
+        stack: 'band',
+        datalabels: {
+          color: '#ffffff', font: { size: 11, weight: '600' },
+          display: function (ctx) {
+            const v = ctx.dataset.data[ctx.dataset.dataIndex];
+            return isNum(v) && v >= 8;
+          },
+          formatter: function (v) { return fmt(v, 0) + '%'; }
+        }
+      };
+    });
+    const chart = new Chart($('#' + canvasId).getContext('2d'), {
+      type: 'bar',
+      data: { labels: schools.map(function (s) { return s.name; }), datasets: datasets },
+      options: {
+        indexAxis: 'y',
+        responsive: false,
+        animation: false,
+        devicePixelRatio: 2,
+        layout: { padding: { top: 6, right: 10, left: 4, bottom: 0 } },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 11, boxHeight: 11, usePointStyle: true, padding: 14, font: { size: 12 } }
+          },
+          tooltip: { enabled: false }
+        },
+        scales: {
+          x: {
+            stacked: true, max: 100,
+            grid: { color: '#eef2f8' },
+            ticks: { color: '#7b8798', font: { size: 11 }, callback: function (v) { return v + '%'; } },
+            title: { display: true, text: '人数占比', color: '#64748b', font: { size: 11.5 } }
+          },
+          y: {
+            stacked: true,
+            grid: { display: false },
+            ticks: { color: '#475569', autoSkip: false, font: { size: 11.5 } }
+          }
+        }
+      }
+    });
+    return { chart: chart, height: H };
+  }
+
+  /* 全区总分分布直方图 */
+  function staticHistChart(canvasId, D) {
+    const Chart = LIB.chart;
+    const W = 900, H = 420;
+    if (!Chart) return { chart: null, height: H };
+    prepCanvas(canvasId, W, H);
+    const colors = D.hist.bins.map(function (b) {
+      const mid = (b.from + b.to) / 2;
+      return mid >= 80 ? '#2563eb' : mid >= 60 ? '#38bdf8' : mid >= 30 ? '#f59e0b' : '#ef4444';
+    });
+    const markPlugin = {
+      id: 'staticHistMarks',
+      afterDatasetsDraw: function (chart) {
+        [60, 80].forEach(function (p) {
+          const x = chart.chartArea.left + (p / 100) * chart.chartArea.width;
+          const ctx = chart.ctx;
+          ctx.save();
+          ctx.setLineDash([6, 4]);
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = p === 60 ? '#d64545' : '#94a3b8';
+          ctx.beginPath();
+          ctx.moveTo(x, chart.chartArea.top);
+          ctx.lineTo(x, chart.chartArea.bottom);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = p === 60 ? '#d64545' : '#94a3b8';
+          ctx.font = '600 11px "Microsoft YaHei","PingFang SC",sans-serif';
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'top';
+          ctx.fillText(p + '%', x + 3, chart.chartArea.top + 2);
+          ctx.restore();
+        });
+      }
+    };
+    const chart = new Chart($('#' + canvasId).getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: D.hist.labels,
+        datasets: [{
+          label: '人数',
+          data: D.hist.bins.map(function (b) { return b.count; }),
+          backgroundColor: colors,
+          borderRadius: 4,
+          maxBarThickness: 40,
+          datalabels: {
+            anchor: 'end', align: 'top', offset: 2, color: '#334155',
+            font: { size: 11, weight: '600' },
+            formatter: function (v) { return v ? v : ''; }
+          }
+        }]
+      },
+      plugins: [markPlugin],
+      options: {
+        responsive: false,
+        animation: false,
+        devicePixelRatio: 2,
+        layout: { padding: { top: 18, right: 10, left: 2, bottom: 0 } },
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: '#eef2f8' },
+            ticks: { color: '#7b8798', precision: 0, font: { size: 11 } },
+            title: { display: true, text: '人数', color: '#64748b', font: { size: 11.5 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#475569', font: { size: 10 }, maxRotation: 45, minRotation: 45 }
+          }
+        }
+      }
+    });
+    return { chart: chart, height: H };
+  }
+
+  /* 学科得分率雷达 */
+  function staticRadarChart(canvasId, A, schools) {
+    const Chart = LIB.chart;
+    const W = 900, H = 520;
+    if (!Chart) return { chart: null, height: H };
+    prepCanvas(canvasId, W, H);
+    const byName = Object.create(null);
+    A.schools.forEach(function (s) { byName[s.name] = s; });
+    const rateOf = function (sc, sub) {
+      if (!sc || !sc.subjects[sub] || !isNum(sc.subjects[sub].mean)) return null;
+      const full = state.fullMarks[sub] || 100;
+      return full > 0 ? sc.subjects[sub].mean / full * 100 : null;
+    };
+    const datasets = schools.map(function (s, i) {
+      const col = COMPARE_COLORS[i % COMPARE_COLORS.length];
+      return {
+        label: s.name,
+        data: A.subjects.map(function (sub) { return rateOf(byName[s.name], sub); }),
+        borderColor: col,
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        pointRadius: 2.5,
+        pointBackgroundColor: col
+      };
+    });
+    datasets.push({
+      label: '全区平均',
+      data: A.subjects.map(function (sub) { return rateOf(A.district, sub); }),
+      borderColor: '#d64545',
+      backgroundColor: 'transparent',
+      borderWidth: 1.8,
+      borderDash: [6, 4],
+      pointRadius: 0
+    });
+    const chart = new Chart($('#' + canvasId).getContext('2d'), {
+      type: 'radar',
+      data: { labels: A.subjects, datasets: datasets },
+      options: {
+        responsive: false,
+        animation: false,
+        devicePixelRatio: 2,
+        layout: { padding: { top: 8, right: 10, left: 10, bottom: 0 } },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, padding: 12, font: { size: 11.5 } }
+          },
+          datalabels: { display: false },
+          tooltip: { enabled: false }
+        },
+        scales: {
+          r: {
+            min: 0, max: 100,
+            ticks: {
+              stepSize: 20, color: '#9aa7ba', backdropColor: 'transparent',
+              font: { size: 10 }, callback: function (v) { return v + '%'; }
+            },
+            grid: { color: '#e6edf7' },
+            angleLines: { color: '#e6edf7' },
+            pointLabels: { color: '#475569', font: { size: 12 } }
+          }
+        }
+      }
+    });
+    return { chart: chart, height: H };
+  }
+
   function dataUrlToU8(dataUrl) {
     const b64 = dataUrl.split(',')[1] || '';
     const bin = atob(b64);
@@ -4128,7 +5437,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     return new Promise(function (resolve) {
       const A = state.analysis;
       if (!A || !LIB.chart) {
-        resolve({ img1: '', img2: '', ratio: 460 / 900, ratio1: 460 / 900, ratio2: 460 / 900 });
+        resolve({ img1: '', img2: '', img3: '', img4: '', img5: '', ratio: 460 / 900, ratio1: 460 / 900, ratio2: 460 / 900, ratio3: 460 / 900, ratio4: 420 / 900, ratio5: 520 / 900 });
         return;
       }
 
@@ -4140,17 +5449,27 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       }).filter(x => isNum(x.r)).sort((a, b) => b.r - a.r);
       const c2 = staticRateChart('rptChart2', subjRate.map(x => x.s), subjRate.map(x => x.r));
 
+      const D = buildDeep(A) || { ok: false };
+      const c3 = D.ok ? staticHistChart('rptChart3', D) : { chart: null, height: 420 };
+      const c4 = D.ok ? staticBandChart('rptChart4', D.schools) : { chart: null, height: 460 };
+      const c5 = (D.ok && A.subjects.length >= 3) ? staticRadarChart('rptChart5', A, D.schools.slice(0, 6)) : { chart: null, height: 520 };
+
       const finish = function () {
-        let img1 = '', img2 = '';
-        try { if (c1.chart) img1 = c1.chart.toBase64Image('image/png', 1); } catch (e) { }
-        try { if (c2.chart) img2 = c2.chart.toBase64Image('image/png', 1); } catch (e) { }
-        try { if (c1.chart) c1.chart.destroy(); } catch (e) { }
-        try { if (c2.chart) c2.chart.destroy(); } catch (e) { }
+        const grab = function (c) {
+          try { if (c.chart) return c.chart.toBase64Image('image/png', 1); } catch (e) { }
+          return '';
+        };
+        const kill = function (c) { try { if (c.chart) c.chart.destroy(); } catch (e) { } };
+        const img1 = grab(c1), img2 = grab(c2), img3 = grab(c3), img4 = grab(c4), img5 = grab(c5);
+        [c1, c2, c3, c4, c5].forEach(kill);
         resolve({
-          img1: img1, img2: img2,
+          img1: img1, img2: img2, img3: img3, img4: img4, img5: img5,
           ratio: c2.height / 900,
           ratio1: c1.height / 900,
-          ratio2: c2.height / 900
+          ratio2: c2.height / 900,
+          ratio3: c3.height / 900,
+          ratio4: c4.height / 900,
+          ratio5: c5.height / 900
         });
       };
       if (window.requestAnimationFrame) {
@@ -4169,11 +5488,13 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       $('#reportActions').style.display = 'none';
       if (pptCard) pptCard.style.display = 'none';
       body.innerHTML = emptyState('还没有可生成的数据', '请先在「数据录入」中导入成绩表，报告会自动生成。', ICONS.chart);
+      renderSchoolReportShell();
       return;
     }
     $('#reportActions').style.display = 'flex';
     if (pptCard) pptCard.style.display = 'block';
     renderPptOutline();
+    renderSchoolReportShell();
 
     const imgs = await buildReportImages();
     state.reportImages = imgs;
@@ -4207,10 +5528,13 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       '各学科统计仅计入该科成绩有效的学生（缺考、空白与非数值均按缺失处理，不计入分母）。' +
       '优秀率指成绩达到该科满分 80% 及以上的人数占比，及格率为达到 60% 及以上的人数占比，学困率为低于满分 30% 的人数占比；' +
       '标准差采用样本标准差（n−1）；学校名称已按规范名称清单统一，同一学校的简称、别名与括号写法会合并统计。各科满分取值：' +
-      A.subjects.map(s => esc(s) + ' ' + (state.fullMarks[s] || 100) + ' 分').join('、') + '。</p>';
+      A.subjects.map(s => esc(s) + ' ' + (state.fullMarks[s] || 100) + ' 分').join('、') + '。' +
+      '分布形态以偏度与超额峰度描述（矩估计），分数段按总分满分的 80% / 60% / 30% 划分为优秀、及格、待提升、学困四段；' +
+      '学科关联采用 Pearson 相关系数（学生个体、成对完整记录）。</p>';
 
     html += '<h2>二、全区学科表现</h2>';
     html += districtTableHtml(A);
+    html += '<p class="fig-cap">表 1　全区各学科与总分的统计指标（总分行的参评人数为全科完整人数）</p>';
     html += '<p>' + esc(conclusions[0]) + '</p>';
 
     html += '<h2>三、学校总体对比</h2>';
@@ -4220,6 +5544,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
         fmt(d.total.mean) + ' 分，N=' + withTotal.length + ' 所学校）</p>';
     }
     html += schoolTableHtml(A, topSchools);
+    html += '<p class="fig-cap">表 2　各校总分与各科平均分（按总分平均排序，仅列前 ' + topSchools.length + ' 所）</p>';
     if (conclusions[1]) html += '<p>' + esc(conclusions[1]) + '</p>';
 
     const cmp = buildSchoolCompare(A);
@@ -4255,19 +5580,52 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     }
     html += '<p>' + esc(subjectRateSentence(A)) + '</p>';
 
-    html += '<h2>六、主要发现</h2><ul>';
+    const D = buildDeep(A);
+    const T = buildDeepTexts(A, D);
+
+    if (D && D.ok) {
+      html += '<h2>六、分数分布与结构</h2>';
+      html += '<p>' + esc(T.dist) + '</p>';
+      if (imgs.img3) {
+        html += '<img src="' + imgs.img3 + '" alt="全区总分分布">';
+        html += '<p class="fig-cap">图 3　全区总分分布（N=' + D.district.n + ' 人，每档为总分满分的 10 个百分点即 ' +
+          fmt(D.totalFull / 10, 0) + ' 分；红色虚线为及格线 60%，灰色虚线为优秀线 80%）</p>';
+      }
+      html += '<p>' + esc(T.struct) + '</p>';
+      if (imgs.img4) {
+        html += '<img src="' + imgs.img4 + '" alt="各校总分分数段结构">';
+        html += '<p class="fig-cap">图 4　各校总分分数段结构（每校按 100% 归一，四段以总分满分的 80% / 60% / 30% 为界）</p>';
+      }
+      html += distStatTableHtml(D);
+      html += '<p class="fig-cap">表 5　各校总分分布统计量（单位：分；偏度为矩估计 g1，IQR = P75 − P25）</p>';
+      if (T.spread) html += '<p>' + esc(T.spread) + '</p>';
+
+      html += '<h2>七、学科关联与均衡</h2>';
+      if (imgs.img5) {
+        html += '<img src="' + imgs.img5 + '" alt="学科得分率雷达">';
+        html += '<p class="fig-cap">图 5　学科得分率雷达（取总分前 6 所，最外圈为 100% 得分率，红色虚线为全区平均）</p>';
+      }
+      html += '<p>' + esc(T.corr) + '</p>';
+      html += corrTableHtml(D);
+      html += '<p class="fig-cap">表 6　学科相关矩阵（Pearson r，学生个体、成对完整记录；末列为各科与总分的相关）</p>';
+    }
+
+    html += '<h2>八、主要发现</h2><ul>';
     conclusions.slice(2).forEach(function (c) { html += '<li>' + esc(c) + '</li>'; });
+    if (T && T.finds) T.finds.forEach(function (c) { html += '<li>' + esc(c) + '</li>'; });
     html += '</ul>';
 
-    html += '<h2>七、教学建议</h2><ul>';
-    suggestions.forEach(function (s) { html += '<li>' + esc(s) + '</li>'; });
+    html += '<h2>九、教学建议</h2><ul>';
+    suggestions.concat((T && T.advices) ? T.advices : []).forEach(function (s) { html += '<li>' + esc(s) + '</li>'; });
     html += '</ul>';
 
-    html += '<h2>八、方法与局限</h2>';
+    html += '<h2>十、方法与局限</h2>';
     html += '<p>本报告为描述性统计分析，反映的是本次考试的成绩分布特征，不构成因果关系推断。' +
       '需注意以下局限：其一，数据为单次考试的横截面数据，未包含学生入学基础、教师配置、命题难度等背景变量，校际差异不能直接归因于教学质量；' +
       '其二，若存在缺考或成绩缺失，各科参评人数并不一致，横向比较时应结合参评人数理解；' +
       '其三，优秀率、及格率、学困率的划分依据满分比例设定，若实际命题难度或满分设置与常规不同，指标的绝对水平会受影响。' +
+      '其四，偏度与峰度采用矩估计（总体口径），样本量较小时数值波动较大；学科相关系数为 Pearson r，反映的是本次考试中分数的同步变动，' +
+      '受命题难度、题型结构与教学安排影响，不能解读为学科间的因果或难度差异；若某科命题明显偏难或偏易，该科与总分的相关会被系统性压低。' +
       '建议结合多次考试的趋势数据与课堂观察、作业情况等过程性证据综合判断。</p>';
 
     html += '</div>';
@@ -4308,13 +5666,14 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 
   function schoolTableHtml(A, list) {
     let h = '<div class="tbl-wrap"><table class="tbl"><thead><tr>' +
-      '<th>排名</th><th>学校</th><th>人数</th><th>总分平均</th><th>标准差</th>';
+      '<th>排名</th><th>学校</th><th>人数</th><th>总分平均</th><th>标准差</th><th>及格率</th>';
     A.subjects.forEach(s => { h += '<th>' + esc(s) + '</th>'; });
     h += '</tr></thead><tbody>';
     (list || A.schools).forEach(function (s) {
       h += '<tr><td class="num">' + (s.totalRank || '—') + '</td><td class="txt">' + esc(s.name) + '</td>' +
         '<td class="num">' + s.n + '</td><td class="num"><b>' + fmt(s.total.mean) + '</b></td>' +
-        '<td class="num">' + fmt(s.total.sd) + '</td>';
+        '<td class="num">' + fmt(s.total.sd) + '</td>' +
+        '<td class="num">' + fmtPct(s.total.pass) + '</td>';
       A.subjects.forEach(function (sj) {
         h += '<td class="num">' + fmt(s.subjects[sj].mean) + '</td>';
       });
@@ -4325,6 +5684,63 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       h += '<p class="hint" style="margin-top:8px;">表中仅列出总分平均前 ' + list.length +
         ' 所（共 ' + A.schools.length + ' 所），完整数据见 Excel 导出。</p>';
     }
+    return h;
+  }
+
+  function distStatTableHtml(D) {
+    const pct = function (v, n) { return n ? fmtPct(v / n) : '—'; };
+    let h = '<div class="tbl-wrap"><table class="tbl"><thead><tr>' +
+      '<th>学校</th><th>人数</th><th>平均</th><th>中位数</th><th>P25</th><th>P75</th><th>IQR</th>' +
+      '<th>偏度</th><th>优秀段</th><th>及格段</th><th>待提升</th><th>学困段</th></tr></thead><tbody>';
+    D.schools.forEach(function (s) {
+      h += '<tr><td class="txt">' + esc(s.name) + '</td>' +
+        '<td class="num">' + s.n + '</td>' +
+        '<td class="num"><b>' + fmt(s.mean) + '</b></td>' +
+        '<td class="num">' + fmt(s.q.p50) + '</td>' +
+        '<td class="num">' + fmt(s.q.p25) + '</td>' +
+        '<td class="num">' + fmt(s.q.p75) + '</td>' +
+        '<td class="num">' + fmt(s.iqr, 1) + '</td>' +
+        '<td class="num">' + fmt(s.skew, 2) + '</td>' +
+        '<td class="num">' + pct(s.bands.ex, s.n) + '</td>' +
+        '<td class="num">' + pct(s.bands.pa, s.n) + '</td>' +
+        '<td class="num">' + pct(s.bands.mid, s.n) + '</td>' +
+        '<td class="num">' + pct(s.bands.low, s.n) + '</td></tr>';
+    });
+    const d = D.district;
+    h += '</tbody><tfoot><tr><td class="txt"><b>全区</b></td>' +
+      '<td class="num">' + d.n + '</td><td class="num">' + fmt(d.mean) + '</td>' +
+      '<td class="num">' + fmt(d.q.p50) + '</td><td class="num">' + fmt(d.q.p25) + '</td>' +
+      '<td class="num">' + fmt(d.q.p75) + '</td><td class="num">' + fmt(d.iqr, 1) + '</td>' +
+      '<td class="num">' + fmt(d.skew, 2) + '</td>' +
+      '<td class="num">' + pct(d.bands.ex, d.n) + '</td><td class="num">' + pct(d.bands.pa, d.n) + '</td>' +
+      '<td class="num">' + pct(d.bands.mid, d.n) + '</td><td class="num">' + pct(d.bands.low, d.n) + '</td></tr></tfoot></table></div>';
+    h += '<p class="hint" style="margin-top:8px;">P10 = ' + fmt(d.q.p10) + ' 分、P90 = ' + fmt(d.q.p90) +
+      ' 分；按 Q1−1.5IQR / Q3+1.5IQR 判定的极端分数共 ' + d.outliers + ' 人（' +
+      fmtPct(d.n ? d.outliers / d.n : null) + '）。</p>';
+    return h;
+  }
+
+  function corrTableHtml(D) {
+    const M = D.corr;
+    if (!M || !M.labels.length) return '';
+    const shade = function (r) {
+      if (!isNum(r)) return '';
+      const t = clamp((r - 0.2) / 0.8, 0, 1);
+      return ' style="background:rgba(37,99,235,' + (0.04 + 0.2 * t).toFixed(3) + ');"';
+    };
+    let h = '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>学科</th>' +
+      M.labels.map(function (s) { return '<th>' + esc(s) + '</th>'; }).join('') +
+      '<th>与总分 r</th></tr></thead><tbody>';
+    M.labels.forEach(function (row, i) {
+      const wt = M.withTotal.filter(function (x) { return x.s === row; })[0];
+      h += '<tr><td class="txt">' + esc(row) + '</td>';
+      M.labels.forEach(function (col, j) {
+        const r = M.matrix[i][j];
+        h += '<td class="num"' + (i === j ? '' : shade(r)) + '>' + (isNum(r) ? fmt(r, 2) : '—') + '</td>';
+      });
+      h += '<td class="num"' + shade(wt && wt.r) + '>' + (wt && isNum(wt.r) ? fmt(wt.r, 2) : '—') + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
     return h;
   }
 
@@ -4463,6 +5879,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
         ['学科', '满分', '参评人数', '平均分', '优秀率', '及格率', '学困率', '标准差'],
         distRows, [0]
       ));
+      children.push(caption('表 1　全区各学科与总分的统计指标（总分行的参评人数为全科完整人数）'));
       children.push(p(conclusions[0]));
 
       // 三、学校总体对比
@@ -4473,11 +5890,12 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       const withTotal = A.schools.filter(s => isNum(s.total.mean)).sort((a, b) => b.total.mean - a.total.mean);
       const topList = withTotal.slice(0, 12);
       const schoolRows = topList.map(function (s) {
-        const row = [s.totalRank || '—', s.name, s.n, fmt(s.total.mean), fmt(s.total.sd)];
+        const row = [s.totalRank || '—', s.name, s.n, fmt(s.total.mean), fmt(s.total.sd), fmtPct(s.total.pass)];
         A.subjects.forEach(sj => row.push(fmt(s.subjects[sj].mean)));
         return row;
       });
-      children.push(makeTable(['排名', '学校', '人数', '总分平均', '标准差'].concat(A.subjects), schoolRows, [1]));
+      children.push(makeTable(['排名', '学校', '人数', '总分平均', '标准差', '及格率'].concat(A.subjects), schoolRows, [1]));
+      children.push(caption('表 2　各校总分与各科平均分（按总分平均排序，仅列前 ' + topList.length + ' 所）'));
       if (withTotal.length > topList.length) {
         children.push(caption('注：表中仅列出总分平均前 ' + topList.length + ' 所（共 ' + A.schools.length + ' 所），完整数据见 Excel 导出。'));
       }
@@ -4500,6 +5918,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
             t.count ? fmt(t.min) + '～' + fmt(t.max) : '—'];
           }), [2]
         ));
+        children.push(caption('表 3　校际分层结构（以区均为基准，±0.5 倍校际标准差为界）'));
         if (cmp.evaluations[2]) children.push(p(cmp.evaluations[2]));
         children.push(makeTable(
           ['学校', '总分平均', '得分率极差', '最强学科', '相对薄弱学科', '高于区均科目'],
@@ -4512,7 +5931,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
               b.above + ' / ' + b.valid];
           }), [0]
         ));
-        children.push(caption('注：「pt」为百分点；括号内为相较区均得分率的差值，正值表示高于区均。'));
+        children.push(caption('表 4　各校学科结构与均衡度（「pt」为百分点；括号内为相较区均得分率的差值，正值表示高于区均）'));
         if (cmp.evaluations[3]) children.push(p(cmp.evaluations[3]));
         const evals = cmp.evaluations.slice(4);
         if (evals.length) {
@@ -4530,20 +5949,61 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       imageBlock(imgs.img2, '图 2　全区各学科得分率对比（得分率 = 平均分 ÷ 该科满分）', imgs.ratio2);
       children.push(p(subjectRateSentence(A)));
 
-      // 六、主要发现
-      children.push(h2('六、主要发现'));
+      // 六、分数分布与结构 / 七、学科关联与均衡
+      const DP = buildDeep(A);
+      const TP = buildDeepTexts(A, DP);
+      if (DP && DP.ok) {
+        const pctOf2 = function (v, n) { return n ? fmtPct(v / n) : '—'; };
+        children.push(h2('六、分数分布与结构'));
+        children.push(p(TP.dist));
+        imageBlock(imgs.img3, '图 3　全区总分分布（N=' + DP.district.n + ' 人，每档为总分满分的 10 个百分点；' +
+          '红色虚线为及格线 60%，灰色虚线为优秀线 80%）', imgs.ratio3);
+        children.push(p(TP.struct));
+        imageBlock(imgs.img4, '图 4　各校总分分数段结构（每校按 100% 归一，四段以总分的 80% / 60% / 30% 为界）', imgs.ratio4);
+
+        const rowsD = DP.schools.map(function (s) {
+          return [s.name, s.n, fmt(s.q.p50), fmt(s.iqr, 1), fmt(s.skew, 2),
+            pctOf2(s.bands.ex, s.n), pctOf2(s.bands.pa, s.n), pctOf2(s.bands.low, s.n)];
+        });
+        const dd = DP.district;
+        rowsD.push(['全区', dd.n, fmt(dd.q.p50), fmt(dd.iqr, 1), fmt(dd.skew, 2),
+          pctOf2(dd.bands.ex, dd.n), pctOf2(dd.bands.pa, dd.n), pctOf2(dd.bands.low, dd.n)]);
+        children.push(makeTable(['学校', '人数', '中位数', 'IQR', '偏度', '优秀段', '及格段', '学困段'], rowsD, [0]));
+        children.push(caption('表 5　各校总分分布统计量（单位：分；偏度为矩估计 g1，IQR = P75 − P25；P10 = ' +
+          fmt(dd.q.p10) + ' 分，P90 = ' + fmt(dd.q.p90) + ' 分，极端分数 ' + dd.outliers + ' 人）'));
+        if (TP.spread) children.push(p(TP.spread));
+
+        children.push(h2('七、学科关联与均衡'));
+        imageBlock(imgs.img5, '图 5　学科得分率雷达（取总分前 6 所，最外圈为 100% 得分率，红色虚线为全区平均）', imgs.ratio5);
+        children.push(p(TP.corr));
+        const M = DP.corr;
+        const rowsC = M.labels.map(function (row, i) {
+          const wt = M.withTotal.filter(function (x) { return x.s === row; })[0];
+          return [row].concat(M.labels.map(function (col, j) {
+            return isNum(M.matrix[i][j]) ? fmt(M.matrix[i][j], 2) : '—';
+          })).concat([wt && isNum(wt.r) ? fmt(wt.r, 2) : '—']);
+        });
+        children.push(makeTable(['学科'].concat(M.labels).concat(['与总分 r']), rowsC, [0]));
+        children.push(caption('表 6　学科相关矩阵（Pearson r，学生个体、成对完整记录；末列为各科与总分的相关）'));
+      }
+
+      // 八、主要发现
+      children.push(h2('八、主要发现'));
       conclusions.slice(2).forEach(c => children.push(bullet(c)));
+      if (TP && TP.finds) TP.finds.forEach(c => children.push(bullet(c)));
 
-      // 七、教学建议
-      children.push(h2('七、教学建议'));
-      suggestions.forEach(s => children.push(bullet(s)));
+      // 九、教学建议
+      children.push(h2('九、教学建议'));
+      suggestions.concat((TP && TP.advices) ? TP.advices : []).forEach(s => children.push(bullet(s)));
 
-      // 八、方法与局限
-      children.push(h2('八、方法与局限'));
+      // 十、方法与局限
+      children.push(h2('十、方法与局限'));
       children.push(p('本报告为描述性统计分析，反映本次考试的成绩分布特征，不构成因果推断。数据为单次考试横截面数据，' +
         '未纳入学生入学基础、教师配置、命题难度等背景变量，校际差异不能直接归因于教学质量；' +
         '若存在缺考或成绩缺失，各科参评人数并不一致，横向比较时应结合参评人数理解；' +
-        '优秀率、及格率、学困率的划分依据满分比例设定，命题难度与满分设置的差异会影响指标绝对水平。' +
+        '优秀率、及格率、学困率的划分依据满分比例设定，命题难度与满分设置的差异会影响指标绝对水平；' +
+        '偏度与峰度采用矩估计（总体口径），样本量较小时数值波动较大；学科相关系数为 Pearson r，只反映本次考试中分数的同步变动，' +
+        '受命题难度、题型结构与教学安排影响，不能解读为因果或学科难度差异。' +
         '建议结合多次考试的趋势数据与课堂观察、作业情况等过程性证据综合判断。'));
 
       children.push(new Paragraph({
@@ -4622,11 +6082,11 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
 
     h += '<h2>三、学校总体对比</h2>';
     if (imgs.img1) h += '<p style="text-align:center"><img src="' + imgs.img1 + '" width="620"></p>';
-    h += '<table><tr><th>排名</th><th>学校</th><th>人数</th><th>总分平均</th><th>标准差</th>' +
+    h += '<table><tr><th>排名</th><th>学校</th><th>人数</th><th>总分平均</th><th>标准差</th><th>及格率</th>' +
       A.subjects.map(s => '<th>' + esc(s) + '</th>').join('') + '</tr>';
     withTotal.forEach(function (s) {
       h += '<tr><td>' + (s.totalRank || '—') + '</td><td>' + esc(s.name) + '</td><td>' + s.n + '</td><td>' +
-        fmt(s.total.mean) + '</td><td>' + fmt(s.total.sd) + '</td>' +
+        fmt(s.total.mean) + '</td><td>' + fmt(s.total.sd) + '</td><td>' + fmtPct(s.total.pass) + '</td>' +
         A.subjects.map(sj => '<td>' + fmt(s.subjects[sj].mean) + '</td>').join('') + '</tr>';
     });
     h += '</table>';
@@ -4652,14 +6112,1272 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     if (imgs.img2) h += '<p style="text-align:center"><img src="' + imgs.img2 + '" width="620"></p>';
     h += '<p>' + esc(subjectRateSentence(A)) + '</p>';
 
-    h += '<h2>六、主要发现</h2><ul>' + conclusions.slice(2).map(c => '<li>' + esc(c) + '</li>').join('') + '</ul>';
-    h += '<h2>七、教学建议</h2><ul>' + suggestions.map(s => '<li>' + esc(s) + '</li>').join('') + '</ul>';
-    h += '<h2>八、方法与局限</h2><p>本报告为描述性统计分析，不构成因果推断；数据为单次考试横截面数据，' +
-      '未控制学生基础、师资与命题难度等变量，校际差异不可直接归因于教学质量；指标水平受满分设置影响，解读时需注意。</p>';
+    const D3 = buildDeep(A);
+    const T3 = buildDeepTexts(A, D3);
+    if (D3 && D3.ok) {
+      h += '<h2>六、分数分布与结构</h2>';
+      h += '<p>' + esc(T3.dist) + '</p>';
+      if (imgs.img3) h += '<p style="text-align:center"><img src="' + imgs.img3 + '" width="620"></p>';
+      h += '<p>' + esc(T3.struct) + '</p>';
+      if (imgs.img4) h += '<p style="text-align:center"><img src="' + imgs.img4 + '" width="620"></p>';
+      h += distStatTableHtml(D3);
+      if (T3.spread) h += '<p>' + esc(T3.spread) + '</p>';
+
+      h += '<h2>七、学科关联与均衡</h2>';
+      if (imgs.img5) h += '<p style="text-align:center"><img src="' + imgs.img5 + '" width="620"></p>';
+      h += '<p>' + esc(T3.corr) + '</p>';
+      h += corrTableHtml(D3);
+    }
+
+    h += '<h2>八、主要发现</h2><ul>' +
+      conclusions.slice(2).map(c => '<li>' + esc(c) + '</li>').join('') +
+      ((T3 && T3.finds) ? T3.finds.map(c => '<li>' + esc(c) + '</li>').join('') : '') + '</ul>';
+    h += '<h2>九、教学建议</h2><ul>' +
+      suggestions.concat((T3 && T3.advices) ? T3.advices : []).map(s => '<li>' + esc(s) + '</li>').join('') + '</ul>';
+    h += '<h2>十、方法与局限</h2><p>本报告为描述性统计分析，不构成因果推断；数据为单次考试横截面数据，' +
+      '未控制学生基础、师资与命题难度等变量，校际差异不可直接归因于教学质量；指标水平受满分设置影响；' +
+      '偏度与峰度为矩估计，样本量小时波动较大；学科相关系数为 Pearson r，仅反映本次考试中分数的同步变动，不代表因果。</p>';
     h += '</body></html>';
 
     const blob = new Blob(['\ufeff', h], { type: 'application/msword' });
     downloadBlob(blob, safeName(exam) + '_成绩分析报告_' + dateTag() + '.doc');
+    toast('Word 组件不可用，已导出兼容格式（.doc）', 'warn');
+  }
+
+  /* ------------------------------------------------------------------
+   * 11.2 学校专项分析报告（点击生成时才计算，不预先计算）
+   * ------------------------------------------------------------------ */
+  function srRowsOf(name) {
+    return state.validRows.filter(function (r) { return r.school === name; });
+  }
+  function srPp(v) { return isNum(v) ? (v >= 0 ? '+' : '') + fmt(v, 1) : '—'; }
+  function srCnt(rate, n) { return (isNum(rate) && isNum(n)) ? Math.round(rate * n) : null; }
+  function srRankTxt(r, N) { return isNum(r) ? '第 ' + r + ' / ' + N + ' 名' : '—'; }
+  function srSkewTxt(v) {
+    if (!isNum(v)) return '形态未知';
+    if (v >= 1) return '明显右偏（正偏）';
+    if (v >= 0.5) return '中度右偏';
+    if (v <= -1) return '明显左偏（负偏）';
+    if (v <= -0.5) return '中度左偏';
+    return '基本对称';
+  }
+
+  // 计算一所学校的完整分析数据（数值 + 文本 + 诊断），页面与 Word 共用同一份结果
+  function buildSchoolReport(A, sc, cmp) {
+    const subs = A.subjects.slice();
+    const fullOf = s => state.fullMarks[s] || 100;
+    const totalFull = subs.reduce((a, s) => a + fullOf(s), 0);
+    const d = A.district;
+    const N = A.schools.length;
+    const rows = srRowsOf(sc.name);
+    const n = sc.n || 0;
+    const completeN = sc.completeN || 0;
+    const missing = Math.max(0, n - completeN);
+    const tot = sc.total || {};
+    const dm = d.total.mean;
+    const dev = (isNum(tot.mean) && isNum(dm)) ? tot.mean - dm : null;
+    const rate = (isNum(tot.mean) && totalFull > 0) ? tot.mean / totalFull * 100 : null;
+    const dRate = (isNum(dm) && totalFull > 0) ? dm / totalFull * 100 : null;
+    const rank = sc.totalRank;
+    const rankPct = (isNum(rank) && N) ? rank / N * 100 : null;
+
+    let tier = null;
+    if (cmp && cmp.ok && cmp.tiers) {
+      cmp.tiers.forEach(function (t) { if (t.schools.indexOf(sc.name) >= 0) tier = t; });
+    }
+
+    const sorted = A.schools.filter(s => isNum(s.total.mean)).sort((a, b) => b.total.mean - a.total.mean);
+    const pos = sorted.findIndex(s => s.name === sc.name);
+    const prev = pos > 0 ? sorted[pos - 1] : null;
+    const next = (pos >= 0 && pos + 1 < sorted.length) ? sorted[pos + 1] : null;
+
+    /* ---- 学科 ---- */
+    const subjects = subs.map(function (sj) {
+      const st = sc.subjects[sj] || {};
+      const ds = d.subjects[sj] || {};
+      const full = fullOf(sj);
+      const r = (isNum(st.mean) && full > 0) ? st.mean / full * 100 : null;
+      const dr = (isNum(ds.mean) && full > 0) ? ds.mean / full * 100 : null;
+      return {
+        s: sj, full: full, n: isNum(st.n) ? st.n : 0,
+        mean: isNum(st.mean) ? st.mean : null,
+        rate: r, dRate: dr,
+        diff: (isNum(r) && isNum(dr)) ? r - dr : null,
+        dev: (isNum(st.mean) && isNum(ds.mean)) ? st.mean - ds.mean : null,
+        rank: (sc.ranks && isNum(sc.ranks[sj])) ? sc.ranks[sj] : null,
+        ex: isNum(st.excellent) ? st.excellent : null,
+        dEx: isNum(ds.excellent) ? ds.excellent : null,
+        pass: isNum(st.pass) ? st.pass : null,
+        dPass: isNum(ds.pass) ? ds.pass : null,
+        low: isNum(st.low) ? st.low : null,
+        dLow: isNum(ds.low) ? ds.low : null,
+        sd: isNum(st.sd) ? st.sd : null,
+        dSd: isNum(ds.sd) ? ds.sd : null
+      };
+    }).filter(x => isNum(x.mean));
+
+    const withDiff = subjects.filter(x => isNum(x.diff));
+    const avgDiff = withDiff.length ? withDiff.reduce((a, x) => a + x.diff, 0) / withDiff.length : null;
+    const relOf = x => (isNum(x.diff) && isNum(avgDiff)) ? x.diff - avgDiff : null;
+    const byRate = subjects.slice().sort((a, b) => b.rate - a.rate);
+    const best = byRate[0] || null;
+    const worst = byRate.length > 1 ? byRate[byRate.length - 1] : null;
+    const rates = subjects.map(x => x.rate).filter(isNum);
+    const rateRange = rates.length > 1 ? Math.max.apply(null, rates) - Math.min.apply(null, rates) : null;
+    const aboveCnt = subjects.filter(x => isNum(x.diff) && x.diff > 0.05).length;
+    let sdRate = null;
+    if (rates.length > 1) {
+      const m = rates.reduce((a, v) => a + v, 0) / rates.length;
+      sdRate = Math.sqrt(rates.reduce((a, v) => a + (v - m) * (v - m), 0) / (rates.length - 1));
+    }
+
+    /* ---- 分布 ---- */
+    const totals = (sc.totals || []).slice();
+    const tn = totals.length;
+    const q = tn ? {
+      p10: quantileOf(totals, 0.1), p25: quantileOf(totals, 0.25), p50: quantileOf(totals, 0.5),
+      p75: quantileOf(totals, 0.75), p90: quantileOf(totals, 0.9)
+    } : { p10: null, p25: null, p50: null, p75: null, p90: null };
+    const iqr = (isNum(q.p25) && isNum(q.p75)) ? q.p75 - q.p25 : null;
+    const ms = tn >= 3 ? momentStats(totals) : { skew: null, kurt: null };
+    const bands = tn ? bandCounts(totals, totalFull) : { ex: 0, pa: 0, mid: 0, low: 0, n: 0 };
+
+    const dTotals = (d.totals || []).slice();
+    const dtn = dTotals.length;
+    const dq = dtn ? {
+      p10: quantileOf(dTotals, 0.1), p25: quantileOf(dTotals, 0.25), p50: quantileOf(dTotals, 0.5),
+      p75: quantileOf(dTotals, 0.75), p90: quantileOf(dTotals, 0.9)
+    } : { p10: null, p25: null, p50: null, p75: null, p90: null };
+    const dIqr = (isNum(dq.p25) && isNum(dq.p75)) ? dq.p75 - dq.p25 : null;
+    const dms = dtn >= 3 ? momentStats(dTotals) : { skew: null, kurt: null };
+    const dBands = dtn ? bandCounts(dTotals, totalFull) : { ex: 0, pa: 0, mid: 0, low: 0, n: 0 };
+    const bandPct = k => tn ? bands[k] / tn * 100 : null;
+    const dBandPct = k => dtn ? dBands[k] / dtn * 100 : null;
+
+    /* ---- 学科相关（学生个体） ---- */
+    const corrList = subs.map(function (sj) {
+      const arr = [];
+      rows.forEach(function (r) {
+        const t = totalOf(r, subs);
+        if (isNum(t) && isNum(r.scores[sj])) arr.push([r.scores[sj], t]);
+      });
+      return { s: sj, r: pearsonR(arr), n: arr.length };
+    }).filter(x => isNum(x.r)).sort((a, b) => b.r - a.r);
+
+    const pairList = [];
+    for (let i = 0; i < subs.length; i++) {
+      for (let jx = i + 1; jx < subs.length; jx++) {
+        const arr = [];
+        rows.forEach(function (r) {
+          const a = r.scores[subs[i]], b = r.scores[subs[jx]];
+          if (isNum(a) && isNum(b)) arr.push([a, b]);
+        });
+        const rr = pearsonR(arr);
+        if (isNum(rr)) pairList.push({ a: subs[i], b: subs[jx], r: rr, n: arr.length });
+      }
+    }
+    pairList.sort((a, b) => b.r - a.r);
+    const corrAvg = corrList.length ? corrList.reduce((a, x) => a + x.r, 0) / corrList.length : null;
+
+    /* ---- 三项比率差（百分点） ---- */
+    const passPp = (isNum(tot.pass) && isNum(d.total.pass)) ? (tot.pass - d.total.pass) * 100 : null;
+    const exPp = (isNum(tot.excellent) && isNum(d.total.excellent)) ? (tot.excellent - d.total.excellent) * 100 : null;
+    const lowPp = (isNum(tot.low) && isNum(d.total.low)) ? (tot.low - d.total.low) * 100 : null;
+    const sdRatio = (isNum(tot.sd) && isNum(d.total.sd) && d.total.sd > 0) ? tot.sd / d.total.sd : null;
+
+    /* ---- 文本 ---- */
+    const texts = {};
+
+    let t1 = '本校本次共 ' + n + ' 名学生参加考试，其中各科成绩齐全 ' + completeN + ' 人' +
+      (missing > 0 ? '，缺考或成绩不齐 ' + missing + ' 人（占 ' + fmt(n ? missing / n * 100 : null, 1) + '%）' : '，无缺考或成绩缺失') +
+      '；考试科目 ' + subs.length + ' 科（' + subs.join('、') + '），总分满分 ' + totalFull + ' 分。';
+    if (isNum(tot.mean)) {
+      t1 += '总分平均 ' + fmt(tot.mean) + ' 分，中位数 ' + fmt(q.p50) + ' 分，最高 ' + fmt(tot.max, 1) +
+        ' 分、最低 ' + fmt(tot.min, 1) + ' 分，标准差 ' + fmt(tot.sd) + ' 分' +
+        (isNum(iqr) ? '，中间 50% 学生的分差（IQR）为 ' + fmt(iqr, 1) + ' 分' : '') + '。';
+    } else {
+      t1 += '本校暂无全科完整的成绩记录，总分相关分析从略，以下以各学科指标为主。';
+    }
+    texts.overview = t1;
+
+    let t2 = '';
+    if (isNum(rank) && isNum(tot.mean)) {
+      t2 += '在全区 ' + N + ' 所参与统计的学校中，本校总分平均位列第 ' + rank + ' 名' +
+        (isNum(rankPct) ? '（约前 ' + fmt(rankPct, 0) + '%）' : '') + '，';
+      if (isNum(dev) && Math.abs(dev) < 0.5) t2 += '与区均 ' + fmt(dm) + ' 分基本持平';
+      else if (isNum(dev)) t2 += (dev > 0 ? '高于' : '低于') + '区均 ' + fmt(Math.abs(dev)) + ' 分';
+      t2 += '，总分得分率 ' + fmt(rate, 1) + '%（区均 ' + fmt(dRate, 1) + '%）';
+      if (tier) t2 += '，按区均 ±0.5 倍校际标准差划分属于「' + tier.label + '」';
+      t2 += '。';
+    }
+    const nb = [];
+    if (prev && isNum(tot.mean) && isNum(rank)) {
+      nb.push('比第 ' + (rank - 1) + ' 名「' + prev.name + '」低 ' + fmt(prev.total.mean - tot.mean) + ' 分');
+    }
+    if (next && isNum(tot.mean) && isNum(rank)) {
+      nb.push('比第 ' + (rank + 1) + ' 名「' + next.name + '」高 ' + fmt(tot.mean - next.total.mean) + ' 分');
+    }
+    if (nb.length) {
+      const relRank = rank / N;
+      const zone = tier
+        ? (tier.key === 'A' ? 'top' : (tier.key === 'C' ? 'bottom' : 'mid'))
+        : (relRank <= 0.3 ? 'top' : (relRank >= 0.7 ? 'bottom' : 'mid'));
+      t2 += '与相邻位次相比，' + nb.join('、') + '；' +
+        (zone === 'top'
+          ? '处于全区前列，进一步进位主要取决于单科的细节分差。'
+          : (zone === 'bottom'
+            ? '处于全区后段，与前列学校差距较大，宜以整体抬升为主、单科突破为辅。'
+            : '处于全区中间地带，一两科位次前移即可带来总分位次的明显变化。'));
+    }
+    if (isNum(passPp)) {
+      t2 += '达标情况：优秀率 ' + fmtPct(tot.excellent) + '（区均 ' + fmtPct(d.total.excellent) + '，' + srPp(exPp) + ' 个百分点）、' +
+        '及格率 ' + fmtPct(tot.pass) + '（区均 ' + fmtPct(d.total.pass) + '，' + srPp(passPp) + ' 个百分点）、' +
+        '学困率 ' + fmtPct(tot.low) + '（区均 ' + fmtPct(d.total.low) + '，' + srPp(lowPp) + ' 个百分点）。';
+    }
+    texts.position = t2;
+
+    let t3 = '';
+    if (subjects.length) {
+      t3 += '分学科看，本校各科得分率由高到低为：' + byRate.map(x => x.s + ' ' + fmt(x.rate, 1) + '%').join('、') + '。';
+      if (best) {
+        t3 += '其中' + best.s + '最强（' + fmt(best.rate, 1) + '%' +
+          (isNum(best.diff) ? '，' + (best.diff >= 0 ? '高于' : '低于') + '区均 ' + fmt(Math.abs(best.diff), 1) + ' 个百分点' : '') +
+          '，' + srRankTxt(best.rank, N) + '）';
+        if (worst && isNum(worst.diff)) {
+          t3 += '，' + worst.s + '最弱（' + fmt(worst.rate, 1) + '%，' + (worst.diff >= 0 ? '高于' : '低于') + '区均 ' +
+            fmt(Math.abs(worst.diff), 1) + ' 个百分点，' + srRankTxt(worst.rank, N) + '）';
+        }
+        t3 += '。';
+      }
+      t3 += subjects.length + ' 个学科中 ' + aboveCnt + ' 个高于区均、' + (subjects.length - aboveCnt) + ' 个低于区均';
+      if (isNum(rateRange)) {
+        t3 += '，各科得分率极差 ' + fmt(rateRange, 1) + ' 个百分点' +
+          (rateRange >= 15 ? '，学科结构明显失衡，存在偏科' : (rateRange >= 10 ? '，学科之间存在一定落差' : '，学科发展较为均衡'));
+      }
+      t3 += '。';
+    }
+    texts.subjects = t3;
+
+    let t4 = '';
+    if (tn) {
+      t4 += '本校 ' + tn + ' 名全科完整学生的总分中位数 ' + fmt(q.p50) + ' 分，P10—P90 为 ' + fmt(q.p10) + '—' + fmt(q.p90) +
+        ' 分，四分位距 ' + fmt(iqr, 1) + ' 分（全区 ' + fmt(dIqr, 1) + ' 分）' +
+        (isNum(iqr) && isNum(dIqr) ? '，' + (iqr > dIqr ? '学生之间的分化大于全区' : '学生之间的分化小于全区') : '') + '。';
+      t4 += '总分分布' + srSkewTxt(ms.skew) + '（偏度 ' + fmt(ms.skew, 2) + '、超额峰度 ' + fmt(ms.kurt, 2) + '），标准差 ' +
+        fmt(tot.sd) + ' 分' + (isNum(sdRatio) ? '，为区均 ' + fmt(d.total.sd) + ' 分的 ' + fmt(sdRatio, 2) + ' 倍' : '') + '。';
+      t4 += '分数段结构：优秀段（≥80%）' + fmt(bandPct('ex'), 1) + '%、及格段（60%—80%）' + fmt(bandPct('pa'), 1) +
+        '%、待提升段（30%—60%）' + fmt(bandPct('mid'), 1) + '%、学困段（<30%）' + fmt(bandPct('low'), 1) + '；' +
+        '与全区相比，学困段' + (bandPct('low') >= dBandPct('low') ? '高 ' : '低 ') +
+        fmt(Math.abs(bandPct('low') - dBandPct('low')), 1) + ' 个百分点，优秀段' +
+        (bandPct('ex') >= dBandPct('ex') ? '高 ' : '低 ') + fmt(Math.abs(bandPct('ex') - dBandPct('ex')), 1) + ' 个百分点。';
+    } else {
+      t4 = '本校暂无全科完整的成绩记录，无法进行分数分布分析。';
+    }
+    texts.dist = t4;
+
+    let t5 = '';
+    if (corrList.length) {
+      const cTop = corrList[0], cBot = corrList[corrList.length - 1];
+      t5 += '以学生个体为单位（各科与总分均为完整记录，有效 ' + cTop.n + ' 人）计算，' + cTop.s + '与总分相关最高（r = ' +
+        fmt(cTop.r, 2) + '），' + cBot.s + '最低（r = ' + fmt(cBot.r, 2) + '），各科与总分平均相关 r = ' + fmt(corrAvg, 2) + '。';
+      if (pairList.length) {
+        const p0 = pairList[0], p1 = pairList[pairList.length - 1];
+        if (p0.a !== p1.a || p0.b !== p1.b) {
+          t5 += '学科之间，' + p0.a + '与' + p0.b + '相关最强（r = ' + fmt(p0.r, 2) + '），' + p1.a + '与' + p1.b +
+            '最弱（r = ' + fmt(p1.r, 2) + '）。';
+        }
+      }
+      t5 += (isNum(corrAvg) && corrAvg >= 0.6)
+        ? '整体同步性较强，说明各科教学进度与要求基本一致，总分能较好地代表学生的综合水平。'
+        : ((isNum(corrAvg) && corrAvg >= 0.4)
+          ? '同步性处于中等水平，学科之间保持一定独立性，评价学生时还需结合单科表现。'
+          : '同步性偏弱，部分学科成绩与整体水平关联不大，需核查命题难度、教学进度与课时落实是否偏离。');
+    } else {
+      t5 = '本校有效样本不足（各科至少 3 人），暂不进行学科相关分析。';
+    }
+    texts.corr = t5;
+
+    /* ---- 问题诊断 ---- */
+    const issues = [];
+    function issue(tag, level, text) { issues.push({ tag: tag, level: level, text: text }); }
+
+    if (isNum(dev) && dev < -0.5) {
+      issue('整体水平', 'bad', '总分平均 ' + fmt(tot.mean) + ' 分，' + (dev <= -totalFull * 0.05 ? '明显' : '略') +
+        '低于区均 ' + fmt(dm) + ' 分（' + srPp(dev) + ' 分），得分率 ' + fmt(rate, 1) + '%、低于区均 ' +
+        fmt(Math.abs(rate - dRate), 1) + ' 个百分点，全区' + srRankTxt(rank, N) + '，整体抬升是首要任务。');
+    }
+    if (isNum(passPp) && passPp <= -1.5) {
+      const np = srCnt(tot.pass, completeN);
+      issue('达标规模', 'bad', '总分及格率 ' + fmtPct(tot.pass) + '，低于区均 ' + fmt(Math.abs(passPp), 1) +
+        ' 个百分点；以全科完整学生计，约 ' + (isNum(np) ? Math.max(0, completeN - np) : '—') + ' 人未达总分 60%（' +
+        fmt(totalFull * 0.6, 0) + ' 分），大面积达标仍是主要矛盾。');
+    }
+    if ((isNum(lowPp) && lowPp >= 1.5) || (isNum(tot.low) && tot.low >= 0.15)) {
+      const nl = srCnt(tot.low, completeN);
+      issue('底部拖累', lowPp >= 3 ? 'bad' : 'warn', '学困率（总分低于满分 30%，即 ' + fmt(totalFull * 0.3, 0) + ' 分）为 ' +
+        fmtPct(tot.low) + (isNum(lowPp) ? '，' + (lowPp >= 0 ? '高于' : '低于') + '区均 ' + fmt(Math.abs(lowPp), 1) + ' 个百分点' : '') +
+        (isNum(nl) ? (nl > 0 ? '，约 ' + nl + ' 人处于该区间' : '，本次暂未出现该区间学生') : '') +
+        '；低分群体既拉低均分，也是课堂管理与控辍保学的重点。');
+    }
+    if (isNum(exPp) && exPp <= -1.5) {
+      const nex = srCnt(tot.excellent, completeN);
+      const nexHead = !isNum(nex) ? '达到' : (nex > 0 ? '约 ' + nex + ' 人达到' : '尚无人达到');
+      issue('拔尖不足', 'warn', '总分优秀率 ' + fmtPct(tot.excellent) + '，低于区均 ' + fmt(Math.abs(exPp), 1) +
+        ' 个百分点，' + nexHead + '总分 80%（' + fmt(totalFull * 0.8, 0) +
+        ' 分）以上，高分群体规模偏小，头部竞争力不足。');
+    }
+
+    // 学科短板：优先看「相对本校各科平均水平」的落差，再参考与区均的差距
+    const weakList = withDiff.slice().sort(function (a, b) {
+      const ra = isNum(relOf(a)) ? relOf(a) : 0, rb = isNum(relOf(b)) ? relOf(b) : 0;
+      return ra - rb;
+    }).filter(function (x) {
+      const rel = relOf(x);
+      return (isNum(rel) && rel <= -2) || (x.diff <= -3);
+    }).slice(0, 2);
+    weakList.forEach(function (x) {
+      const rel = relOf(x);
+      const lvl = (x.diff <= -5 || (isNum(rel) && rel <= -5)) ? 'bad' : 'warn';
+      const posTxt = x.diff < -0.05
+        ? '低于区均 ' + fmt(Math.abs(x.diff), 1) + ' 个百分点'
+        : '虽高于区均 ' + fmt(x.diff, 1) + ' 个百分点';
+      issue(x.s + '短板', lvl,
+        x.s + '得分率 ' + fmt(x.rate, 1) + '%，' + posTxt + '，' + srRankTxt(x.rank, N) +
+        (isNum(rel) ? '；相对本校各科平均水平（' + srPp(avgDiff) + ' 个百分点）还低 ' + fmt(Math.abs(rel), 1) + ' 个百分点' : '') +
+        (isNum(x.pass) ? '，该科及格率 ' + fmtPct(x.pass) + '（区均 ' + fmtPct(x.dPass) + '）、学困率 ' + fmtPct(x.low) +
+          '（区均 ' + fmtPct(x.dLow) + '）' : '') +
+        (x.diff < -0.05
+          ? (isNum(rel) && rel > -2 ? '，属于本校内部的相对短板，仍有提升空间。' : '。该科是校内最主要的失分环节。')
+          : '，属于本校内部的相对短板，仍有提升空间。'));
+    });
+
+    if (isNum(rateRange) && rateRange >= 15 && best && worst) {
+      issue('结构失衡', rateRange >= 20 ? 'bad' : 'warn', '校内各科得分率极差达 ' + fmt(rateRange, 1) +
+        ' 个百分点，最强' + best.s + '（' + fmt(best.rate, 1) + '%）与最弱' + worst.s + '（' + fmt(worst.rate, 1) +
+        '%）相差悬殊，学科结构失衡会持续拉低总分位次，也说明课时、师资或教研投入存在不均衡。');
+    }
+    if (isNum(sdRatio) && sdRatio >= 1.1) {
+      issue('校内分化', 'warn', '总分标准差 ' + fmt(tot.sd) + ' 分，是区均（' + fmt(d.total.sd) + ' 分）的 ' +
+        fmt(sdRatio, 2) + ' 倍' + (isNum(iqr) ? '，中间 50% 学生的分差（IQR）为 ' + fmt(iqr, 1) + ' 分' : '') +
+        '，同校学生的水平跨度较大，统一进度授课容易两头都不讨好。');
+    }
+    if (isNum(ms.skew) && ms.skew >= 0.5) {
+      issue('分布形态', 'warn', '总分分布呈' + srSkewTxt(ms.skew) + '（偏度 ' + fmt(ms.skew, 2) + '），低分尾部较长，' +
+        '均值被少数低分学生明显拉低；提升重心应放在「大面积达到及格线」而非只抓少数尖子。');
+    }
+    if (corrList.length && isNum(corrList[corrList.length - 1].r) && corrList[corrList.length - 1].r < 0.3) {
+      const cb = corrList[corrList.length - 1];
+      issue('学科一致性', 'warn', cb.s + '与总分的相关系数仅 r = ' + fmt(cb.r, 2) +
+        '，本次考试中该科成绩与学生的整体水平几乎不同步，需核查命题难度、考查范围是否与教学进度一致，以及该科课时与作业落实是否到位。');
+    }
+    if (n > 0 && missing / n >= 0.05) {
+      issue('数据完整性', 'warn', '缺考或成绩不齐 ' + missing + ' 人，占参评人数的 ' + fmt(missing / n * 100, 1) +
+        '%；各科参评人数并不一致（' + subjects.map(x => x.s + ' ' + x.n + ' 人').join('、') +
+        '），总分与比率类指标的横向比较需结合参评人数理解。');
+    }
+
+    /* ---- 优势亮点 ---- */
+    const strengths = [];
+    if (isNum(dev) && dev >= 0.5) {
+      strengths.push({ tag: '整体领先', text: '总分平均 ' + fmt(tot.mean) + ' 分，高于区均 ' + fmt(dev) + ' 分，' +
+        srRankTxt(rank, N) + '，总分得分率 ' + fmt(rate, 1) + '%，整体水平在全区处于' + (rank <= Math.ceil(N * 0.25) ? '前列' : '中上') + '。' });
+    }
+    const strongSubs = withDiff.filter(x => x.diff >= 3).sort((a, b) => b.diff - a.diff).slice(0, 2);
+    strongSubs.forEach(function (x) {
+      strengths.push({ tag: x.s + '优势', text: x.s + '得分率 ' + fmt(x.rate, 1) + '%，高于区均 ' + fmt(x.diff, 1) +
+        ' 个百分点，' + srRankTxt(x.rank, N) + '，是本校可以对外输出经验的学科。' });
+    });
+    if (isNum(passPp) && passPp >= 1.5) {
+      strengths.push({ tag: '达标面广', text: '总分及格率 ' + fmtPct(tot.pass) + '，高于区均 ' + fmt(passPp, 1) +
+        ' 个百分点，绝大多数学生达到基本要求，教学底线守得较稳。' });
+    }
+    if (isNum(exPp) && exPp >= 1.5) {
+      strengths.push({ tag: '拔尖突出', text: '总分优秀率 ' + fmtPct(tot.excellent) + '，高于区均 ' + fmt(exPp, 1) +
+        ' 个百分点，高分群体规模在全区处于较好水平。' });
+    }
+    if (isNum(rateRange) && rateRange <= 10) {
+      strengths.push({ tag: '结构均衡', text: '各科得分率极差仅 ' + fmt(rateRange, 1) +
+        ' 个百分点，学科之间没有明显塌陷，教学管理整体较为均衡。' });
+    }
+    if (isNum(sdRatio) && sdRatio <= 0.9) {
+      strengths.push({ tag: '整体齐整', text: '总分标准差 ' + fmt(tot.sd) + ' 分，低于区均（' + fmt(d.total.sd) +
+        ' 分），学生水平相对集中，便于统一进度授课、集中力量补差。' });
+    }
+    if (isNum(corrAvg) && corrAvg >= 0.6) {
+      strengths.push({ tag: '教学协同', text: '各科与总分的平均相关 r = ' + fmt(corrAvg, 2) +
+        '，学科之间同进同退，说明各科教学要求与进度基本一致，没有出现「放弃某一科」的现象。' });
+    }
+
+    /* ---- 改进建议 ---- */
+    const advices = [];
+    const hasIssue = tag => issues.some(i => i.tag === tag);
+    const weakest = weakList[0] || null;
+
+    if (hasIssue('整体水平')) {
+      advices.push('整体抬升：以区均 ' + fmt(dm) + ' 分为阶段目标，把差距分解到学科——优先抓差距最大的 ' +
+        (weakest ? weakest.s : '1—2 个学科') + '，设定「得分率提升 3—5 个百分点」的学期目标，每两周用同层次测评跟踪离均差变化。');
+    }
+    if (hasIssue('达标规模')) {
+      advices.push('守住及格线：按总分 60%（' + fmt(totalFull * 0.6, 0) + ' 分）筛出临界生名单，逐人统计各科失分点，' +
+        '以基础题与核心考点为内容做专项补偿，实行「周清—月测—过关」闭环，先把不及格人数降下来。');
+    }
+    if (hasIssue('底部拖累')) {
+      advices.push('托底帮扶：为总分低于 30%（' + fmt(totalFull * 0.3, 0) + ' 分）的学生建立一人一档，' +
+        '优先保证语文、数学等主干学科的基础得分，采用小步子、勤反馈的补偿教学，并与家长约定每日固定时长的基础练习。');
+    }
+    if (hasIssue('拔尖不足')) {
+      advices.push('拔尖培优：面向总分前 15%—20% 的学生开设拓展任务与压轴题专项，' +
+        '同时用「小先生制」让他们参与同伴辅导，避免只抓少数尖子而忽视中间段。');
+    }
+    if (weakList.length && weakest) {
+      const relW = relOf(weakest);
+      const goalTxt = weakest.diff < -0.05
+        ? '目标在下次考试中把与区均的差距收窄一半（当前 ' + srPp(weakest.diff) + ' 个百分点）。'
+        : (isNum(relW)
+          ? '该科虽高于区均 ' + fmt(weakest.diff, 1) + ' 个百分点，但低于本校各科平均水平 ' + fmt(Math.abs(relW), 1) +
+            ' 个百分点，目标是把这一落差收窄一半。'
+          : '目标是在保持区均以上水平的同时，缩小与校内优势学科的差距。');
+      advices.push('学科攻坚（' + weakest.s + '）：成立学科改进小组，核查课时落实与教学进度，梳理核心知识点清单，' +
+        '每周一次集体备课与错题重测；以「得分率、及格率」为过程指标，' + goalTxt);
+    }
+    if (hasIssue('结构失衡')) {
+      advices.push('结构校准：召开学科诊断会，逐一核对各科课时、作业量与测评频次，防止薄弱学科被挤占；' +
+        '对最弱学科增加每周一次限时训练，并把学科均衡度（各科得分率极差）纳入教研组考核。');
+    }
+    if (hasIssue('校内分化')) {
+      advices.push('分层教学：同一课时设计 A/B 两层任务单，课堂提问与板演兼顾两端；' +
+        '以 IQR、学困率与优秀率作为分层教学效果的过程指标，每学期复盘一次分层是否真正落地。');
+    }
+    if (hasIssue('分布形态')) {
+      advices.push('治理低分尾部：整理每科 20 个「保底考点」，以过关制推进，优先保证会做的不丢分；' +
+        '考后按知识点归因，避免用整套卷反复刷题消耗学生信心。');
+    }
+    if (hasIssue('学科一致性')) {
+      const cb = corrList[corrList.length - 1];
+      if (cb) {
+        advices.push('命题与进度校准（' + cb.s + '）：用双向细目表复盘本次命题的考点分布与难度结构，核对是否超出教学进度；' +
+          '若连续两次考试该科与总分相关偏低，需评估该科师资配备与课堂落实情况。');
+      }
+    }
+    if (hasIssue('数据完整性')) {
+      advices.push('数据治理：补齐缺考学生成绩或标注缺考原因，保证各科参评人数一致后再做横向比较；' +
+        '分析时同时呈现参评人数，避免用不完整样本得出过强结论。');
+    }
+    advices.push('跟踪机制：把本次各项离均差作为基线，建立「一科一表」的跟踪台账，' +
+      '在下次考试后对比总分位次、薄弱学科位次与学困率三项指标，用连续 2—3 次的变化判断改进是否有效。');
+
+    const uniqTags = [];
+    issues.forEach(function (i) { if (uniqTags.indexOf(i.tag) < 0) uniqTags.push(i.tag); });
+    const headline = (isNum(rank) ? '第 ' + rank + '/' + N + ' 名' : '—') +
+      (isNum(rate) ? ' · 得分率 ' + fmt(rate, 1) + '%（' + srPp(rate - dRate) + ' pp）' : '') +
+      ' · ' + (uniqTags.length ? '主要问题：' + uniqTags.slice(0, 2).join('、') : '未见明显短板');
+
+    return {
+      name: sc.name,
+      at: nowStamp(),
+      N: N,
+      n: n,
+      completeN: completeN,
+      missing: missing,
+      totalFull: totalFull,
+      rank: rank,
+      rankPct: rankPct,
+      tier: tier ? tier.label : null,
+      tierKey: tier ? tier.key : null,
+      tot: {
+        mean: isNum(tot.mean) ? tot.mean : null, sd: isNum(tot.sd) ? tot.sd : null,
+        min: isNum(tot.min) ? tot.min : null, max: isNum(tot.max) ? tot.max : null,
+        ex: tot.excellent, pass: tot.pass, low: tot.low
+      },
+      dev: dev, rate: rate, dRate: dRate,
+      passPp: passPp, exPp: exPp, lowPp: lowPp, sdRatio: sdRatio,
+      subjects: subjects, avgDiff: avgDiff, rateRange: rateRange, sdRate: sdRate, aboveCnt: aboveCnt,
+      best: best, worst: worst, weakList: weakList,
+      dist: {
+        n: tn, q: q, iqr: iqr, skew: ms.skew, kurt: ms.kurt, bands: bands, bandPct: bandPct,
+        dq: dq, dIqr: dIqr, dSkew: dms.skew, dKurt: dms.kurt, bandsD: dBands, dBandPct: dBandPct, dN: dtn
+      },
+      district: {
+        mean: dm, sd: d.total.sd, ex: d.total.excellent, pass: d.total.pass, low: d.total.low,
+        completeN: d.completeN, students: A.totalStudents
+      },
+      corr: { list: corrList, pairs: pairList, avg: corrAvg },
+      texts: texts,
+      issues: issues,
+      strengths: strengths,
+      advices: advices,
+      headline: headline,
+      img1: '', img2: '', ratio1: 420 / 900, ratio2: 400 / 900
+    };
+  }
+
+  /* ---- 学校报告的表与页面 ---- */
+  function srPosTableHtml(R) {
+    const rows = [
+      ['参评人数', R.n + ' 人', R.district.students + ' 人', '—'],
+      ['全科完整人数', R.completeN + ' 人', R.district.completeN + ' 人', R.missing ? '缺 ' + R.missing + ' 人' : '—'],
+      ['总分平均', fmt(R.tot.mean) + ' 分', fmt(R.district.mean) + ' 分', srPp(R.dev) + ' 分'],
+      ['总分得分率', fmt(R.rate, 1) + '%', fmt(R.dRate, 1) + '%', srPp(R.rate - R.dRate) + ' pp'],
+      ['总分标准差', fmt(R.tot.sd) + ' 分', fmt(R.district.sd) + ' 分', isNum(R.sdRatio) ? '×' + fmt(R.sdRatio, 2) : '—'],
+      ['优秀率', fmtPct(R.tot.ex), fmtPct(R.district.ex), srPp(R.exPp) + ' pp'],
+      ['及格率', fmtPct(R.tot.pass), fmtPct(R.district.pass), srPp(R.passPp) + ' pp'],
+      ['学困率', fmtPct(R.tot.low), fmtPct(R.district.low), srPp(R.lowPp) + ' pp'],
+      ['最高分 / 最低分', fmt(R.tot.max, 1) + ' / ' + fmt(R.tot.min, 1), '—', '—'],
+      ['中位数', fmt(R.dist.q.p50) + ' 分', fmt(R.dist.dq.p50) + ' 分', '—'],
+      ['IQR（P75−P25）', fmt(R.dist.iqr, 1) + ' 分', fmt(R.dist.dIqr, 1) + ' 分', '—'],
+      ['偏度 / 超额峰度', fmt(R.dist.skew, 2) + ' / ' + fmt(R.dist.kurt, 2), fmt(R.dist.dSkew, 2) + ' / ' + fmt(R.dist.dKurt, 2), '—']
+    ];
+    let h = '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>指标</th><th>本校</th><th>全区</th><th>差异 / 说明</th></tr></thead><tbody>';
+    rows.forEach(function (r, i) {
+      h += '<tr><td class="txt">' + esc(r[0]) + '</td><td class="num">' + (i === 2 ? '<b>' + esc(r[1]) + '</b>' : esc(r[1])) +
+        '</td><td class="num">' + esc(r[2]) + '</td><td class="num">' + esc(r[3]) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    return h;
+  }
+
+  function srSubjectTableHtml(R) {
+    let h = '<div class="tbl-wrap"><table class="tbl"><thead><tr>' +
+      '<th>学科</th><th>满分</th><th>参评</th><th>平均分</th><th>得分率</th><th>区均得分率</th><th>差值</th>' +
+      '<th>区内位次</th><th>优秀率</th><th>及格率</th><th>学困率</th><th>标准差</th></tr></thead><tbody>';
+    R.subjects.forEach(function (x) {
+      const diffColor = isNum(x.diff) ? (x.diff >= 0.05 ? '#12855c' : (x.diff <= -0.05 ? '#d64545' : '#556071')) : '#556071';
+      h += '<tr><td class="txt">' + esc(x.s) + '</td><td class="num">' + x.full + '</td><td class="num">' + x.n + '</td>' +
+        '<td class="num">' + fmt(x.mean) + '</td><td class="num">' + fmt(x.rate, 1) + '%</td>' +
+        '<td class="num">' + fmt(x.dRate, 1) + '%</td>' +
+        '<td class="num" style="color:' + diffColor + ';font-weight:700;">' + srPp(x.diff) + '</td>' +
+        '<td class="num">' + (isNum(x.rank) ? x.rank + ' / ' + R.N : '—') + '</td>' +
+        '<td class="num">' + fmtPct(x.ex) + '</td><td class="num">' + fmtPct(x.pass) + '</td>' +
+        '<td class="num">' + fmtPct(x.low) + '</td><td class="num">' + fmt(x.sd) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    return h;
+  }
+
+  function srDistTableHtml(R) {
+    const D = R.dist;
+    const rows = [
+      ['平均分', fmt(R.tot.mean), fmt(R.district.mean)],
+      ['中位数', fmt(D.q.p50), fmt(D.dq.p50)],
+      ['P10', fmt(D.q.p10), fmt(D.dq.p10)],
+      ['P25', fmt(D.q.p25), fmt(D.dq.p25)],
+      ['P75', fmt(D.q.p75), fmt(D.dq.p75)],
+      ['P90', fmt(D.q.p90), fmt(D.dq.p90)],
+      ['IQR（P75−P25）', fmt(D.iqr, 1), fmt(D.dIqr, 1)],
+      ['标准差', fmt(R.tot.sd), fmt(R.district.sd)],
+      ['偏度 g1', fmt(D.skew, 2), fmt(D.dSkew, 2)],
+      ['超额峰度 g2−3', fmt(D.kurt, 2), fmt(D.dKurt, 2)],
+      ['最高分', fmt(R.tot.max, 1), '—'],
+      ['最低分', fmt(R.tot.min, 1), '—']
+    ];
+    let h = '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>分布统计量</th><th>本校</th><th>全区</th></tr></thead><tbody>';
+    rows.forEach(function (r) {
+      h += '<tr><td class="txt">' + esc(r[0]) + '</td><td class="num">' + esc(r[1]) + '</td><td class="num">' + esc(r[2]) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    return h;
+  }
+
+  function srBandTableHtml(R) {
+    const D = R.dist;
+    const defs = BAND_DEFS;
+    let h = '<div class="tbl-wrap"><table class="tbl"><thead><tr>' +
+      '<th>分数段</th><th>分数区间</th><th>人数</th><th>本校占比</th><th>全区占比</th><th>差值</th></tr></thead><tbody>';
+    defs.forEach(function (b) {
+      const cnt = D.bands[b.key];
+      const pct = R.dist.n ? cnt / R.dist.n * 100 : null;
+      const dpct = D.dN ? D.bandsD[b.key] / D.dN * 100 : null;
+      h += '<tr><td class="txt">' + esc(b.label) + '段</td><td class="num">' + esc(b.range) + '</td>' +
+        '<td class="num">' + cnt + '</td><td class="num">' + fmt(pct, 1) + '%</td>' +
+        '<td class="num">' + fmt(dpct, 1) + '%</td>' +
+        '<td class="num" style="color:' + (isNum(pct) && isNum(dpct) ? (pct > dpct ? '#d64545' : '#12855c') : '#556071') +
+        ';font-weight:700;">' + srPp((pct || 0) - (dpct || 0)) + ' pp</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    return h;
+  }
+
+  function srCorrTableHtml(R) {
+    if (!R.corr.list.length) return '';
+    let h = '<div class="tbl-wrap"><table class="tbl"><thead><tr>' +
+      '<th>学科</th><th>与总分相关系数 r</th><th>有效样本</th><th>相关强度</th></tr></thead><tbody>';
+    R.corr.list.forEach(function (x) {
+      const lvl = Math.abs(x.r) >= 0.7 ? '强' : (Math.abs(x.r) >= 0.4 ? '中等' : '弱');
+      h += '<tr><td class="txt">' + esc(x.s) + '</td><td class="num"><b>' + fmt(x.r, 3) + '</b></td>' +
+        '<td class="num">' + x.n + '</td><td class="num">' + lvl + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    return h;
+  }
+
+  function srTags(R, max) {
+    const out = [];
+    (R.issues || []).forEach(function (i) { if (out.indexOf(i.tag) < 0) out.push(i.tag); });
+    return out.slice(0, max || 2).join('、') || '—';
+  }
+
+  function srDocHtml(R, idx) {
+    let h = '<div class="report sr-doc" id="sr-doc-' + idx + '">';
+    h += '<div class="sr-doc-head"><span class="sr-tag" style="background:#eaf1ff;color:#2563eb;">学校专项报告 ' + (idx + 1) + '</span>' +
+      '<span class="hint">生成时间 ' + esc(R.at) + '　·　数据：' + esc(state.fileName || '—') + '</span></div>';
+    h += '<h1>' + esc(R.name) + '　成绩分析报告</h1>';
+    h += '<p class="r-sub">' + esc(state.meta.examName || '考试成绩') +
+      (state.meta.grade ? ' · ' + esc(state.meta.grade) : '') +
+      ' · 全区 ' + R.N + ' 所学校 · 本校参评 ' + R.n + ' 人</p>';
+
+    h += '<div class="meta-grid">' +
+      kpiHtml('总分位次', isNum(R.rank) ? '第 ' + R.rank + ' / ' + R.N : '—') +
+      kpiHtml('总分平均', fmt(R.tot.mean) + ' 分') +
+      kpiHtml('与区均差', srPp(R.dev) + ' 分') +
+      kpiHtml('总分得分率', fmt(R.rate, 1) + '%') +
+      kpiHtml('及格率', fmtPct(R.tot.pass)) +
+      kpiHtml('学困率', fmtPct(R.tot.low)) +
+      '</div>';
+
+    h += '<h2>一、学校概况与全区位置</h2>';
+    h += '<p>' + esc(R.texts.overview) + '</p>';
+    if (R.texts.position) h += '<p>' + esc(R.texts.position) + '</p>';
+    h += srPosTableHtml(R);
+    h += '<p class="fig-cap">表 1　本校关键指标与全区对比（「pp」为百分点差，正值为高于区均）</p>';
+
+    h += '<h2>二、各学科表现与区内外位次</h2>';
+    if (R.img1) {
+      h += '<img src="' + R.img1 + '" alt="本校各科得分率与区均对比">';
+      h += '<p class="fig-cap">图 1　本校各学科得分率与区均对比（得分率 = 该科平均分 ÷ 该科满分）</p>';
+    }
+    h += '<p>' + esc(R.texts.subjects) + '</p>';
+    h += srSubjectTableHtml(R);
+    h += '<p class="fig-cap">表 2　本校各学科指标与区内外位置（差值 = 本校得分率 − 区均得分率）</p>';
+
+    h += '<h2>三、分数分布与校内分化</h2>';
+    h += '<p>' + esc(R.texts.dist) + '</p>';
+    h += srDistTableHtml(R);
+    h += '<p class="fig-cap">表 3　本校与全区的总分分布统计量（单位：分）</p>';
+    if (R.img2) {
+      h += '<img src="' + R.img2 + '" alt="本校与全区分数段结构对比">';
+      h += '<p class="fig-cap">图 2　本校与全区总分分数段结构对比（按 80% / 60% / 30% 满分划分）</p>';
+    }
+    h += srBandTableHtml(R);
+    h += '<p class="fig-cap">表 4　本校各分数段人数与占比（差值为本校占比 − 全区占比）</p>';
+
+    h += '<h2>四、学科关联与教学一致性</h2>';
+    h += '<p>' + esc(R.texts.corr) + '</p>';
+    h += srCorrTableHtml(R);
+    if (R.corr.list.length) {
+      h += '<p class="fig-cap">表 5　各学科与总分的相关系数（Pearson r，学生个体、全科完整记录）</p>';
+    }
+
+    h += '<h2>五、问题诊断</h2>';
+    if (R.issues.length) {
+      h += '<ul class="sr-issues">';
+      R.issues.forEach(function (it) {
+        h += '<li class="' + it.level + '"><span class="sr-tag">' + esc(it.tag) + '</span><span>' + esc(it.text) + '</span></li>';
+      });
+      h += '</ul>';
+    } else {
+      h += '<p>本次考试中，本校各项指标均未出现明显低于区均或结构性失衡的情况，暂未发现需要专项整改的问题。</p>';
+    }
+
+    h += '<h2>六、优势与亮点</h2>';
+    if (R.strengths.length) {
+      h += '<ul class="sr-issues">';
+      R.strengths.forEach(function (it) {
+        h += '<li class="good"><span class="sr-tag">' + esc(it.tag) + '</span><span>' + esc(it.text) + '</span></li>';
+      });
+      h += '</ul>';
+    } else {
+      h += '<p>本次考试暂无明显领先指标，建议以「五、问题诊断」中的短板为突破口，先在 1—2 个学科上形成可见进步。</p>';
+    }
+
+    h += '<h2>七、改进建议</h2><ul class="sr-advice">';
+    R.advices.forEach(function (a) { h += '<li>' + esc(a) + '</li>'; });
+    h += '</ul>';
+
+    h += '<h2>八、方法与局限</h2>';
+    h += '<p>本报告基于本次考试的横截面数据，属于描述性统计与校内诊断，不构成因果推断。' +
+      '其一，未纳入学生入口成绩、师资配置、命题难度等背景变量，与区均的差距不能直接归因于教学质量；' +
+      '其二，优秀率、及格率、学困率按满分比例（80% / 60% / 30%）设定，命题难度与满分设置会影响指标的绝对水平；' +
+      '其三，相关系数为 Pearson r，只反映本次考试中分数的同步变动，受命题结构与教学安排影响，不代表学科间的因果或难度差异；' +
+      '其四，样本量较小时（如本校全科完整人数不足 30 人），比率类指标与偏度、相关系数的波动较大，建议结合多次考试趋势与课堂观察综合判断。' +
+      '数据来源：' + esc(state.fileName || '导入成绩表') + '。</p>';
+
+    h += '</div>';
+    return h;
+  }
+
+  function srIndexHtml(list) {
+    let h = '<div class="sr-index"><div class="tbl-wrap"><table class="tbl"><thead><tr>' +
+      '<th>序</th><th>学校</th><th>总分位次</th><th>总分平均</th><th>得分率</th><th>与区均</th>' +
+      '<th>及格率</th><th>学困率</th><th>主要问题</th><th>操作</th></tr></thead><tbody>';
+    list.forEach(function (R, i) {
+      h += '<tr><td class="num miss">' + (i + 1) + '</td>' +
+        '<td class="txt"><a href="#sr-doc-' + i + '">' + esc(R.name) + '</a></td>' +
+        '<td class="num">' + (isNum(R.rank) ? '第 ' + R.rank + ' / ' + R.N : '—') + '</td>' +
+        '<td class="num">' + fmt(R.tot.mean) + '</td>' +
+        '<td class="num">' + fmt(R.rate, 1) + '%</td>' +
+        '<td class="num" style="color:' + (isNum(R.dev) && R.dev < 0 ? '#d64545' : '#12855c') + ';font-weight:700;">' + srPp(R.dev) + '</td>' +
+        '<td class="num">' + fmtPct(R.tot.pass) + '</td>' +
+        '<td class="num">' + fmtPct(R.tot.low) + '</td>' +
+        '<td class="txt" style="font-size:11.8px;">' +
+        esc(srTags(R, 2)) + '</td>' +
+        '<td class="num"><button class="btn sm ghost sr-dl" type="button" data-school="' + esc(R.name) + '">Word</button></td></tr>';
+    });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function srEmptyHtml() {
+    return '<div class="sr-empty"><p>尚未生成学校专项报告。<br>' +
+      '选择学校后点击「生成该校报告」，或点击「一键生成全部学校」；报告在点击时才临时计算，不会预先占用页面加载时间。<br>' +
+      '更新数据、调整满分或勾选学校后，已生成的报告会同步作废，需要重新生成。</p></div>';
+  }
+
+  /* ---- 学校报告配图（离屏静态图） ---- */
+  function srChartRate(R) {
+    const Chart = LIB.chart;
+    const H = 420;
+    if (!Chart || !R.subjects.length) return { chart: null, height: H };
+    prepCanvas('srChart1', 900, H);
+    const labels = R.subjects.map(x => x.s);
+    const chart = new Chart($('#srChart1').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '本校得分率',
+            data: R.subjects.map(x => x.rate),
+            backgroundColor: 'rgba(37,99,235,.82)',
+            borderColor: '#2563eb',
+            borderWidth: 1,
+            borderRadius: 5,
+            maxBarThickness: 46
+          },
+          {
+            label: '全区得分率',
+            data: R.subjects.map(x => x.dRate),
+            backgroundColor: 'rgba(148,163,184,.42)',
+            borderColor: '#94a3b8',
+            borderWidth: 1,
+            borderRadius: 5,
+            maxBarThickness: 46
+          }
+        ]
+      },
+      options: {
+        responsive: false,
+        animation: false,
+        devicePixelRatio: 2,
+        layout: { padding: { top: 26, right: 12, left: 2, bottom: 0 } },
+        plugins: {
+          legend: {
+            display: true, position: 'bottom',
+            labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, padding: 14, font: { size: 12 } }
+          },
+          tooltip: { enabled: false },
+          datalabels: {
+            display: function (ctx) { return ctx.datasetIndex === 0; },
+            anchor: 'end', align: 'top', offset: 4, color: '#1e293b',
+            font: { size: 11, weight: '600' },
+            textStrokeColor: '#ffffff', textStrokeWidth: 3,
+            formatter: v => isNum(v) ? fmt(v, 1) + '%' : ''
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true, max: 110,
+            grid: { color: '#eef2f8' },
+            ticks: { color: '#7b8798', font: { size: 11 }, callback: v => v + '%' },
+            title: { display: true, text: '得分率（%）', color: '#64748b', font: { size: 11.5 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#475569', autoSkip: false, font: { size: 12 } }
+          }
+        }
+      }
+    });
+    return { chart: chart, height: H };
+  }
+
+  function srChartBand(R) {
+    const Chart = LIB.chart;
+    const H = 400;
+    if (!Chart || !R.dist.n) return { chart: null, height: H };
+    prepCanvas('srChart2', 900, H);
+    const labels = ['优秀段（≥80%）', '及格段（60—80%）', '待提升段（30—60%）', '学困段（<30%）'];
+    const keys = ['ex', 'pa', 'mid', 'low'];
+    const mine = keys.map(k => R.dist.n ? R.dist.bands[k] / R.dist.n * 100 : null);
+    const dist = keys.map(k => R.dist.dN ? R.dist.bandsD[k] / R.dist.dN * 100 : null);
+    const chart = new Chart($('#srChart2').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '本校占比',
+            data: mine,
+            backgroundColor: 'rgba(37,99,235,.82)',
+            borderColor: '#2563eb',
+            borderWidth: 1,
+            borderRadius: 5,
+            maxBarThickness: 56
+          },
+          {
+            label: '全区占比',
+            data: dist,
+            backgroundColor: 'rgba(148,163,184,.42)',
+            borderColor: '#94a3b8',
+            borderWidth: 1,
+            borderRadius: 5,
+            maxBarThickness: 56
+          }
+        ]
+      },
+      options: {
+        responsive: false,
+        animation: false,
+        devicePixelRatio: 2,
+        layout: { padding: { top: 26, right: 12, left: 2, bottom: 0 } },
+        plugins: {
+          legend: {
+            display: true, position: 'bottom',
+            labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true, padding: 14, font: { size: 12 } }
+          },
+          tooltip: { enabled: false },
+          datalabels: {
+            display: 'auto',
+            anchor: 'end', align: 'top', offset: 4, color: '#1e293b',
+            font: { size: 10.5, weight: '600' },
+            textStrokeColor: '#ffffff', textStrokeWidth: 3,
+            formatter: v => isNum(v) ? fmt(v, 1) + '%' : ''
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true, max: 100,
+            grid: { color: '#eef2f8' },
+            ticks: { color: '#7b8798', font: { size: 11 }, callback: v => v + '%' },
+            title: { display: true, text: '占本校（全区）人数比例', color: '#64748b', font: { size: 11.5 } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#475569', autoSkip: false, font: { size: 11 } }
+          }
+        }
+      }
+    });
+    return { chart: chart, height: H };
+  }
+
+  function srNextFrame() {
+    return new Promise(function (resolve) {
+      if (window.requestAnimationFrame) requestAnimationFrame(function () { requestAnimationFrame(resolve); });
+      else setTimeout(resolve, 40);
+    });
+  }
+
+  async function srBuildOne(A, sc, cmp, withChart) {
+    const R = buildSchoolReport(A, sc, cmp);
+    if (withChart && LIB.chart && R.subjects.length) {
+      const c1 = srChartRate(R);
+      const c2 = srChartBand(R);
+      await srNextFrame();
+      try { R.img1 = c1.chart ? c1.chart.toBase64Image('image/png', 1) : ''; } catch (e) { R.img1 = ''; }
+      try { R.img2 = c2.chart ? c2.chart.toBase64Image('image/png', 1) : ''; } catch (e) { R.img2 = ''; }
+      R.ratio1 = c1.height / 900;
+      R.ratio2 = c2.height / 900;
+      [c1, c2].forEach(function (c) { try { if (c.chart) c.chart.destroy(); } catch (e) { } });
+    }
+    return R;
+  }
+
+  async function srGenerate(mode) {
+    const A = state.analysis;
+    if (!A) { toast('请先导入成绩数据', 'warn'); return; }
+    if (state.srBusy) { toast('报告正在生成，请稍候', 'warn'); return; }
+
+    const withChart = !!($('#srWithChart') && $('#srWithChart').checked);
+    const sorted = A.schools.slice().sort(function (a, b) {
+      const ra = isNum(a.totalRank) ? a.totalRank : 9999;
+      const rb = isNum(b.totalRank) ? b.totalRank : 9999;
+      return ra - rb;
+    });
+    let targets = [];
+    if (mode === 'single') {
+      const name = $('#srSchool') ? $('#srSchool').value : '';
+      const sc = A.schools.filter(s => s.name === name)[0];
+      if (!sc) { toast('请选择要生成报告的学校', 'warn'); return; }
+      targets = [sc];
+    } else {
+      targets = sorted;
+    }
+    if (!targets.length) { toast('暂无可生成报告的学校', 'warn'); return; }
+
+    const cmp = buildSchoolCompare(A);
+    const prog = $('#srProgress');
+    const btnS = $('#btnSrSingle'), btnA = $('#btnSrAll');
+    state.srBusy = true;
+    if (btnS) btnS.disabled = true;
+    if (btnA) btnA.disabled = true;
+
+    const out = [];
+    try {
+      for (let i = 0; i < targets.length; i++) {
+        if (prog) prog.textContent = mode === 'all'
+          ? '正在生成 ' + (i + 1) + ' / ' + targets.length + '：' + targets[i].name
+          : '正在生成…';
+        await srNextFrame();
+        out.push(await srBuildOne(A, targets[i], cmp, withChart));
+      }
+      state.schoolReports = out;
+      state.srMode = mode;
+      state.srRev = state.rev;
+      renderSchoolOutput();
+      const box = $('#schoolReportCard');
+      if (box && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toast(mode === 'single'
+        ? '已生成「' + targets[0].name + '」的专项分析报告'
+        : '已生成 ' + out.length + ' 所学校的专项分析报告', 'success', 2600);
+    } catch (e) {
+      console.error(e);
+      toast('报告生成失败：' + (e && e.message ? e.message : '未知错误'), 'error');
+    } finally {
+      state.srBusy = false;
+      if (btnS) btnS.disabled = false;
+      if (btnA) btnA.disabled = false;
+      if (prog) prog.textContent = '';
+    }
+  }
+
+  function renderSchoolOutput() {
+    const box = $('#srOutput');
+    if (!box) return;
+    const list = state.schoolReports || [];
+    if (!list.length) { box.innerHTML = srEmptyHtml(); return; }
+    let h = '<div class="sr-bar"><span class="sr-count">已生成 ' + list.length + ' 份' +
+      (state.srMode === 'all' ? '（全部学校）' : '（单校）') + ' · ' + esc(list[0].at) + '</span>' +
+      '<span class="spacer"></span>' +
+      '<button class="btn sm" type="button" data-sr-docx="all">下载' + (list.length > 1 ? '全部' : '该') + ' Word（.docx）</button>' +
+      '<button class="btn sm ghost" type="button" data-sr-print="1">打印 / 另存 PDF</button>' +
+      '<button class="btn sm ghost" type="button" data-sr-clear="1">清空</button>' +
+      '</div>';
+    if (list.length > 1) h += srIndexHtml(list);
+    h += '<div class="sr-docs">';
+    list.forEach(function (R, i) { h += srDocHtml(R, i); });
+    h += '</div>';
+    box.innerHTML = h;
+  }
+
+  // 打开报告页时刷新选择器与已有结果；数据变化后旧报告自动作废
+  function renderSchoolReportShell() {
+    const A = state.analysis;
+    const sel = $('#srSchool');
+    const box = $('#srOutput');
+    const btnS = $('#btnSrSingle'), btnA = $('#btnSrAll');
+    if (!A || !A.schools.length) {
+      if (sel) { sel.innerHTML = ''; sel.disabled = true; }
+      if (btnS) btnS.disabled = true;
+      if (btnA) btnA.disabled = true;
+      if (box) box.innerHTML = '<div class="sr-empty"><p>请先在「数据录入」中导入成绩表，之后即可按校生成专项报告。</p></div>';
+      if ($('#srHint')) $('#srHint').textContent = '按需生成 · 不预先计算';
+      return;
+    }
+    if (btnS) btnS.disabled = false;
+    if (btnA) btnA.disabled = false;
+
+    const sorted = A.schools.slice().sort(function (a, b) {
+      const ra = isNum(a.totalRank) ? a.totalRank : 9999;
+      const rb = isNum(b.totalRank) ? b.totalRank : 9999;
+      return ra - rb;
+    });
+    if (sel) {
+      sel.disabled = false;
+      const cur = sel.value;
+      sel.innerHTML = sorted.map(function (s) {
+        return '<option value="' + esc(s.name) + '">' +
+          (isNum(s.totalRank) ? '第 ' + s.totalRank + ' 名 · ' : '') + esc(s.name) +
+          '（' + fmt(s.total.mean) + ' 分）</option>';
+      }).join('');
+      if (cur && sorted.some(s => s.name === cur)) sel.value = cur;
+    }
+    if (state.schoolReports.length && state.srRev !== state.rev) {
+      state.schoolReports = [];
+      state.srRev = -1;
+      toast('数据已更新，学校专项报告需重新生成', 'warn', 2600);
+    }
+    if ($('#srHint')) $('#srHint').textContent = A.schools.length + ' 所学校 · 报告在点击时临时计算';
+    renderSchoolOutput();
+  }
+
+  /* ---- 学校报告 Word 导出 ---- */
+  async function exportSchoolDocx(list) {
+    list = (list && list.length) ? list : (state.schoolReports || []);
+    if (!list.length) { toast('请先生成学校报告', 'warn'); return; }
+    if (!LIB.docx) { exportSchoolDocFallback(list); return; }
+    const D = LIB.docx;
+    try {
+      const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+        WidthType, AlignmentType, BorderStyle, ImageRun, ShadingType } = D;
+      const SHADE = (ShadingType && ShadingType.CLEAR) || 'clear';
+      const BORDER = { style: BorderStyle.SINGLE, size: 4, color: 'BFBFBF' };
+      const BORDERS = {
+        top: BORDER, bottom: BORDER, left: BORDER, right: BORDER,
+        insideHorizontal: BORDER, insideVertical: BORDER
+      };
+      const children = [];
+      const many = list.length > 1;
+
+      const h1 = (t, opts) => new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { before: 60, after: 140 },
+        pageBreakBefore: !!(opts && opts.brk),
+        children: [new TextRun({ text: t, bold: true, size: 30, font: '黑体' })]
+      });
+      const sub = t => new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 240 },
+        children: [new TextRun({ text: t, size: 18, color: '6B7280', font: '宋体' })]
+      });
+      const h2 = t => new Paragraph({
+        spacing: { before: 240, after: 110 },
+        children: [new TextRun({ text: t, bold: true, size: 24, font: '黑体', color: '1F2937' })]
+      });
+      const p = (t, opts) => new Paragraph({
+        spacing: { after: 90, line: 330 },
+        children: [new TextRun(Object.assign({ text: t, size: 20, font: '宋体' }, opts || {}))]
+      });
+      const bullet = t => new Paragraph({
+        spacing: { after: 70, line: 320 },
+        bullet: { level: 0 },
+        children: [new TextRun({ text: t, size: 20, font: '宋体' })]
+      });
+      const caption = t => new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { before: 50, after: 160 },
+        children: [new TextRun({ text: t, size: 17, color: '6B7280', font: '宋体' })]
+      });
+      function cell(text, opts) {
+        opts = opts || {};
+        return new TableCell({
+          shading: opts.fill ? { fill: opts.fill, type: SHADE, color: 'auto' } : undefined,
+          margins: { top: 40, bottom: 40, left: 60, right: 60 },
+          children: [new Paragraph({
+            alignment: opts.align === false ? AlignmentType.LEFT : AlignmentType.CENTER,
+            children: [new TextRun({ text: String(text), bold: !!opts.bold, size: 16, font: '宋体' })]
+          })]
+        });
+      }
+      function makeTable(headers, rows, leftCols) {
+        const headerRow = new TableRow({
+          tableHeader: true,
+          children: headers.map(h => cell(h, { bold: true, fill: 'EAF1FF' }))
+        });
+        const bodyRows = rows.map(function (r) {
+          return new TableRow({
+            children: r.map(function (c, i) {
+              return cell(c, { align: !(leftCols || []).includes(i) });
+            })
+          });
+        });
+        return new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          borders: BORDERS,
+          rows: [headerRow].concat(bodyRows)
+        });
+      }
+      function imageBlock(dataUrl, capText, ratio) {
+        if (!dataUrl) return;
+        const rt = isNum(ratio) ? ratio : 0.46;
+        children.push(new Paragraph({
+          alignment: AlignmentType.CENTER,
+          spacing: { before: 140, after: 50 },
+          children: [new ImageRun({
+            data: dataUrlToU8(dataUrl),
+            transformation: { width: 450, height: Math.round(450 * rt) }
+          })]
+        }));
+        children.push(caption(capText));
+      }
+
+      // 封面（单校报告直接以学校标题开篇，避免重复标题与空白页）
+      if (many) {
+        children.push(h1('学校专项成绩分析报告'));
+        children.push(sub((state.meta.examName || '考试成绩') + (state.meta.grade ? '　' + state.meta.grade : '') +
+          '　生成时间：' + nowStamp() + '　共 ' + list.length + ' 所学校'));
+      }
+
+      if (many) {
+        children.push(h2('报告概览'));
+        children.push(p('本册按学校分别成册，每所学校含「概况与全区位置、学科表现、分数分布、学科关联、问题诊断、优势亮点、改进建议、方法与局限」八个部分，' +
+          '各校数据口径一致，均以全区 ' + list[0].N + ' 所学校为参照。'));
+        children.push(makeTable(
+          ['学校', '总分位次', '总分平均', '得分率', '与区均', '及格率', '学困率', '主要问题'],
+          list.map(function (R) {
+            return [R.name, isNum(R.rank) ? '第 ' + R.rank + ' / ' + R.N : '—', fmt(R.tot.mean),
+            fmt(R.rate, 1) + '%', srPp(R.dev) + ' 分', fmtPct(R.tot.pass), fmtPct(R.tot.low),
+            srTags(R, 2)];
+          }), [0, 7]
+        ));
+        children.push(caption('表 0　各校关键指标与主要问题概览'));
+      }
+
+      list.forEach(function (R, i) {
+        children.push(h1(R.name + '　成绩分析报告', { brk: many }));
+        children.push(sub((state.meta.examName || '考试成绩') + (state.meta.grade ? '　' + state.meta.grade : '') +
+          '　参评 ' + R.n + ' 人　全区 ' + R.N + ' 所'));
+
+        children.push(h2('一、学校概况与全区位置'));
+        children.push(p(R.texts.overview));
+        if (R.texts.position) children.push(p(R.texts.position));
+        children.push(makeTable(
+          ['指标', '本校', '全区', '差异 / 说明'],
+          [
+            ['参评人数', R.n + ' 人', R.district.students + ' 人', '—'],
+            ['全科完整人数', R.completeN + ' 人', R.district.completeN + ' 人', R.missing ? '缺 ' + R.missing + ' 人' : '—'],
+            ['总分平均', fmt(R.tot.mean) + ' 分', fmt(R.district.mean) + ' 分', srPp(R.dev) + ' 分'],
+            ['总分得分率', fmt(R.rate, 1) + '%', fmt(R.dRate, 1) + '%', srPp(R.rate - R.dRate) + ' pp'],
+            ['总分标准差', fmt(R.tot.sd) + ' 分', fmt(R.district.sd) + ' 分', isNum(R.sdRatio) ? '×' + fmt(R.sdRatio, 2) : '—'],
+            ['优秀率', fmtPct(R.tot.ex), fmtPct(R.district.ex), srPp(R.exPp) + ' pp'],
+            ['及格率', fmtPct(R.tot.pass), fmtPct(R.district.pass), srPp(R.passPp) + ' pp'],
+            ['学困率', fmtPct(R.tot.low), fmtPct(R.district.low), srPp(R.lowPp) + ' pp'],
+            ['中位数 / IQR', fmt(R.dist.q.p50) + ' / ' + fmt(R.dist.iqr, 1), fmt(R.dist.dq.p50) + ' / ' + fmt(R.dist.dIqr, 1), '单位：分']
+          ], [0]
+        ));
+        children.push(caption('表 1　本校关键指标与全区对比'));
+
+        children.push(h2('二、各学科表现与区内外位次'));
+        imageBlock(R.img1, '图 1　本校各学科得分率与区均对比', R.ratio1);
+        children.push(p(R.texts.subjects));
+        children.push(makeTable(
+          ['学科', '满分', '平均分', '得分率', '区均得分率', '差值', '区内位次', '优秀率', '及格率', '学困率'],
+          R.subjects.map(function (x) {
+            return [x.s, x.full, fmt(x.mean), fmt(x.rate, 1) + '%', fmt(x.dRate, 1) + '%',
+            srPp(x.diff), isNum(x.rank) ? x.rank + ' / ' + R.N : '—',
+            fmtPct(x.ex), fmtPct(x.pass), fmtPct(x.low)];
+          }), [0]
+        ));
+        children.push(caption('表 2　本校各学科指标（差值 = 本校得分率 − 区均得分率，单位：百分点）'));
+
+        children.push(h2('三、分数分布与校内分化'));
+        children.push(p(R.texts.dist));
+        children.push(makeTable(
+          ['分布统计量', '本校', '全区'],
+          [
+            ['中位数', fmt(R.dist.q.p50), fmt(R.dist.dq.p50)],
+            ['P10 / P90', fmt(R.dist.q.p10) + ' / ' + fmt(R.dist.q.p90), fmt(R.dist.dq.p10) + ' / ' + fmt(R.dist.dq.p90)],
+            ['IQR（P75−P25）', fmt(R.dist.iqr, 1), fmt(R.dist.dIqr, 1)],
+            ['标准差', fmt(R.tot.sd), fmt(R.district.sd)],
+            ['偏度 / 超额峰度', fmt(R.dist.skew, 2) + ' / ' + fmt(R.dist.kurt, 2), fmt(R.dist.dSkew, 2) + ' / ' + fmt(R.dist.dKurt, 2)],
+            ['最高 / 最低分', fmt(R.tot.max, 1) + ' / ' + fmt(R.tot.min, 1), '—']
+          ], [0]
+        ));
+        children.push(caption('表 3　本校与全区的总分分布统计量（单位：分）'));
+        imageBlock(R.img2, '图 2　本校与全区总分分数段结构对比', R.ratio2);
+        children.push(makeTable(
+          ['分数段', '分数区间', '人数', '本校占比', '全区占比', '差值'],
+          BAND_DEFS.map(function (b) {
+            const cnt = R.dist.bands[b.key];
+            const pct = R.dist.n ? cnt / R.dist.n * 100 : null;
+            const dp = R.dist.dN ? R.dist.bandsD[b.key] / R.dist.dN * 100 : null;
+            return [b.label, b.range, cnt, fmt(pct, 1) + '%', fmt(dp, 1) + '%', srPp((pct || 0) - (dp || 0)) + ' pp'];
+          }), [0]
+        ));
+        children.push(caption('表 4　本校各分数段人数与占比（差值 = 本校占比 − 全区占比）'));
+
+        children.push(h2('四、学科关联与教学一致性'));
+        children.push(p(R.texts.corr));
+        if (R.corr.list.length) {
+          children.push(makeTable(
+            ['学科', '与总分相关系数 r', '有效样本', '相关强度'],
+            R.corr.list.map(function (x) {
+              return [x.s, fmt(x.r, 3), x.n, Math.abs(x.r) >= 0.7 ? '强' : (Math.abs(x.r) >= 0.4 ? '中等' : '弱')];
+            }), [0]
+          ));
+          children.push(caption('表 5　各学科与总分的相关系数（Pearson r，学生个体、全科完整记录）'));
+        }
+
+        children.push(h2('五、问题诊断'));
+        if (R.issues.length) {
+          R.issues.forEach(function (it) { children.push(bullet('【' + it.tag + '】' + it.text)); });
+        } else {
+          children.push(p('本次考试各项指标未出现明显低于区均或结构性失衡的情况，暂未发现需要专项整改的问题。'));
+        }
+
+        children.push(h2('六、优势与亮点'));
+        if (R.strengths.length) {
+          R.strengths.forEach(function (it) { children.push(bullet('【' + it.tag + '】' + it.text)); });
+        } else {
+          children.push(p('本次考试暂无明显领先指标，建议以问题诊断中的短板为突破口，先在 1—2 个学科上形成可见进步。'));
+        }
+
+        children.push(h2('七、改进建议'));
+        R.advices.forEach(function (a) { children.push(bullet(a)); });
+
+        children.push(h2('八、方法与局限'));
+        children.push(p('本报告基于本次考试的横截面数据，属于描述性统计与校内诊断，不构成因果推断。' +
+          '未纳入学生入口成绩、师资配置、命题难度等背景变量，与区均的差距不能直接归因于教学质量；' +
+          '优秀率、及格率、学困率按满分 80% / 60% / 30% 设定，命题难度与满分设置会影响绝对水平；' +
+          '相关系数为 Pearson r，只反映本次考试中分数的同步变动，不代表学科间的因果或难度差异；' +
+          '本校全科完整人数较少时（不足 30 人），比率类指标与偏度、相关系数波动较大，建议结合多次考试趋势综合判断。'));
+        children.push(new Paragraph({
+          spacing: { before: 200 },
+          alignment: AlignmentType.RIGHT,
+          children: [new TextRun({
+            text: '（本报告由考试成绩智能分析工作台自动生成，数据来源：' + (state.fileName || '导入成绩表') + '）',
+            size: 16, color: '9CA3AF', font: '宋体'
+          })]
+        }));
+      });
+
+      const doc = new Document({
+        styles: { default: { document: { run: { font: '宋体', size: 20 } } } },
+        sections: [{
+          properties: {
+            page: {
+              size: { width: 11906, height: 16838 },
+              margin: { top: 1134, right: 1134, bottom: 1134, left: 1134 }
+            }
+          },
+          children: children
+        }]
+      });
+
+      const blob = await Packer.toBlob(doc);
+      const exam = state.meta.examName || '考试成绩';
+      const fname = many
+        ? safeName(exam) + '_学校专项分析报告_' + list.length + '所_' + dateTag() + '.docx'
+        : safeName(exam) + '_' + safeName(list[0].name) + '_专项分析报告_' + dateTag() + '.docx';
+      downloadBlob(blob, fname);
+      toast(many ? '已生成 ' + list.length + ' 所学校的 Word 报告' : 'Word 报告已生成并开始下载', 'success');
+    } catch (err) {
+      console.error(err);
+      toast('Word 生成失败：' + (err && err.message ? err.message : '未知错误') + '，将导出兼容格式', 'error');
+      exportSchoolDocFallback(list);
+    }
+  }
+
+  function exportSchoolDocFallback(list) {
+    list = (list && list.length) ? list : (state.schoolReports || []);
+    if (!list.length) { toast('请先生成学校报告', 'warn'); return; }
+    const exam = state.meta.examName || '考试成绩';
+    let h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">' +
+      '<head><meta charset="utf-8"><title>学校专项分析报告</title>' +
+      '<style>body{font-family:"宋体";font-size:11pt;line-height:1.8;} h1{font-family:"黑体";font-size:17pt;text-align:center;}' +
+      'h2{font-family:"黑体";font-size:13pt;color:#1f2937;border-left:3pt solid #2563eb;padding-left:6pt;}' +
+      'table{border-collapse:collapse;width:100%;font-size:9.5pt;} td,th{border:0.5pt solid #bfbfbf;padding:3pt 5pt;text-align:center;}' +
+      'th{background:#eaf1ff;font-weight:bold;} .cap{text-align:center;font-size:9pt;color:#6b7280;} img{max-width:620px;}</style></head><body>';
+    list.forEach(function (R, i) {
+      const doc = srDocHtml(R, i)
+        .replace(/<div class="sr-doc-head">[\s\S]*?<\/div>\s*<h1>/, '<h1>');
+      h += (i > 0 ? '<br clear="all" style="page-break-before:always">' : '') + doc;
+    });
+    h += '</body></html>';
+    const blob = new Blob(['\ufeff', h], { type: 'application/msword' });
+    const fname = list.length > 1
+      ? safeName(exam) + '_学校专项分析报告_' + list.length + '所_' + dateTag() + '.doc'
+      : safeName(exam) + '_' + safeName(list[0].name) + '_专项分析报告_' + dateTag() + '.doc';
+    downloadBlob(blob, fname);
     toast('Word 组件不可用，已导出兼容格式（.doc）', 'warn');
   }
 
@@ -4673,9 +7391,11 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     { no: 'P4', title: '学校总体对比', desc: '总分平均分横向柱状图、区平均参考线与校际差异结论' },
     { no: 'P5', title: '校际差异与评价', desc: '三档分层、学科结构差异与校际评价' },
     { no: 'P6', title: '学科得分率对比', desc: '各学科得分率柱状图与学科达成水平分析' },
-    { no: 'P7', title: '主要发现', desc: '校际差异、学科表现与学困分布' },
-    { no: 'P8', title: '教学建议', desc: '薄弱学科改进与分层教学方向' },
-    { no: 'P9', title: '方法与局限', desc: '统计口径、解读边界与使用建议' }
+    { no: 'P7', title: '分数分布与结构', desc: '全区总分分布直方图、各校分数段构成与形态判读' },
+    { no: 'P8', title: '学科关联与均衡', desc: '学科得分率雷达、学科间相关与均衡度结论' },
+    { no: 'P9', title: '主要发现', desc: '校际差异、学科表现、分数分布与学困分布' },
+    { no: 'P10', title: '教学建议', desc: '薄弱学科改进、分层教学与学困干预方向' },
+    { no: 'P11', title: '方法与局限', desc: '统计口径、解读边界与使用建议' }
   ];
 
   function renderPptOutline() {
@@ -4744,7 +7464,7 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       /* ---------- P1 封面 ---------- */
       let s = pptx.addSlide();
       s.background = { color: C.bg };
-      s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 0.2, h: 5.63, fill: { color: C.brand }, line: { color: C.brand } });
+      s.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 0.2, h: 5.625, fill: { color: C.brand }, line: { color: C.brand } });
       s.addText('成 绩 分 析 报 告', {
         x: 0.85, y: 1.0, w: 8.4, h: 0.34, fontSize: 13, bold: true, color: C.brand, fontFace: F, charSpacing: 2
       });
@@ -4895,10 +7615,78 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       });
       foot(s);
 
-      /* ---------- P7 主要发现 ---------- */
+      /* ---------- P7 分数分布与结构 ---------- */
+      const DD = buildDeep(A);
+      const TT = buildDeepTexts(A, DD);
+      const fitBox = function (ratio, maxW, maxH) {
+        let w = maxW, h = w * ratio;
+        if (h > maxH) { h = maxH; w = maxH > 0 ? h / ratio : maxW; }
+        return { w: w, h: h };
+      };
+      const clip = function (t, n) {
+        const s2 = String(t || '');
+        return s2.length > n ? s2.slice(0, n) + '…' : s2;
+      };
+
       s = pptx.addSlide();
-      head(s, '六、主要发现', '基于本次考试成绩的描述性结论');
-      const finds = conclusions.slice(2).slice(0, 5);
+      head(s, '六、分数分布与结构', '总分分布形态、分位数与各校分数段构成');
+      if (DD && DD.ok) {
+        if (imgs.img3) {
+          const f3 = fitBox(imgs.ratio3 || 0.467, 4.5, 2.06);
+          s.addImage({ data: imgs.img3, x: 0.42, y: 1.28, w: f3.w, h: f3.h });
+        }
+        if (imgs.img4) {
+          const f4 = fitBox(imgs.ratio4 || 0.5, 4.5, 2.06);
+          s.addImage({ data: imgs.img4, x: 5.08, y: 1.28, w: f4.w, h: f4.h });
+        }
+        s.addText('图 3　全区总分分布（N=' + DD.district.n + ' 人）　　图 4　各校分数段结构', {
+          x: 0.42, y: 3.4, w: 9.2, h: 0.24, fontSize: 8, color: '94A3B8', fontFace: F
+        });
+        s.addText(clip(TT.dist, 210), {
+          x: 0.45, y: 3.68, w: 9.1, h: 0.62, fontSize: 8.5, color: '334155',
+          fontFace: F, valign: 'top', lineSpacingMultiple: 1.05
+        });
+        s.addText(clip(TT.struct, 230), {
+          x: 0.45, y: 4.34, w: 9.1, h: 0.8, fontSize: 8.5, color: '334155',
+          fontFace: F, valign: 'top', lineSpacingMultiple: 1.05
+        });
+      }
+      foot(s);
+
+      /* ---------- P8 学科关联与均衡 ---------- */
+      s = pptx.addSlide();
+      head(s, '七、学科关联与均衡', '学科间相关结构、得分率均衡度与学科—总分关系');
+      if (DD && DD.ok) {
+        if (imgs.img5) {
+          const f5 = fitBox(imgs.ratio5 || 0.578, 5.1, 3.3);
+          s.addImage({ data: imgs.img5, x: 0.4, y: 1.26, w: f5.w, h: f5.h });
+        }
+        s.addText(clip(TT.corr, 330), {
+          x: 5.72, y: 1.3, w: 3.86, h: 3.1, fontSize: 8.5, color: '334155',
+          fontFace: F, valign: 'top', lineSpacingMultiple: 1.1
+        });
+        const M = DD.corr;
+        const rr = [];
+        for (let i = 0; i < M.labels.length; i++) {
+          for (let j = i + 1; j < M.labels.length; j++) {
+            if (isNum(M.matrix[i][j])) rr.push({ t: M.labels[i] + '—' + M.labels[j], r: M.matrix[i][j] });
+          }
+        }
+        rr.sort(function (a, b) { return b.r - a.r; });
+        if (rr.length) {
+          s.addText('最强：' + rr[0].t + ' r=' + fmt(rr[0].r, 2) +
+            '　·　最弱：' + rr[rr.length - 1].t + ' r=' + fmt(rr[rr.length - 1].r, 2) +
+            (DD.corr.withTotal.length && isNum(DD.corr.withTotal[0].r)
+              ? '　·　与总分最高：' + DD.corr.withTotal[0].s + ' r=' + fmt(DD.corr.withTotal[0].r, 2) : ''),
+            { x: 5.72, y: 4.42, w: 3.86, h: 0.6, fontSize: 8, color: '64748B', fontFace: F, valign: 'top' });
+        }
+      }
+      foot(s);
+
+      /* ---------- P9 主要发现 ---------- */
+      s = pptx.addSlide();
+      head(s, '八、主要发现', '基于本次考试成绩的描述性结论');
+      const finds = conclusions.slice(2).concat((TT && TT.finds) ? TT.finds : []).slice(0, 5);
       finds.forEach(function (t, i) {
         const y = 1.35 + i * 0.76;
         s.addShape(pptx.ShapeType.ellipse, {
@@ -4908,17 +7696,17 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
           x: 0.55, y: y + 0.02, w: 0.34, h: 0.34, fontSize: 11, bold: true,
           color: 'FFFFFF', align: 'center', valign: 'middle', fontFace: F
         });
-        s.addText(String(t), {
-          x: 1.02, y: y, w: 8.4, h: 0.7, fontSize: 11, color: '334155',
+        s.addText(clip(t, 110), {
+          x: 1.02, y: y, w: 8.4, h: 0.7, fontSize: 10.5, color: '334155',
           fontFace: F, valign: 'top', lineSpacingMultiple: 1.1
         });
       });
       foot(s);
 
-      /* ---------- P7 教学建议 ---------- */
+      /* ---------- P10 教学建议 ---------- */
       s = pptx.addSlide();
-      head(s, '七、教学建议', '针对薄弱环节的改进方向');
-      suggestions.slice(0, 5).forEach(function (t, i) {
+      head(s, '九、教学建议', '针对薄弱环节的改进方向');
+      suggestions.concat((TT && TT.advices) ? TT.advices : []).slice(0, 5).forEach(function (t, i) {
         const y = 1.35 + i * 0.76;
         s.addShape(pptx.ShapeType.ellipse, {
           x: 0.55, y: y + 0.02, w: 0.34, h: 0.34, fill: { color: C.teal }, line: { color: C.teal }
@@ -4934,13 +7722,15 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
       });
       foot(s);
 
-      /* ---------- P8 方法与局限 ---------- */
+      /* ---------- P11 方法与局限 ---------- */
       s = pptx.addSlide();
-      head(s, '八、方法与局限', '解读本报告时需要注意的边界');
+      head(s, '十、方法与局限', '解读本报告时需要注意的边界');
       s.addText('本报告为描述性统计分析，反映的是本次考试的成绩分布特征，不构成因果关系推断。' +
         '其一，数据为单次考试的横截面数据，未纳入学生入学基础、教师配置、命题难度等背景变量，校际差异不能直接归因于教学质量；' +
         '其二，若存在缺考或成绩缺失，各科参评人数并不一致，横向比较时应结合参评人数理解；' +
-        '其三，优秀率、及格率、学困率的划分依据满分比例设定，命题难度与满分设置的差异会影响指标的绝对水平。' +
+        '其三，优秀率、及格率、学困率的划分依据满分比例设定，命题难度与满分设置的差异会影响指标的绝对水平；' +
+        '其四，偏度与峰度为矩估计，样本量小时波动较大，学科相关系数只反映本次考试中分数的同步变动，不代表因果，' +
+        '若某科命题明显偏难或偏易，该科与总分的相关会被系统性压低。' +
         '建议结合多次考试的趋势数据与课堂观察、作业情况等过程性证据综合判断。',
         {
           x: 0.5, y: 1.4, w: 9, h: 2.5, fontSize: 11, color: '334155',
@@ -5667,6 +8457,19 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     // 点击图表放大（对比图为每科一幅，点击事件在 renderCompareChart 内绑定）
     $('#mainChart').addEventListener('click', function () { openChartModal('main'); });
     $('#devChart').addEventListener('click', function () { openChartModal('dev'); });
+    $('#rankBumpChart').addEventListener('click', function () { openChartModal('rank'); });
+
+    // 位次矩阵/走势图设置
+    $('#rankSort').addEventListener('change', function (e) {
+      state.rankSort = e.target.value;
+      renderCharts();
+    });
+    $('#rankTop').addEventListener('change', function (e) {
+      state.rankTop = e.target.value;
+      renderCharts();
+    });
+    $('#rankSort').value = state.rankSort;
+    $('#rankTop').value = state.rankTop;
 
     // 离均差口径切换
     $('#devMode').addEventListener('change', function (e) {
@@ -5704,6 +8507,28 @@ table.tbl tr.sch-detail:hover td{background:#f8fafd;}
     $('#btnPrint').addEventListener('click', function () {
       if (!state.analysis) { toast('请先导入成绩数据', 'warn'); return; }
       window.print();
+    });
+
+    // 学校专项报告：点击时才生成
+    $('#btnSrSingle').addEventListener('click', function () { srGenerate('single'); });
+    $('#btnSrAll').addEventListener('click', function () { srGenerate('all'); });
+    $('#srOutput').addEventListener('click', function (e) {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      if (btn.hasAttribute('data-sr-clear')) {
+        state.schoolReports = [];
+        state.srRev = -1;
+        renderSchoolOutput();
+        toast('已清空学校专项报告', 'success', 1800);
+        return;
+      }
+      if (btn.hasAttribute('data-sr-print')) { window.print(); return; }
+      if (btn.hasAttribute('data-sr-docx')) { exportSchoolDocx(state.schoolReports); return; }
+      if (btn.classList.contains('sr-dl')) {
+        const name = btn.getAttribute('data-school');
+        const R = (state.schoolReports || []).filter(x => x.name === name)[0];
+        if (R) exportSchoolDocx([R]);
+      }
     });
 
     $('#btnExportAll').addEventListener('click', exportAll);
